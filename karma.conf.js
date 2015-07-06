@@ -13,6 +13,7 @@ module.exports = function(config) {
         files: [
             'bower_components/json2/json2.js',
             'bower_components/jquery/jquery.js',
+            'bower_components/ne-code-snippet/code-snippet.js',
             'src/**/*.js',
             'test/**/*.spec.js'
         ],
