@@ -1,0 +1,18 @@
+{
+    "name": "component-file-uploader",
+    "version": "0.0.0",
+    "authors": ["NHNEnt FE Development Team <e0242@nhnent.com>"],
+    "description": "",
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "json2": "latest",
+        "jquery": "1.8.3"
+    }
+}
