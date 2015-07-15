@@ -6,7 +6,7 @@ module.exports = function(config) {
     };
 
     config.set({
-        basePath: '',
+        basePath: './',
 
         frameworks: ['jasmine'],
 
@@ -14,6 +14,7 @@ module.exports = function(config) {
             'bower_components/json2/json2.js',
             'bower_components/jquery/jquery.js',
             'bower_components/ne-code-snippet/code-snippet.js',
+            'src/**/fileUploader.js',
             'src/**/*.js',
             'test/**/*.spec.js'
         ],
@@ -26,6 +27,7 @@ module.exports = function(config) {
         },
 
         reporters: [
+            'dots',
             'mocha',
             'coverage',
             'junit'
