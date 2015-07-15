@@ -6,11 +6,10 @@
 
 ne.util.defineNamespace('ne.component.Uploader.Connector');
 
-ne.component.Uploader.Connector = ne.util.defineClass({
+ne.component.Uploader.Connector = ne.util.defineClass(/** @lends ne.component.Uploader.Connector.prototype */{
     init: function(uploader) {
-        var type = uploader.type;
+        var type = this._getClassName(uploader.type);
 
-        type = this._getClassName(type);
         this._uploader = uploader;
         this.mixin(ne.component.Uploader[type]);
     },

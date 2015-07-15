@@ -10,14 +10,46 @@ ne.util.defineNamespace('ne.component.Uploader');
  * It makes connector and view with option and environment.<br>
  * It control and make connection among modules.<br>
  * @constructor ne.component.FileUplodaer
+ * @example
+ * var uploader = new ne.component.Uploader({
+ *     url: {
+ *         send: "http://fe.nhnent.com/etc/etc/uploader/uploader.php",
+ *         remove: "http://fe.nhnent.com/etc/etc/uploader/remove.php"
+ *     },
+ *     helper: {
+ *         url: 'http://10.77.34.126:8009/samples/response.html',
+ *         name: 'REDIRECT_URL'
+ *     },
+ *     resultTypeElementName: 'RESPONSE_TYPE',
+ *     formTarget: 'hiddenFrame',
+ *     callbackName: 'responseCallback',
+ *     listInfo: {
+ *         list: $('#files'),
+ *         count: $('#file_count'),
+ *         size: $('#size_count')
+ *     },
+ *     sizeunit: "KB",
+ *     separator: ';'
+ * }, $('#uploader'));
  */
 ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 
     /**
      * initialize options
      * @param {object} options The options to set up file uploader modules.
-     *  @param {string} options.url The url is file server.
-     *  @parma {string} useJsonP Whether JsonpConnector or not.
+     *  @param {object} options.url The url is file server.
+     *      @param {string} options.url.send The url is for file attach.
+     *      @param {string} options.url.remove The url is for file detach.
+     *  @param {object} options.helper The helper object info is for x-domain.
+     *      @param {string} options.helper.url The url is helper page url.
+     *      @param {string} options.helper.name The name of hidden element for sending server helper page information.
+     *  @param {string} options.resultTypeElementName The type of hidden element for sending server response type information.
+     *  @param {string} options.formTarget The target for x-domain jsonp case.
+     *  @param {string} options.callbackName The name of jsonp callback function.
+     *  @param {object} opitons.listInfo The element info to display file list information.
+     *  @param {string} options.sizeunit The unit of file usage.
+     *  @param {string} options.separator The separator for jsonp helper response.
+     * @param {JqueryObject} $el Root Element of Uploader
      */
     init: function(options, $el) {
         var view = ne.component.Uploader.View;
@@ -39,7 +71,7 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
     _setConnector: function() {
         var constructor = ne.component.Uploader;
         if (this.isCrossDomain()) {
-            if (this.useAsyncTransfer && this.helper) {
+            if (this.helper) {
                 this.type = 'jsonp';
             } else {
                 alert(CONF.ERROR.NOT_SURPPORT);
@@ -69,7 +101,6 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
      */
     _setData: function(options) {
         ne.util.extend(this, options);
-        this.useAsyncTransfer = ne.util.isExisty(this.useAsyncTransfer) ?  this.useAsyncTransfer : true;
     },
 
     /**

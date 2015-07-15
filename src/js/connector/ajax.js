@@ -8,7 +8,10 @@
 
 ne.util.defineNamespace('ne.component.Uploader.Ajax');
 
-ne.component.Uploader.Ajax = {
+/**
+ * The modules will be mixed in connector by type.
+ */
+ne.component.Uploader.Ajax = {/** @lends ne.component.Uploader.Ajax */
     type: 'POST',
     /**
      * Request ajax by config to add files.

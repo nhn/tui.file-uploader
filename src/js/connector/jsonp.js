@@ -8,7 +8,10 @@
 
 ne.util.defineNamespace('ne.component.Uploader.Jsonp');
 
-ne.component.Uploader.Jsonp = {
+/**
+ * The modules will be mixed in connector by type.
+ */
+ne.component.Uploader.Jsonp = {/** @lends ne.component.Uploader.Jsonp */
     /**
      * Request by form submit.
      * @param {object} config Configuration for submit form.
@@ -17,12 +20,8 @@ ne.component.Uploader.Jsonp = {
     addRequest: function(config) {
         var callbackName = this._uploader.callbackName,
         callback = config.success;
+        window[callbackName] = ne.util.bind(this.successPadding, this, callback);
 
-        if (this._uploader.isCrossDomain()) {
-            window[callbackName] = ne.util.bind(this.successPadding, this, callback);
-        } else {
-            window[callbackName] = ne.util.bind(this.successPadding, this, callback);
-        }
         this._uploader.inputView.$el.submit();
     },
 
@@ -74,9 +73,7 @@ ne.component.Uploader.Jsonp = {
      */
     removeRequest: function(config) {
         var callbackName = this._uploader.callbackName,
-            data = {
-                callback: callbackName
-            },
+            data = { callback: callbackName },
             callback = config.success;
 
         window[callbackName] = ne.util.bind(this.removePadding, this, callback);
