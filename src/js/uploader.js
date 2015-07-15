@@ -9,7 +9,7 @@ ne.util.defineNamespace('ne.component.Uploader');
  * FileUploader act like bridge between connector and view.<br>
  * It makes connector and view with option and environment.<br>
  * It control and make connection among modules.<br>
- * @constructor ne.component.FileUplodaer
+ * @constructor ne.component.Uploader
  * @example
  * var uploader = new ne.component.Uploader({
  *     url: {
