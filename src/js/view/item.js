@@ -68,7 +68,6 @@ ne.component.Uploader.View.Item = ne.util.defineClass(/** @lends ne.component.Up
      */
     _setConnectInfo: function(options) {
         this._url = options.url;
-        this._hiddenFrame = options.hiddenFrame;
         this._hiddenInputName = options.hiddenFieldName || 'filename';
     },
 
@@ -103,19 +102,6 @@ ne.component.Uploader.View.Item = ne.util.defineClass(/** @lends ne.component.Up
             'name' : helper.name,
             'value': helper.url
         });
-    },
-
-    /**
-     * Make Hidden type input element and return the element.
-     * @returns {*|jQuery|HTMLElement}
-     */
-    _getHidden: function() {
-        var $input = $('<input type="hidden" />');
-        $input.attr({
-            name: this._hiddenInputName,
-            value: this.name
-        });
-        return $input;
     },
 
     /**
