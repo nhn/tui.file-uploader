@@ -20,7 +20,6 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
      *  @parma {string} useJsonP Whether JsonpConnector or not.
      */
     init: function(options, $el) {
-
         var view = ne.component.Uploader.View;
 
         this._setData(options);
@@ -130,6 +129,10 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
         });
     },
 
+    /**
+     * Add event to listview and inputview
+     * @private
+     */
     _addEvent: function() {
         this.listView.on('remove', ne.util.bind(this.removeFile, this));
         this.inputView.on('change', ne.util.bind(this.sendFile, this));

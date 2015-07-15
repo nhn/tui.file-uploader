@@ -23,9 +23,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
         this._url = options.url;
 
         this._render(html);
-        this._makeResultTypeElement();
-        this._makeCallbackElement();
-        this._makeTargetFrame();
+        this._renderHiddenElements();
 
         if (options.helper) {
             this._makeBridgeInfoElement(options.helper);
@@ -49,6 +47,17 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
             target: this._target
         });
         this._uploader.$el.append(this.$el);
+    },
+
+    /**
+     * Call methods those make each hidden element.
+     * @private
+     */
+    _renderHiddenElements: function() {
+        this._makeTargetFrame();
+        this._makeResultTypeElement();
+        this._makeCallbackElement();
+        this._makeSizeUnit();
     },
 
     /**
@@ -81,10 +90,12 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
         this._uploader.$el.append(this._$target);
     },
 
+    /**
+     * Make element has size unit.(like KB, MB..)
+     * @private
+     */
     _makeSizeUnit: function() {
-        this._$sizeunit = $('<input />');
-        this._$sizeunit.attr({
-            'type': 'hidden',
+        this._$sizeunit = this._getHiddenElement({
             'name': CONF.SIZE_UNIT,
             'value': this._uploader.sizeunit
         });
@@ -96,9 +107,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      * @private
      */
     _makeCallbackElement: function() {
-        this._$callback = $('<input />');
-        this._$callback.attr({
-            'type': 'hidden',
+        this._$callback = this._getHiddenElement({
             'name': CONF.JSONPCALLBACK_NAME,
             'value': this._uploader.callbackName
         });
@@ -110,9 +119,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      * @private
      */
     _makeResultTypeElement: function() {
-        this._$resType = $('<input />');
-        this._$resType.attr({
-            'type': 'hidden',
+        this._$resType = this._getHiddenElement({
             'name' : this._uploader.resultTypeElementName || CONF.RESPONSE_TYPE,
             'value': this._uploader.type
         });
@@ -125,13 +132,24 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      * @private
      */
     _makeBridgeInfoElement: function(helper) {
-        this._$helper = $('<input />');
-        this._$helper.attr({
-            'type': 'hidden',
+        this._$helper = this._getHiddenElement({
             'name' : helper.name || CONF.REDIRECT_URL,
             'value': helper.url
         });
         this.$el.append(this._$helper);
+    },
+
+    /**
+     * Make Hidden input element with options
+     * @param {objejct} options The opitons to be attribute of input
+     * @returns {*|jQuery}
+     * @private
+     */
+    _getHiddenElement: function(options) {
+        ne.util.extend(options, {
+            type: 'hidden'
+        });
+        return $('<input />').attr(options);
     }
 });
 
