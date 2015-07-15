@@ -7,6 +7,7 @@
 ne.util.defineNamespace('ne.component.Uploader.View.List');
 
 /**
+ * List has items. It can add and remove item, and get total usage.
  * @constructor
  */
 ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Uploader.View.List.prototype */{
@@ -89,17 +90,11 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
      */
     _getSumAllItemUsage: function() {
         var items = this.items,
-            totalUsage;
+            totalUsage = 0;
 
-        if (items.length <= 1) {
-            totalUsage = items[0] ? items[0].size : 0;
-        } else {
-            totalUsage = ne.util.reduce(items, function(before, after) {
-                var pre = ne.util.isNumber(before) ? before : parseInt(before.size),
-                    next = parseInt(after.size, 10);
-                return pre + next;
-            });
-        }
+        ne.util.forEach(items, function(item) {
+            totalUsage += parseInt(item.size, 10);
+        });
 
         return totalUsage + this.sizeunit;
     },
