@@ -163,11 +163,6 @@ if ($_POST['RESPONSE_TYPE'] == 'jsonp') {
 	} else {
 		echo '<script type="text/javascript">window.parent.' . $_POST['CALLBACK_NAME'] . '(' . json_encode($uploader->getResult()) . ');</script>';
 	}
-	// echo '<script>
-	// 			.postMessage("callbackUpload", "*");
-	// 	</script>';
-	// echo 'window.parent.requestCallback({asdf:1});';
-	// echo json_encode($uploader->getResult());	
 } else {
 	echo json_encode($uploader->getResult());	
 }
