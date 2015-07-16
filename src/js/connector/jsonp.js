@@ -1,6 +1,5 @@
 /**
- * @fileoverview A Default Connector implement Connector.<br>
- *     This Connector make connection between FileManager and file server api at old browser.<br>
+ * @fileoverview This Connector make connection between FileManager and file server api at old browser.<br>
  *     This Connector use hidden iframe.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
  * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
@@ -20,7 +19,7 @@ ne.component.Uploader.Jsonp = {/** @lends ne.component.Uploader.Jsonp */
     addRequest: function(config) {
         var callbackName = this._uploader.callbackName,
         callback = config.success;
-        window[callbackName] = ne.util.bind(this.successPadding, this, callback);
+        ne.util.defineNamespace(callbackName,  ne.util.bind(this.successPadding, this, callback));
 
         this._uploader.inputView.$el.submit();
     },

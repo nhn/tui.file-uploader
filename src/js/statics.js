@@ -1,7 +1,7 @@
 /**
  * @fileoverview Configuration or default values.
  * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
- */ 
+ */
 
 
 /**
