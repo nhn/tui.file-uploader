@@ -57,7 +57,7 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
 
     /**
      * Update items total count and refresh element
-     * @param count
+     * @param {(number|string)} [count] Total file count
      * @private
      */
     _updateTotalCount: function(count) {
@@ -71,7 +71,7 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
 
     /**
      * Update items total size and refresh element
-     * @param size
+     * @param {(number|string)} size Total files sizes
      * @private
      */
     _updateTotalUsage: function(size) {
@@ -84,7 +84,7 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
     },
 
     /**
-     * Sum all of items size
+     * Sum sizes of all items.
      * @returns {*}
      * @private
      */

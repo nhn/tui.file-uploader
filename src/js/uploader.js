@@ -52,14 +52,14 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
      * @param {JqueryObject} $el Root Element of Uploader
      */
     init: function(options, $el) {
-        var view = ne.component.Uploader.View;
+        var View = ne.component.Uploader.View;
 
         this._setData(options);
         this._setConnector();
 
         this.$el = $el;
-        this.inputView = new view.Input(options, this);
-        this.listView = new view.List(options, this);
+        this.inputView = new View.Input(options, this);
+        this.listView = new View.List(options, this);
 
         this._addEvent();
     },
