@@ -13,6 +13,7 @@ var CONF = {
     REDIRECT_URL: 'REDIRECT_URL',
     JSONPCALLBACK_NAME: 'CALLBACK_NAME',
     SIZE_UNIT: 'SIZE_UNIT',
+    REMOVE_CALLBACK : 'responseRemoveCallback',
     ERROR: {
         DEFAULT: 'Unknown error.',
         NOT_SURPPORT: 'This is x-domain connection, you have to make helper page.'

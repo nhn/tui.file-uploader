@@ -149,7 +149,7 @@ ne.component.Uploader.View.Item = ne.util.defineClass(/** @lends ne.component.Up
     _addEvent: function() {
         var query = '.' + this._btnClass,
             $delBtn = this._$el.find(query);
-        $delBtn.on('click', this._onClickEvent, this);
+        $delBtn.on('click', ne.util.bind(this._onClickEvent, this));
     },
 
     /**
