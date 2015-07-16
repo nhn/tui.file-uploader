@@ -117,7 +117,6 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
      * @returns {boolean}
      */
     _isSupportDataForm: function() {
-        // for ie low version browser tester
         var formData = FormData || null;
         return !!formData;
     },
