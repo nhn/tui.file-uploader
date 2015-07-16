@@ -71,13 +71,13 @@ ne.component.Uploader.Jsonp = {/** @lends ne.component.Uploader.Jsonp */
      * @param {object} config
      */
     removeRequest: function(config) {
-        var callbackName = this._uploader.callbackName + 'Remove',
+        var callbackName = this._uploader.callbackName,
             data = {
                 callback: callbackName
             },
             callback = config.success;
 
-        ne.util.defineNamespace(callbackName, ne.util.bind(this.removePadding, this, callback));
+        ne.util.defineNamespace(callbackName, ne.util.bind(this.removePadding, this, callback), true);
 
         $.ajax({
             url: this._uploader.url.remove,
