@@ -95,7 +95,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      * @private
      */
     _makeSizeUnit: function() {
-        this._$sizeunit = this._getHiddenElement({
+        this._$sizeunit = this._makeHiddenElement({
             'name': CONF.SIZE_UNIT,
             'value': this._uploader.sizeunit
         });
@@ -107,7 +107,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      * @private
      */
     _makeCallbackElement: function() {
-        this._$callback = this._getHiddenElement({
+        this._$callback = this._makeHiddenElement({
             'name': CONF.JSONPCALLBACK_NAME,
             'value': this._uploader.callbackName
         });
@@ -119,7 +119,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      * @private
      */
     _makeResultTypeElement: function() {
-        this._$resType = this._getHiddenElement({
+        this._$resType = this._makeHiddenElement({
             'name' : this._uploader.resultTypeElementName || CONF.RESPONSE_TYPE,
             'value': this._uploader.type
         });
@@ -132,7 +132,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      * @private
      */
     _makeBridgeInfoElement: function(helper) {
-        this._$helper = this._getHiddenElement({
+        this._$helper = this._makeHiddenElement({
             'name' : helper.name || CONF.REDIRECT_URL,
             'value': helper.url
         });
@@ -145,7 +145,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      * @returns {*|jQuery}
      * @private
      */
-    _getHiddenElement: function(options) {
+    _makeHiddenElement: function(options) {
         ne.util.extend(options, {
             type: 'hidden'
         });
