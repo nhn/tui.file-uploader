@@ -1,7 +1,7 @@
 /**
  * @fileoverview ItemView make element to display added file information. It has attached file ID to request for remove.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author FE dev team Jein Yi <jein.yi@nhnent.com>
+ * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
  */
 
 ne.util.defineNamespace('ne.component.Uploader.View.Item');
@@ -149,7 +149,7 @@ ne.component.Uploader.View.Item = ne.util.defineClass(/** @lends ne.component.Up
     _addEvent: function() {
         var query = '.' + this._btnClass,
             $delBtn = this._$el.find(query);
-        $delBtn.on('click', ne.util.bind(this._onClickEvent, this));
+        $delBtn.on('click', this._onClickEvent, this);
     },
 
     /**

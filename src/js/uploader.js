@@ -1,7 +1,7 @@
 /**
  * @fileoverview FileUploader is core of file uploader component.<br>FileManager manage connector to connect server and update FileListView.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author FE dev team Jein Yi <jein.yi@nhnent.com>
+ * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
  */
 ne.util.defineNamespace('ne.component.Uploader');
 
@@ -136,20 +136,21 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
 
     /**
      * Callback of error
-     * @param response
+     * @param {object} response Error response
      */
     errorCallback: function(response) {
-        var massage;
+        var message;
         if (response && response.msg) {
-            massage = response.msg;
+            message = response.msg;
         } else {
-            massage = CONF.ERROR.DEFAULT;
+            message = CONF.ERROR.DEFAULT;
         }
-        alert(massage);
+        alert(message);
     },
 
     /**
      * Callback of custom remove event
+     * @param {object} data The data for remove file.
      */
     removeFile: function(data) {
         var callback = ne.util.bind(this.notify, this);
@@ -165,8 +166,8 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
      * @private
      */
     _addEvent: function() {
-        this.listView.on('remove', ne.util.bind(this.removeFile, this));
-        this.inputView.on('change', ne.util.bind(this.sendFile, this));
+        this.listView.on('remove', this.removeFile, this);
+        this.inputView.on('change', this.sendFile, this);
     }
 
 });

@@ -1,14 +1,18 @@
 /**
  * @fileoverview A Connector make connection between FileManager and file server API.<br> The Connector is interface.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author FE dev team Jein Yi <jein.yi@nhnent.com>
+ * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
  */
 
 ne.util.defineNamespace('ne.component.Uploader.Connector');
 
+/**
+ * The connector class could connect with server and return server response to callback.
+ * @constructor
+ */
 ne.component.Uploader.Connector = ne.util.defineClass(/** @lends ne.component.Uploader.Connector.prototype */{
     init: function(uploader) {
-        var type = this._getClassName(uploader.type);
+        var type = this._getMixinModuleName(uploader.type);
 
         this._uploader = uploader;
         this.mixin(ne.component.Uploader[type]);
@@ -19,12 +23,12 @@ ne.component.Uploader.Connector = ne.util.defineClass(/** @lends ne.component.Up
      * @param {string} type
      * @returns {XML|string|void}
      */
-    _getClassName: function(type) {
+    _getMixinModuleName: function(type) {
         return type.replace(type.charAt(0), type.charAt(0).toUpperCase());
     },
 
     /**
-     * Send reqeust
+     * Send request
      * @param {object} options
      *  @param {string} options.type Type of request
      */

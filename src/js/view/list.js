@@ -1,7 +1,7 @@
 /**
  * @fileoverview FileListView manage and display files state(like size, count) and list.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author FE dev team Jein Yi <jein.yi@nhnent.com>
+ * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
  */
 
 ne.util.defineNamespace('ne.component.Uploader.View.List');
@@ -131,7 +131,7 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
             template: this.template && this.template.item,
             unit: this.sizeunit
         });
-        item.on('remove', ne.util.bind(this._removeFile, this));
+        item.on('remove', this._removeFile, this);
         return item;
     },
 
