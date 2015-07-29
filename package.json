@@ -1,20 +1,24 @@
 {
     "name": "component-file-uploader",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "description": "",
     "private": true,
     "devDependencies": {
         "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git",
         "gulp": "latest",
         "gulp-connect": "^2.2.0",
-        "jasmine-core": "^2.3.4",
-        "karma": "^0.12.33",
-        "karma-jasmine": "^0.3.5",
-        "karma-mocha-reporter": "latest",
-        "karma-junit-reporter": "latest",
-        "karma-coverage": "latest",
+        "jasmine-jquery": "^2.0.5",
+        "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
+        "karma": "^0.12.22",
+        "karma-coverage": "^0.2.6",
+        "karma-jasmine": "~0.2.0",
+        "karma-junit-reporter": "^0.2.2",
+        "karma-phantomjs-launcher": "^0.2.0",
+        "karma-requirejs": "^0.2.2",
         "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
-        "karma-phantomjs-launcher": "latest"
+        "phantomjs": "^1.9.17",
+        "readme-builder": "git+https://github.com/jein-yi/readme-builder.git",
+        "requirejs": "^2.1.14"
     },
     "scripts": {
         "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json"
