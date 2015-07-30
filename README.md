@@ -12,9 +12,9 @@ The component support to upload files to server.
 * **API** : https://nhnent.github.io/fe.component-file-uploader/latest
 * **Tutorial** : https://github.com/nhnent/fe.component-file-uploader/wiki/File-Uploader-Tutorial
 
-# Sample (Internal Network only)
-[Sample Page] (http://fe.nhnent.com/etc/sample/component-uploader/samedomain.html)
-[X Domain] (http://fe.nhnent.com/etc/sample/component-uploader/xdomain.html)
+## Sample (Internal Network only)
+* [Sample Page] (http://fe.nhnent.com/etc/sample/component-uploader/samedomain.html)
+* [X Domain] (http://fe.nhnent.com/etc/sample/component-uploader/xdomain.html)
 
 ## Dependency
 * ne-code-snippet: ~1.0.4
