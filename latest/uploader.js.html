@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: uploader.js</title>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-fe2.css">
+</head>
+<body>
+
+<div id="wrap">
+
+    <div class="header">
+
+        <div class="container-fluid">
+            <h3><a href="index.html">API Documentation</a> <small>FE개발팀</small></h3>
+        </div>
+
+    </div>
+
+    <div class="body">
+        <div id="navigation" class="navigation"><h3>Classes</h3><ul class="list classes"><li class="item" id="ne.component.FileUploader.InputView"><span class="title"><span class="p-item">ne.component.FileUploader.</span><a href="ne.component.FileUploader.InputView.html">InputView</a></span><span class="icon blue static">static</span></li><li class="item" id="ne.component.Uploader"><span class="title"><span class="p-item">ne.component.</span><a href="ne.component.Uploader.html">Uploader</a></span><span class="icon blue static">static</span><ul class="sublist members ne.component.Uploader"><span class="subtitle">Members</span><li><a href="ne.component.Uploader.html#.Ajax">Ajax</a></li><li><a href="ne.component.Uploader.html#.Jsonp">Jsonp</a></li></ul><ul class="sublist division ne.component.Uploader"><li></li></ul><ul class="sublist methods ne.component.Uploader"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.html#_isSupportDataForm">_isSupportDataForm</a></li><li><a href="ne.component.Uploader.html#_setData">_setData</a></li><li><a href="ne.component.Uploader.html#errorCallback">errorCallback</a></li><li><a href="ne.component.Uploader.html#init">init</a></li><li><a href="ne.component.Uploader.html#isCrossDomain">isCrossDomain</a></li><li><a href="ne.component.Uploader.html#notify">notify</a></li><li><a href="ne.component.Uploader.html#removeFile">removeFile</a></li><li><a href="ne.component.Uploader.html#sendFile">sendFile</a></li></ul></li><li class="item" id="ne.component.Uploader.Connector"><span class="title"><span class="p-item">ne.component.Uploader.</span><a href="ne.component.Uploader.Connector.html">Connector</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.Uploader.Connector"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.Connector.html#_getMixinModuleName">_getMixinModuleName</a></li><li><a href="ne.component.Uploader.Connector.html#mixin">mixin</a></li><li><a href="ne.component.Uploader.Connector.html#send">send</a></li></ul></li><li class="item" id="ne.component.Uploader.View.Item"><span class="title"><span class="p-item">ne.component.Uploader.View.</span><a href="ne.component.Uploader.View.Item.html">Item</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.Uploader.View.Item"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.View.Item.html#_setItemInfo">_setItemInfo</a></li><li><a href="ne.component.Uploader.View.Item.html#destroy">destroy</a></li><li><a href="ne.component.Uploader.View.Item.html#init">init</a></li><li><a href="ne.component.Uploader.View.Item.html#render">render</a></li></ul></li><li class="item" id="ne.component.Uploader.View.List"><span class="title"><span class="p-item">ne.component.Uploader.View.</span><a href="ne.component.Uploader.View.List.html">List</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.Uploader.View.List"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.View.List.html#update">update</a></li><li><a href="ne.component.Uploader.View.List.html#updateTotalInfo">updateTotalInfo</a></li></ul></li></ul><h3>Global</h3><ul class="list globals"><li class="item" id="CONF"><span class="title"><a href="global.html#CONF">CONF</a></span></li><li class="item" id="HTML"><span class="title"><a href="global.html#HTML">HTML</a></span></li></ul></div>
+        <div id="main" class="main">
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview FileUploader is core of file uploader component.&lt;br>FileManager manage connector to connect server and update FileListView.
+ * @dependency ne-code-snippet 1.0.3, jquery1.8.3
+ * @author  NHN entertainment FE dev team Jein Yi &lt;jein.yi@nhnent.com>
+ */
+ne.util.defineNamespace('ne.component.Uploader');
+
+/**
+ * FileUploader act like bridge between connector and view.&lt;br>
+ * It makes connector and view with option and environment.&lt;br>
+ * It control and make connection among modules.&lt;br>
+ * @constructor ne.component.Uploader
+ * @example
+ * var uploader = new ne.component.Uploader({
+ *     url: {
+ *         send: "http://fe.nhnent.com/etc/etc/uploader/uploader.php",
+ *         remove: "http://fe.nhnent.com/etc/etc/uploader/remove.php"
+ *     },
+ *     helper: {
+ *         url: 'http://10.77.34.126:8009/samples/response.html',
+ *         name: 'REDIRECT_URL'
+ *     },
+ *     resultTypeElementName: 'RESPONSE_TYPE',
+ *     formTarget: 'hiddenFrame',
+ *     callbackName: 'responseCallback',
+ *     listInfo: {
+ *         list: $('#files'),
+ *         count: $('#file_count'),
+ *         size: $('#size_count')
+ *     },
+ *     sizeunit: "KB",
+ *     separator: ';'
+ * }, $('#uploader'));
+ */
+ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
+
+    /**
+     * initialize options
+     * @param {object} options The options to set up file uploader modules.
+     *  @param {object} options.url The url is file server.
+     *      @param {string} options.url.send The url is for file attach.
+     *      @param {string} options.url.remove The url is for file detach.
+     *  @param {object} options.helper The helper object info is for x-domain.
+     *      @param {string} options.helper.url The url is helper page url.
+     *      @param {string} options.helper.name The name of hidden element for sending server helper page information.
+     *  @param {string} options.resultTypeElementName The type of hidden element for sending server response type information.
+     *  @param {string} options.formTarget The target for x-domain jsonp case.
+     *  @param {string} options.callbackName The name of jsonp callback function.
+     *  @param {object} opitons.listInfo The element info to display file list information.
+     *  @param {string} options.sizeunit The unit of file usage.
+     *  @param {string} options.separator The separator for jsonp helper response.
+     * @param {JqueryObject} $el Root Element of Uploader
+     */
+    init: function(options, $el) {
+        var View = ne.component.Uploader.View;
+
+        this._setData(options);
+        this._setConnector();
+
+        this.$el = $el;
+        this.inputView = new View.Input(options, this);
+        this.listView = new View.List(options, this);
+
+        this._addEvent();
+    },
+
+    /**
+     * Set Connector by useJsonp flag and whether.
+     * @private
+     */
+    _setConnector: function() {
+        var constructor = ne.component.Uploader;
+        if (this.isCrossDomain()) {
+            if (this.helper) {
+                this.type = 'jsonp';
+            } else {
+                alert(CONF.ERROR.NOT_SURPPORT);
+            }
+        } else {
+            if (this.useJsonp || !this._isSupportDataForm()) {
+                this.type = 'jsonp';
+            } else {
+                this.type = 'ajax';
+            }
+        }
+        this._connector = new constructor.Connector(this);
+    },
+
+    /**
+     * Update list view with custom or original data.
+     * @param info
+     */
+    notify: function(info) {
+        this.listView.update(info);
+        this.listView.updateTotalInfo(info);
+    },
+
+    /**
+     * Set field data by option values.
+     * @param options
+     */
+    _setData: function(options) {
+        ne.util.extend(this, options);
+    },
+
+    /**
+     * Extract protocol + domain from url to find out whether cross-domain or not.
+     * @returns {boolean}
+     */
+    isCrossDomain: function() {
+        var pageDomain = document.domain;
+        return this.url.send.indexOf(pageDomain) === -1;
+    },
+
+    /**
+     * Check DataForm Object exist.
+     * @returns {boolean}
+     */
+    _isSupportDataForm: function() {
+        var formData = FormData || null;
+        return !!formData;
+    },
+
+    /**
+     * Callback of custom send event
+     */
+    sendFile: function() {
+        var callback = ne.util.bind(this.notify, this);
+        this._connector.send({
+            type: 'add',
+            success: callback,
+            error: this.errorCallback
+        });
+    },
+
+    /**
+     * Callback of error
+     * @param {object} response Error response
+     */
+    errorCallback: function(response) {
+        var message;
+        if (response &amp;&amp; response.msg) {
+            message = response.msg;
+        } else {
+            message = CONF.ERROR.DEFAULT;
+        }
+        alert(message);
+    },
+
+    /**
+     * Callback of custom remove event
+     * @param {object} data The data for remove file.
+     */
+    removeFile: function(data) {
+        var callback = ne.util.bind(this.notify, this);
+        this._connector.send({
+            type: 'remove',
+            data: data,
+            success: callback
+        });
+    },
+
+    /**
+     * Add event to listview and inputview
+     * @private
+     */
+    _addEvent: function() {
+        this.listView.on('remove', this.removeFile, this);
+        this.inputView.on('change', this.sendFile, this);
+    }
+
+});
+
+ne.util.CustomEvents.mixin(ne.component.Uploader);</code></pre>
+        </article>
+    </section>
+
+
+
+</div>
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+<script>
+(function() {
+// 영역 height 설정
+var height = (window.innerHeight || document.documentElement.clientHeight || document.getElementByTagName('body')[0].clientHeight) - 50;
+var navigation = document.getElementById('navigation');
+var main = document.getElementById('main');
+navigation.style.height = height + 'px';
+main.style.height = height + 'px';
+
+// IE 7,8을 위한 getElementsByClassName 구현
+var getElementsByClassName = function(className, parentElement) {
+	if(document.getElementsByClassName) {
+		return (parentElement || document).getElementsByClassName(className);
+	}
+
+    var regEx = new RegExp('(^| )'+className+'( |$)');
+	var nodes = new Array();
+    var elements = (parentElement || document.body).getElementsByTagName("*");
+    for(var i = 0, len = elements.length; i < len ; i++) {
+        if(regEx.test(elements[i].className)) {
+			nodes.push(elements[i]);
+		}
+	}
+	elements = null;
+    return nodes;
+}
+
+// url 파싱후 해당 카테고리만 display:block 처리
+var url = location.href;
+var path = url.lastIndexOf('/');
+var fileName = url.substring(path+1);
+var fullName = fileName.split('.');
+fullName.length -= 1;
+fullName = fullName.join('.');
+fullName = fullName.split('-');
+fullName = fullName[fullName.length - 1];
+var lnbList = getElementsByClassName(fullName);
+if(lnbList.length && lnbList.length > 0) {
+    for(var i = 0, len = lnbList.length; i < len; i++) {
+        lnbList[i].className += ' selected';
+    }
+}
+
+var title = document.getElementById(fullName);
+if(title) {
+    title.className += ' selected';
+    title.innerHTML = '<span class="arrow">▶</span>' + title.innerHTML;
+
+    var static = getElementsByClassName('static', title);
+    if(static) {
+        static[0].className += ' selected';
+    }
+}
+})();
+</script>
+<script type="text/javascript" src="scripts/prettify/prettify.js"></script>
+<script type="text/javascript" src="scripts/prettify/lang-css.js"></script>
+<script type="text/javascript">prettyPrint();</script>
+<script type="text/javascript" src="scripts/linenumber.js"></script>
+</body>
+</html>

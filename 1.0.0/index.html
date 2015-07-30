@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Index</title>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-fe2.css">
+</head>
+<body>
+
+<div id="wrap">
+
+    <div class="header">
+
+        <div class="container-fluid">
+            <h3><a href="index.html">API Documentation</a> <small>FE개발팀</small></h3>
+        </div>
+
+    </div>
+
+    <div class="body">
+        <div id="navigation" class="navigation"><h3>Classes</h3><ul class="list classes"><li class="item" id="ne.component.FileUploader.InputView"><span class="title"><span class="p-item">ne.component.FileUploader.</span><a href="ne.component.FileUploader.InputView.html">InputView</a></span><span class="icon blue static">static</span></li><li class="item" id="ne.component.Uploader"><span class="title"><span class="p-item">ne.component.</span><a href="ne.component.Uploader.html">Uploader</a></span><span class="icon blue static">static</span><ul class="sublist members ne.component.Uploader"><span class="subtitle">Members</span><li><a href="ne.component.Uploader.html#.Ajax">Ajax</a></li><li><a href="ne.component.Uploader.html#.Jsonp">Jsonp</a></li></ul><ul class="sublist division ne.component.Uploader"><li></li></ul><ul class="sublist methods ne.component.Uploader"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.html#_isSupportDataForm">_isSupportDataForm</a></li><li><a href="ne.component.Uploader.html#_setData">_setData</a></li><li><a href="ne.component.Uploader.html#errorCallback">errorCallback</a></li><li><a href="ne.component.Uploader.html#init">init</a></li><li><a href="ne.component.Uploader.html#isCrossDomain">isCrossDomain</a></li><li><a href="ne.component.Uploader.html#notify">notify</a></li><li><a href="ne.component.Uploader.html#removeFile">removeFile</a></li><li><a href="ne.component.Uploader.html#sendFile">sendFile</a></li></ul></li><li class="item" id="ne.component.Uploader.Connector"><span class="title"><span class="p-item">ne.component.Uploader.</span><a href="ne.component.Uploader.Connector.html">Connector</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.Uploader.Connector"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.Connector.html#_getMixinModuleName">_getMixinModuleName</a></li><li><a href="ne.component.Uploader.Connector.html#mixin">mixin</a></li><li><a href="ne.component.Uploader.Connector.html#send">send</a></li></ul></li><li class="item" id="ne.component.Uploader.View.Item"><span class="title"><span class="p-item">ne.component.Uploader.View.</span><a href="ne.component.Uploader.View.Item.html">Item</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.Uploader.View.Item"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.View.Item.html#_setItemInfo">_setItemInfo</a></li><li><a href="ne.component.Uploader.View.Item.html#destroy">destroy</a></li><li><a href="ne.component.Uploader.View.Item.html#init">init</a></li><li><a href="ne.component.Uploader.View.Item.html#render">render</a></li></ul></li><li class="item" id="ne.component.Uploader.View.List"><span class="title"><span class="p-item">ne.component.Uploader.View.</span><a href="ne.component.Uploader.View.List.html">List</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.Uploader.View.List"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.View.List.html#update">update</a></li><li><a href="ne.component.Uploader.View.List.html#updateTotalInfo">updateTotalInfo</a></li></ul></li></ul><h3>Global</h3><ul class="list globals"><li class="item" id="CONF"><span class="title"><a href="global.html#CONF">CONF</a></span></li><li class="item" id="HTML"><span class="title"><a href="global.html#HTML">HTML</a></span></li></ul></div>
+        <div id="main" class="main">
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><div class="readme"><h1>File Uploader</h1><p>File Uploader Component<br>
+The component support to upload files to server.<br></p>
+<h2>Feature</h2><ul>
+<li>X-domain support</li>
+<li>Listing uploaded files</li>
+<li>Add files, Remove files</li>
+</ul>
+<h2>Documentation</h2><ul>
+<li><strong>API</strong> : https://nhnent.github.io/fe.component-file-uploader/latest</li>
+<li><strong>Tutorial</strong> : https://github.com/nhnent/fe.component-file-uploader/wiki/File-Uploader-Tutorial</li>
+<li><strong>Sample</strong> - https://nhnent.github.io/fe.component-file-uploader/1.0.0/tutorial-three.html</li>
+</ul>
+<h2>Dependency</h2><ul>
+<li>jquery: ~1.8.3</li>
+<li>ne-code-snippet: ~1.0.4</li>
+</ul>
+<h2>Test environment</h2><ul>
+<li>PC<ul>
+<li>IE7~11</li>
+<li>Chrome</li>
+<li>Firefox</li>
+</ul>
+</li>
+</ul>
+<h2>Download/Install</h2><ul>
+<li>Bower:<ul>
+<li>latest : <code>bower install &quot;ne-component-file-uploader#master&quot;</code></li>
+<li>each version : <code>bower install &quot;ne-component-file-uploader[#tag]&quot;</code></li>
+</ul>
+</li>
+<li>Download: https://github.com/nhnent/fe.component-layout</li>
+</ul>
+<h2>History</h2><table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Description</th>
+<th>Date</th>
+<th>Developer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://nhnent.github.io/fe.component-file-uploader/1.0.0">1.0.0</a></td>
+<td>Release</td>
+<td>2015.07</td>
+<td>NHN Entertainment FE dev team Jein Yi <a href="&#109;&#x61;&#105;&#x6c;&#x74;&#x6f;&#58;&#x6a;&#101;&#105;&#x6e;&#46;&#x79;&#x69;&#x40;&#x6e;&#104;&#110;&#x65;&#x6e;&#x74;&#x2e;&#x63;&#x6f;&#x6d;">&#x6a;&#101;&#105;&#x6e;&#46;&#x79;&#x69;&#x40;&#x6e;&#104;&#110;&#x65;&#x6e;&#x74;&#x2e;&#x63;&#x6f;&#x6d;</a></td>
+</tr>
+</tbody>
+</table>
+<h2>LICENSE</h2><p><a href="LICENSE">MIT LICENSE</a></p></div></article>
+    </section>
+
+
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        connector/ajax.js
+        
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>This Connector make connection between FileManager and file server api at modern browser.<br>
+    This Connector use ajax.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="mailto:jein.yi@nhnent.com">NHN entertainment FE dev team Jein Yi</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+        <dd class="tag-source"><ul class="dummy"><li>
+            <a href="connector_ajax.js.html">connector/ajax.js</a>, <a href="connector_ajax.js.html#line1">line 1</a>
+        </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+        
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        connector/connector.js
+        
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>A Connector make connection between FileManager and file server API.<br> The Connector is interface.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="mailto:jein.yi@nhnent.com">NHN entertainment FE dev team Jein Yi</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+        <dd class="tag-source"><ul class="dummy"><li>
+            <a href="connector_connector.js.html">connector/connector.js</a>, <a href="connector_connector.js.html#line1">line 1</a>
+        </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+        
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        connector/jsonp.js
+        
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>This Connector make connection between FileManager and file server api at old browser.<br>
+    This Connector use hidden iframe.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="mailto:jein.yi@nhnent.com">NHN entertainment FE dev team Jein Yi</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+        <dd class="tag-source"><ul class="dummy"><li>
+            <a href="connector_jsonp.js.html">connector/jsonp.js</a>, <a href="connector_jsonp.js.html#line1">line 1</a>
+        </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+        
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        statics.js
+        
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Configuration or default values.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="mailto:jein.yi@nhnent.com">NHN entertainment FE dev team Jein Yi</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+        <dd class="tag-source"><ul class="dummy"><li>
+            <a href="statics.js.html">statics.js</a>, <a href="statics.js.html#line1">line 1</a>
+        </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+        
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        uploader.js
+        
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>FileUploader is core of file uploader component.<br>FileManager manage connector to connect server and update FileListView.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="mailto:jein.yi@nhnent.com">NHN entertainment FE dev team Jein Yi</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+        <dd class="tag-source"><ul class="dummy"><li>
+            <a href="uploader.js.html">uploader.js</a>, <a href="uploader.js.html#line1">line 1</a>
+        </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+        
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        view/input.js
+        
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>InputView make input form by template. Add event file upload event.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="mailto:jein.yi@nhnent.com">NHN entertainment FE dev team Jein Yi</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+        <dd class="tag-source"><ul class="dummy"><li>
+            <a href="view_input.js.html">view/input.js</a>, <a href="view_input.js.html#line1">line 1</a>
+        </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+        
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        view/item.js
+        
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>ItemView make element to display added file information. It has attached file ID to request for remove.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="mailto:jein.yi@nhnent.com">NHN entertainment FE dev team Jein Yi</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+        <dd class="tag-source"><ul class="dummy"><li>
+            <a href="view_item.js.html">view/item.js</a>, <a href="view_item.js.html#line1">line 1</a>
+        </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+        
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        view/list.js
+        
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>FileListView manage and display files state(like size, count) and list.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="mailto:jein.yi@nhnent.com">NHN entertainment FE dev team Jein Yi</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+        <dd class="tag-source"><ul class="dummy"><li>
+            <a href="view_list.js.html">view/list.js</a>, <a href="view_list.js.html#line1">line 1</a>
+        </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+        
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+</div>
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+<script>
+(function() {
+// 영역 height 설정
+var height = (window.innerHeight || document.documentElement.clientHeight || document.getElementByTagName('body')[0].clientHeight) - 50;
+var navigation = document.getElementById('navigation');
+var main = document.getElementById('main');
+navigation.style.height = height + 'px';
+main.style.height = height + 'px';
+
+// IE 7,8을 위한 getElementsByClassName 구현
+var getElementsByClassName = function(className, parentElement) {
+	if(document.getElementsByClassName) {
+		return (parentElement || document).getElementsByClassName(className);
+	}
+
+    var regEx = new RegExp('(^| )'+className+'( |$)');
+	var nodes = new Array();
+    var elements = (parentElement || document.body).getElementsByTagName("*");
+    for(var i = 0, len = elements.length; i < len ; i++) {
+        if(regEx.test(elements[i].className)) {
+			nodes.push(elements[i]);
+		}
+	}
+	elements = null;
+    return nodes;
+}
+
+// url 파싱후 해당 카테고리만 display:block 처리
+var url = location.href;
+var path = url.lastIndexOf('/');
+var fileName = url.substring(path+1);
+var fullName = fileName.split('.');
+fullName.length -= 1;
+fullName = fullName.join('.');
+fullName = fullName.split('-');
+fullName = fullName[fullName.length - 1];
+var lnbList = getElementsByClassName(fullName);
+if(lnbList.length && lnbList.length > 0) {
+    for(var i = 0, len = lnbList.length; i < len; i++) {
+        lnbList[i].className += ' selected';
+    }
+}
+
+var title = document.getElementById(fullName);
+if(title) {
+    title.className += ' selected';
+    title.innerHTML = '<span class="arrow">▶</span>' + title.innerHTML;
+
+    var static = getElementsByClassName('static', title);
+    if(static) {
+        static[0].className += ' selected';
+    }
+}
+})();
+</script>
+<script type="text/javascript" src="scripts/prettify/prettify.js"></script>
+<script type="text/javascript" src="scripts/prettify/lang-css.js"></script>
+<script type="text/javascript">prettyPrint();</script>
+<script type="text/javascript" src="scripts/linenumber.js"></script>
+</body>
+</html>

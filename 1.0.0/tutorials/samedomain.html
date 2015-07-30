@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/code-snippet.js"></script>
+    <script type="text/javascript" src="js/file-uploader.js"></script>
+    <link href="css/sample.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<div id="uploader"></div>
+<div id="list">
+    <div class="count">count : <strong id="file_count"></strong></div>
+    <div class="size">size : <strong id="size_count"></strong></div>
+    <ul id="files">
+    </ul>
+</div>
+<script type="text/javascript">
+    var uploader = new ne.component.Uploader({
+        url: {
+            send: "../server/uploader.php",
+            remove: "../server/remove.php"
+        },
+        helper: {
+            url: 'srouce/response.html',
+            name: 'REDIRECT_URL'
+        },
+        resultTypeElementName: 'RESPONSE_TYPE',
+        formTarget: 'hiddenFrame',
+        callbackName: 'responseCallback',
+        listInfo: {
+            list: $('#files'),
+            count: $('#file_count'),
+            size: $('#size_count')
+        },
+        sizeunit: "KB",
+        separator: ';'
+    }, $('#uploader'));
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: view/input.js</title>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-fe2.css">
+</head>
+<body>
+
+<div id="wrap">
+
+    <div class="header">
+
+        <div class="container-fluid">
+            <h3><a href="index.html">API Documentation</a> <small>FE개발팀</small></h3>
+        </div>
+
+    </div>
+
+    <div class="body">
+        <div id="navigation" class="navigation"><h3>Classes</h3><ul class="list classes"><li class="item" id="ne.component.FileUploader.InputView"><span class="title"><span class="p-item">ne.component.FileUploader.</span><a href="ne.component.FileUploader.InputView.html">InputView</a></span><span class="icon blue static">static</span></li><li class="item" id="ne.component.Uploader"><span class="title"><span class="p-item">ne.component.</span><a href="ne.component.Uploader.html">Uploader</a></span><span class="icon blue static">static</span><ul class="sublist members ne.component.Uploader"><span class="subtitle">Members</span><li><a href="ne.component.Uploader.html#.Ajax">Ajax</a></li><li><a href="ne.component.Uploader.html#.Jsonp">Jsonp</a></li></ul><ul class="sublist division ne.component.Uploader"><li></li></ul><ul class="sublist methods ne.component.Uploader"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.html#_isSupportDataForm">_isSupportDataForm</a></li><li><a href="ne.component.Uploader.html#_setData">_setData</a></li><li><a href="ne.component.Uploader.html#errorCallback">errorCallback</a></li><li><a href="ne.component.Uploader.html#init">init</a></li><li><a href="ne.component.Uploader.html#isCrossDomain">isCrossDomain</a></li><li><a href="ne.component.Uploader.html#notify">notify</a></li><li><a href="ne.component.Uploader.html#removeFile">removeFile</a></li><li><a href="ne.component.Uploader.html#sendFile">sendFile</a></li></ul></li><li class="item" id="ne.component.Uploader.Connector"><span class="title"><span class="p-item">ne.component.Uploader.</span><a href="ne.component.Uploader.Connector.html">Connector</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.Uploader.Connector"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.Connector.html#_getMixinModuleName">_getMixinModuleName</a></li><li><a href="ne.component.Uploader.Connector.html#mixin">mixin</a></li><li><a href="ne.component.Uploader.Connector.html#send">send</a></li></ul></li><li class="item" id="ne.component.Uploader.View.Item"><span class="title"><span class="p-item">ne.component.Uploader.View.</span><a href="ne.component.Uploader.View.Item.html">Item</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.Uploader.View.Item"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.View.Item.html#_setItemInfo">_setItemInfo</a></li><li><a href="ne.component.Uploader.View.Item.html#destroy">destroy</a></li><li><a href="ne.component.Uploader.View.Item.html#init">init</a></li><li><a href="ne.component.Uploader.View.Item.html#render">render</a></li></ul></li><li class="item" id="ne.component.Uploader.View.List"><span class="title"><span class="p-item">ne.component.Uploader.View.</span><a href="ne.component.Uploader.View.List.html">List</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.Uploader.View.List"><span class="subtitle">Methods</span><li><a href="ne.component.Uploader.View.List.html#update">update</a></li><li><a href="ne.component.Uploader.View.List.html#updateTotalInfo">updateTotalInfo</a></li></ul></li></ul><h3>Global</h3><ul class="list globals"><li class="item" id="CONF"><span class="title"><a href="global.html#CONF">CONF</a></span></li><li class="item" id="HTML"><span class="title"><a href="global.html#HTML">HTML</a></span></li></ul></div>
+        <div id="main" class="main">
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview InputView make input form by template. Add event file upload event.
+ * @dependency ne-code-snippet 1.0.3, jquery1.8.3
+ * @author  NHN entertainment FE dev team Jein Yi &lt;jein.yi@nhnent.com>
+ */
+
+ne.util.defineNamespace('ne.component.Uploader.View.Input');
+
+/**
+ * This view control input element typed file.
+ * @constructor ne.component.FileUploader.InputView
+ */
+ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Uploader.View.Input.prototype **/{
+    /**
+     * Initialize input element.
+     * @param {object} [options]
+     */
+    init: function(options, uploader) {
+        var html = (options.template &amp;&amp; options.template.input) || HTML.input;
+
+        this._uploader = uploader;
+        this._target = options.formTarget;
+        this._url = options.url;
+
+        this._render(html);
+        this._renderHiddenElements();
+
+        if (options.helper) {
+            this._makeBridgeInfoElement(options.helper);
+        }
+
+        this._addEvent();
+    },
+
+
+    /**
+     * Render input area
+     * @param {string} html Input element html
+     * @private
+     */
+    _render: function(html) {
+        this.$el = $(html);
+        this.$el.attr({
+            action: this._url.send,
+            method: 'post',
+            enctype: "multipart/form-data",
+            target: this._target
+        });
+        this._uploader.$el.append(this.$el);
+    },
+
+    /**
+     * Call methods those make each hidden element.
+     * @private
+     */
+    _renderHiddenElements: function() {
+        this._makeTargetFrame();
+        this._makeResultTypeElement();
+        this._makeCallbackElement();
+        this._makeSizeUnit();
+    },
+
+    /**
+     * Add change evnet and custom Event
+     * @private
+     */
+    _addEvent: function() {
+        this.$el.on('change', ne.util.bind(this.onChange, this));
+    },
+
+    /**
+     * Event-Handle for input element change
+     */
+    onChange: function() {
+        this.fire('change', {
+            target: this
+        });
+    },
+
+    /**
+     * Make element to be target of submit form form element.
+     * @private
+     */
+    _makeTargetFrame: function() {
+        this._$target = $('&lt;iframe name="' + this._target + '">&lt;/iframe>');
+        this._$target.css({
+            visibility: 'hidden',
+            position: 'absolute'
+        });
+        this._uploader.$el.append(this._$target);
+    },
+
+    /**
+     * Make element has size unit.(like KB, MB..)
+     * @private
+     */
+    _makeSizeUnit: function() {
+        this._$sizeunit = this._makeHiddenElement({
+            'name': CONF.SIZE_UNIT,
+            'value': this._uploader.sizeunit
+        });
+        this.$el.append(this._$sizeunit);
+    },
+
+    /**
+     * Make element to be callback function name
+     * @private
+     */
+    _makeCallbackElement: function() {
+        this._$callback = this._makeHiddenElement({
+            'name': CONF.JSONPCALLBACK_NAME,
+            'value': this._uploader.callbackName
+        });
+        this.$el.append(this._$callback);
+    },
+
+    /**
+     * Make element to know which type request
+     * @private
+     */
+    _makeResultTypeElement: function() {
+        this._$resType = this._makeHiddenElement({
+            'name' : this._uploader.resultTypeElementName || CONF.RESPONSE_TYPE,
+            'value': this._uploader.type
+        });
+        this.$el.append(this._$resType);
+    },
+
+    /**
+     * Make element that has redirect page information used by Server side.
+     * @param {object} helper Redirection information for clear x-domain problem.
+     * @private
+     */
+    _makeBridgeInfoElement: function(helper) {
+        this._$helper = this._makeHiddenElement({
+            'name' : helper.name || CONF.REDIRECT_URL,
+            'value': helper.url
+        });
+        this.$el.append(this._$helper);
+    },
+
+    /**
+     * Make Hidden input element with options
+     * @param {objejct} options The opitons to be attribute of input
+     * @returns {*|jQuery}
+     * @private
+     */
+    _makeHiddenElement: function(options) {
+        ne.util.extend(options, {
+            type: 'hidden'
+        });
+        return $('&lt;input />').attr(options);
+    }
+});
+
+
+ne.util.CustomEvents.mixin(ne.component.Uploader.View.Input);</code></pre>
+        </article>
+    </section>
+
+
+
+</div>
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+<script>
+(function() {
+// 영역 height 설정
+var height = (window.innerHeight || document.documentElement.clientHeight || document.getElementByTagName('body')[0].clientHeight) - 50;
+var navigation = document.getElementById('navigation');
+var main = document.getElementById('main');
+navigation.style.height = height + 'px';
+main.style.height = height + 'px';
+
+// IE 7,8을 위한 getElementsByClassName 구현
+var getElementsByClassName = function(className, parentElement) {
+	if(document.getElementsByClassName) {
+		return (parentElement || document).getElementsByClassName(className);
+	}
+
+    var regEx = new RegExp('(^| )'+className+'( |$)');
+	var nodes = new Array();
+    var elements = (parentElement || document.body).getElementsByTagName("*");
+    for(var i = 0, len = elements.length; i < len ; i++) {
+        if(regEx.test(elements[i].className)) {
+			nodes.push(elements[i]);
+		}
+	}
+	elements = null;
+    return nodes;
+}
+
+// url 파싱후 해당 카테고리만 display:block 처리
+var url = location.href;
+var path = url.lastIndexOf('/');
+var fileName = url.substring(path+1);
+var fullName = fileName.split('.');
+fullName.length -= 1;
+fullName = fullName.join('.');
+fullName = fullName.split('-');
+fullName = fullName[fullName.length - 1];
+var lnbList = getElementsByClassName(fullName);
+if(lnbList.length && lnbList.length > 0) {
+    for(var i = 0, len = lnbList.length; i < len; i++) {
+        lnbList[i].className += ' selected';
+    }
+}
+
+var title = document.getElementById(fullName);
+if(title) {
+    title.className += ' selected';
+    title.innerHTML = '<span class="arrow">▶</span>' + title.innerHTML;
+
+    var static = getElementsByClassName('static', title);
+    if(static) {
+        static[0].className += ' selected';
+    }
+}
+})();
+</script>
+<script type="text/javascript" src="scripts/prettify/prettify.js"></script>
+<script type="text/javascript" src="scripts/prettify/lang-css.js"></script>
+<script type="text/javascript">prettyPrint();</script>
+<script type="text/javascript" src="scripts/linenumber.js"></script>
+</body>
+</html>
