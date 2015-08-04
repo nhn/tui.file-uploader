@@ -23,7 +23,7 @@ var Item = ne.util.defineClass(/** @lends ne.component.Uploader.Item.prototype *
      *  @param {string} [options.hiddenFieldName] The name of hidden filed. The hidden field is for connecting x-domian.
      *  @param {string} [options.deleteButtonClassName='uploader_btn_delete'] The class name is for delete button.
      *  @param {(string|number)} [options.size] File size (but ie low browser, x-domain)
-     *  @param {string} options.unit The unit of file usage.
+     *  @param {string} [options.unit] The unit of file usage.
      *  @param {object} [options.helper] The helper page info.
      */
     init: function(options) {

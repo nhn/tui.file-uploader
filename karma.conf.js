@@ -1,3 +1,6 @@
+var istanbul = require('browserify-istanbul');
+var hbsfy = require('hbsfy');
+
 module.exports = function(config) {
     var webdriverConfig = {
         hostname: 'fe.nhnent.com',
@@ -8,13 +11,16 @@ module.exports = function(config) {
     config.set({
         basePath: './',
 
-        frameworks: ['jasmine'],
+        frameworks: [
+            'browserify',
+            'jasmine'
+        ],
 
         files: [
-            'bower_components/json2/json2.js',
-            'bower_components/jquery/jquery.js',
-            'bower_components/ne-code-snippet/code-snippet.js',
-            'src/**/fileUploader.js',
+            'lib/json2/json2.js',
+            'lib/jquery/jquery.js',
+            'lib/ne-code-snippet/code-snippet.js',
+            'src/**/uploader.js',
             'src/**/*.js',
             'test/**/*.spec.js'
         ],
@@ -23,15 +29,26 @@ module.exports = function(config) {
         ],
 
         preprocessors: {
-            'src/**/*.js': ['coverage']
+            'index.js': ['browserify'],
+            'src/**/*.js': ['browserify'],
+            'test/**/*.js': ['browserify']
         },
 
         reporters: [
-            'dots',
             'mocha',
             'coverage',
             'junit'
         ],
+
+        browserify: {
+            debug: true,
+            bundleDelay: 1000,
+            transform:[hbsfy, istanbul({
+                ignore: [
+                    'index.js'
+                ]
+            })]
+        },
 
         coverageReporter: {
             type: 'html',
@@ -39,9 +56,10 @@ module.exports = function(config) {
         },
 
         junitReporter: {
-            outputFile: 'report/junit-result.xml',
+            outputDir: 'report/',
             suite: ''
         },
+
 
         port: 9876,
 
@@ -64,28 +82,33 @@ module.exports = function(config) {
         customLaunchers: {
             'IE7': {
                 base: 'WebDriver', 
-                config: webdriverConfig, 
-                browserName: 'IE7' 
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 7
             },
             'IE8': {
                 base: 'WebDriver', 
-                config: webdriverConfig, 
-                browserName: 'IE8' 
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 8
             },
             'IE9': {
                 base: 'WebDriver', 
-                config: webdriverConfig, 
-                browserName: 'IE9' 
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 9
             },
             'IE10': {
                 base: 'WebDriver', 
-                config: webdriverConfig, 
-                browserName: 'IE10' 
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 10
             },
             'IE11': {
                 base: 'WebDriver', 
-                config: webdriverConfig, 
-                browserName: 'IE11' 
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 11
             },
             'Chrome-WebDriver': {
                 base: 'WebDriver', 
@@ -99,8 +122,6 @@ module.exports = function(config) {
             }
         },
 
-        singleRun: true,
-
-        browserNoActivityTimeout: 30000
+        singleRun: true
     });
 };

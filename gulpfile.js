@@ -11,6 +11,7 @@ var hbsfy = require('hbsfy');
 var uglify = require('gulp-uglify');
 var gutil = require('gulp-util');
 var concat = require('gulp-concat');
+var filename = require('./package.json').name.replace('component-', '');
 
 gulp.task('default', function() {
     karma.start({
@@ -38,12 +39,20 @@ gulp.task('bundle', function() {
             console.log(err.message);
             this.emit('end');
         })
-        .pipe(source('app.js'))
+        .pipe(source(filename + '.js'))
         .pipe(buffer())
-        //.pipe(sourceMap.init({loadMaps: true}))
-        .pipe(uglify())
-        .pipe(concat('../sample/js/uploader.js'))
-        //.on('error', gutil.log)
-        //.pipe(sourceMap.write('./'))
-        .pipe(gulp.dest('./dist'));
+        .pipe(gulp.dest('./'));
 });
+
+gulp.task('compress', function() {
+    gulp.src(filename + '.js')
+        .pipe(uglify())
+        .pipe(concat(filename + '.min.js'))
+        .pipe(gulp.dest('./'));
+
+    gulp.src(filename + '.min.js')
+        .pipe(concat(filename + '.min.js'))
+        .pipe(gulp.dest('./sample/js/'));
+});
+
+gulp.task('default', ['bundle', 'compress']);
