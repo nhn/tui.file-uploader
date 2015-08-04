@@ -3,7 +3,11 @@
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
  * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
  */
-ne.util.defineNamespace('ne.component.Uploader');
+
+var static = require('./statics.js');
+var Connector = require('./connector/connector.js');
+var Input = require('./view/input.js');
+var List = require('./view/list.js');
 
 /**
  * FileUploader act like bridge between connector and view.<br>
@@ -32,7 +36,7 @@ ne.util.defineNamespace('ne.component.Uploader');
  *     separator: ';'
  * }, $('#uploader'));
  */
-ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
+var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 
     /**
      * initialize options
@@ -52,14 +56,12 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
      * @param {JqueryObject} $el Root Element of Uploader
      */
     init: function(options, $el) {
-        var View = ne.component.Uploader.View;
-
         this._setData(options);
         this._setConnector();
 
         this.$el = $el;
-        this.inputView = new View.Input(options, this);
-        this.listView = new View.List(options, this);
+        this.inputView = new Input(options, this);
+        this.listView = new List(options, this);
 
         this._addEvent();
     },
@@ -69,12 +71,11 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
      * @private
      */
     _setConnector: function() {
-        var constructor = ne.component.Uploader;
         if (this.isCrossDomain()) {
             if (this.helper) {
                 this.type = 'jsonp';
             } else {
-                alert(CONF.ERROR.NOT_SURPPORT);
+                alert(static.CONF.ERROR.NOT_SURPPORT);
             }
         } else {
             if (this.useJsonp || !this._isSupportDataForm()) {
@@ -83,7 +84,7 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
                 this.type = 'ajax';
             }
         }
-        this._connector = new constructor.Connector(this);
+        this._connector = new Connector(this);
     },
 
     /**
@@ -142,7 +143,7 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
         if (response && response.msg) {
             message = response.msg;
         } else {
-            message = CONF.ERROR.DEFAULT;
+            message = static.CONF.ERROR.DEFAULT;
         }
         alert(message);
     },
@@ -171,4 +172,5 @@ ne.component.Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prot
 
 });
 
-ne.util.CustomEvents.mixin(ne.component.Uploader);
+ne.util.CustomEvents.mixin(Uploader);
+module.exports = Uploader;

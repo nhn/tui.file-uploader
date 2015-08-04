@@ -4,13 +4,13 @@
  * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
  */
 
-ne.util.defineNamespace('ne.component.Uploader.View.Item');
+var static = require('../statics.js');
 
 /**
  * Class of item that is member of file list.
  * @constructor
  */
-ne.component.Uploader.View.Item = ne.util.defineClass(/** @lends ne.component.Uploader.View.Item.prototype **/ {
+var Item = ne.util.defineClass(/** @lends ne.component.Uploader.Item.prototype **/ {
     /**
      * Initialize item
      * @param {object} options
@@ -32,7 +32,7 @@ ne.component.Uploader.View.Item = ne.util.defineClass(/** @lends ne.component.Up
         this._setItemInfo(options);
         this._setConnectInfo(options);
 
-        this.render(options.template || HTML.item);
+        this.render(options.template || static.HTML.item);
 
         if (options.helper) {
             this._makeBridgeInfoElement(options.helper);
@@ -177,4 +177,6 @@ ne.component.Uploader.View.Item = ne.util.defineClass(/** @lends ne.component.Up
     }
 });
 
-ne.util.CustomEvents.mixin(ne.component.Uploader.View.Item);
+ne.util.CustomEvents.mixin(Item);
+
+module.exports = Item;

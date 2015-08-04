@@ -4,25 +4,26 @@
  * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
  */
 
-ne.util.defineNamespace('ne.component.Uploader.View.Input');
+var static = require('../statics.js');
 
 /**
  * This view control input element typed file.
  * @constructor ne.component.FileUploader.InputView
  */
-ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Uploader.View.Input.prototype **/{
+var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype **/{
     /**
      * Initialize input element.
      * @param {object} [options]
      */
     init: function(options, uploader) {
-        var html = (options.template && options.template.input) || HTML.input;
 
         this._uploader = uploader;
         this._target = options.formTarget;
         this._url = options.url;
+        this._isBatchTransfer = options.isBatchTransfer;
+        this.html = (options.template && options.template.input) || static.HTML.input;
 
-        this._render(html);
+        this._render();
         this._renderHiddenElements();
 
         if (options.helper) {
@@ -32,14 +33,12 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
         this._addEvent();
     },
 
-
     /**
      * Render input area
-     * @param {string} html Input element html
      * @private
      */
-    _render: function(html) {
-        this.$el = $(html);
+    _render: function() {
+        this.$el = $(this.html);
         this.$el.attr({
             action: this._url.send,
             method: 'post',
@@ -61,11 +60,15 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
     },
 
     /**
-     * Add change evnet and custom Event
+     * Add change event and custom Event
      * @private
      */
     _addEvent: function() {
-        this.$el.on('change', ne.util.bind(this.onChange, this));
+        if (this._isBatchTransfer) {
+            this.$el.on('change', ne.util.bind(this.saveChange, this));
+        } else {
+            this.$el.on('change', ne.util.bind(this.onChange, this));
+        }
     },
 
     /**
@@ -75,6 +78,24 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
         this.fire('change', {
             target: this
         });
+    },
+
+    /**
+     * Event-Handle for save input element
+     */
+    saveChange: function() {
+        this.fire('save', {
+           element: this.$el[0]
+        });
+        this._changeElement();
+    },
+
+    /**
+     * Change element for save file data
+     */
+    _changeElement: function() {
+        this._render();
+        this._addEvent();
     },
 
     /**
@@ -96,7 +117,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      */
     _makeSizeUnit: function() {
         this._$sizeunit = this._makeHiddenElement({
-            'name': CONF.SIZE_UNIT,
+            'name': static.CONF.SIZE_UNIT,
             'value': this._uploader.sizeunit
         });
         this.$el.append(this._$sizeunit);
@@ -108,7 +129,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      */
     _makeCallbackElement: function() {
         this._$callback = this._makeHiddenElement({
-            'name': CONF.JSONPCALLBACK_NAME,
+            'name': static.CONF.JSONPCALLBACK_NAME,
             'value': this._uploader.callbackName
         });
         this.$el.append(this._$callback);
@@ -120,7 +141,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      */
     _makeResultTypeElement: function() {
         this._$resType = this._makeHiddenElement({
-            'name' : this._uploader.resultTypeElementName || CONF.RESPONSE_TYPE,
+            'name' : this._uploader.resultTypeElementName || static.CONF.RESPONSE_TYPE,
             'value': this._uploader.type
         });
         this.$el.append(this._$resType);
@@ -133,7 +154,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
      */
     _makeBridgeInfoElement: function(helper) {
         this._$helper = this._makeHiddenElement({
-            'name' : helper.name || CONF.REDIRECT_URL,
+            'name' : helper.name || static.CONF.REDIRECT_URL,
             'value': helper.url
         });
         this.$el.append(this._$helper);
@@ -141,7 +162,7 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
 
     /**
      * Make Hidden input element with options
-     * @param {objejct} options The opitons to be attribute of input
+     * @param {object} options The opitons to be attribute of input
      * @returns {*|jQuery}
      * @private
      */
@@ -154,4 +175,6 @@ ne.component.Uploader.View.Input = ne.util.defineClass(/**@lends ne.component.Up
 });
 
 
-ne.util.CustomEvents.mixin(ne.component.Uploader.View.Input);
+ne.util.CustomEvents.mixin(Input);
+
+module.exports = Input;

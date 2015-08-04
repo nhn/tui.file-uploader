@@ -4,27 +4,20 @@
  * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
  */
 
-ne.util.defineNamespace('ne.component.Uploader.Connector');
+
+var Ajax = require('./ajax.js');
+var Jsonp = require('./jsonp.js');
 
 /**
  * The connector class could connect with server and return server response to callback.
  * @constructor
  */
-ne.component.Uploader.Connector = ne.util.defineClass(/** @lends ne.component.Uploader.Connector.prototype */{
+var Connector = ne.util.defineClass(/** @lends ne.component.Uploader.Connector.prototype */{
     init: function(uploader) {
-        var type = this._getMixinModuleName(uploader.type);
+        var target = uploader.type === 'ajax' ? Ajax : Jsonp;
 
         this._uploader = uploader;
-        this.mixin(ne.component.Uploader[type]);
-    },
-
-    /**
-     * Get Class Name for mixin
-     * @param {string} type
-     * @returns {XML|string|void}
-     */
-    _getMixinModuleName: function(type) {
-        return type.replace(type.charAt(0), type.charAt(0).toUpperCase());
+        this.mixin(target);
     },
 
     /**
@@ -48,3 +41,5 @@ ne.component.Uploader.Connector = ne.util.defineClass(/** @lends ne.component.Up
         ne.util.extend(this, connector);
     }
 });
+
+module.exports = Connector;

@@ -5,12 +5,10 @@
  * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
  */
 
-ne.util.defineNamespace('ne.component.Uploader.Ajax');
-
 /**
  * The modules will be mixed in connector by type.
  */
-ne.component.Uploader.Ajax = {/** @lends ne.component.Uploader.Ajax */
+var Ajax = {/** @lends ne.component.Uploader.Ajax */
     type: 'POST',
     /**
      * Request ajax by config to add files.
@@ -76,3 +74,5 @@ ne.component.Uploader.Ajax = {/** @lends ne.component.Uploader.Ajax */
         callback(result);
     }
 };
+
+module.exports = Ajax;

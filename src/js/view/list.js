@@ -4,13 +4,14 @@
  * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
  */
 
-ne.util.defineNamespace('ne.component.Uploader.View.List');
+var static = require('../statics.js');
+var Item = require('./item.js');
 
 /**
  * List has items. It can add and remove item, and get total usage.
  * @constructor
  */
-ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Uploader.View.List.prototype */{
+var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype */{
     init : function(options, uploader, $el) {
         var listInfo = options.listInfo;
         this.items = [];
@@ -145,4 +146,6 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
     }
 });
 
-ne.util.CustomEvents.mixin(ne.component.Uploader.View.List);
+ne.util.CustomEvents.mixin(List);
+
+module.exports = List;

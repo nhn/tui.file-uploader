@@ -3,16 +3,17 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script type="text/javascript" src="../bower_components/jquery/jquery.js"></script>
-    <script type="text/javascript" src="../bower_components/ne-code-snippet/code-snippet.js"></script>
-    <script type="text/javascript" src="../src/js/statics.js"></script>
-    <script type="text/javascript" src="../src/js/uploader.js"></script>
-    <script type="text/javascript" src="../src/js/connector/connector.js"></script>
-    <script type="text/javascript" src="../src/js/connector/ajax.js"></script>
-    <script type="text/javascript" src="../src/js/connector/jsonp.js"></script>
-    <script type="text/javascript" src="../src/js/view/input.js"></script>
-    <script type="text/javascript" src="../src/js/view/list.js"></script>
-    <script type="text/javascript" src="../src/js/view/item.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery.js"></script>
+    <script type="text/javascript" src="../lib/ne-code-snippet/code-snippet.js"></script>
+    <script type="text/javascript" src="js/uploader.js"></script>
+    <!--<script type="text/javascript" src="../src/js/statics.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/uploader.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/connector/connector.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/connector/ajax.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/connector/jsonp.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/view/input.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/view/list.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/view/item.js"></script>-->
     <link href="css/sample.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -30,6 +31,7 @@
             send: "http://127.0.0.1:8008/server/uploader.php",
             remove: "http://127.0.0.1:8008/server/remove.php"
         },
+        isBatchTransfer: true,
         helper: {
             url: 'http://10.77.34.126:8009/samples/response.html',
             name: 'REDIRECT_URL'

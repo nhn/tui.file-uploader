@@ -5,12 +5,10 @@
  * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
  */
 
-ne.util.defineNamespace('ne.component.Uploader.Jsonp');
-
 /**
  * The modules will be mixed in connector by type.
  */
-ne.component.Uploader.Jsonp = {/** @lends ne.component.Uploader.Jsonp */
+var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
     /**
      * Request by form submit.
      * @param {object} config Configuration for submit form.
@@ -101,3 +99,5 @@ ne.component.Uploader.Jsonp = {/** @lends ne.component.Uploader.Jsonp */
         callback(result);
     }
 };
+
+module.exports = Jsonp;
