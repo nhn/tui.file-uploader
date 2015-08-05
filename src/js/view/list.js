@@ -12,7 +12,7 @@ var Item = require('./item.js');
  * @constructor
  */
 var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype */{
-    init : function(options, uploader, $el) {
+    init : function(options, uploader) {
         var listInfo = options.listInfo;
         this.items = [];
         this.$el = listInfo.list;
@@ -94,7 +94,7 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
             totalUsage = 0;
 
         ne.util.forEach(items, function(item) {
-            totalUsage += parseInt(item.size, 10);
+            totalUsage += parseFloat(item.size);
         });
 
         return totalUsage + this.sizeunit;
@@ -121,7 +121,7 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
      * @private
      */
     _createItem: function(data) {
-        var item = new ne.component.Uploader.View.Item({
+        var item = new Item({
             root: this,
             name: data.name,
             size: data.size,

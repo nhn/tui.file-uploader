@@ -49,6 +49,7 @@ var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
             status = data.status.split(sep),
             names = data.names.split(sep),
             sizes = data.sizes.split(sep),
+            ids = ne.util.isString(data.ids) ? data.ids.split(sep) : names,
             items = [];
 
         ne.util.forEach(status, function(item, index) {
@@ -56,7 +57,8 @@ var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
                 var nItem = {
                     name: names[index],
                     status: status[index],
-                    size: sizes[index]
+                    size: sizes[index],
+                    id: ids[index]
                 };
                 items.push(nItem);
             }

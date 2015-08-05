@@ -118,24 +118,12 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
      * @returns {boolean}
      */
     _isSupportDataForm: function() {
-        var formData = FormData || null;
-        return !!formData;
+        var FormData = FormData || null;
+        return ne.util.isExisty(FormData);
     },
 
     /**
-     * Callback of custom send event
-     */
-    sendFile: function() {
-        var callback = ne.util.bind(this.notify, this);
-        this._connector.send({
-            type: 'add',
-            success: callback,
-            error: this.errorCallback
-        });
-    },
-
-    /**
-     * Callback of error
+     * Callback for error
      * @param {object} response Error response
      */
     errorCallback: function(response) {
@@ -149,7 +137,19 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
     },
 
     /**
-     * Callback of custom remove event
+     * Callback for custom send event
+     */
+    sendFile: function() {
+        var callback = ne.util.bind(this.notify, this);
+        this._connector.send({
+            type: 'add',
+            success: callback,
+            error: this.errorCallback
+        });
+    },
+
+    /**
+     * Callback for custom remove event
      * @param {object} data The data for remove file.
      */
     removeFile: function(data) {
@@ -162,12 +162,24 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
     },
 
     /**
+     * Callback for custom save event
+     * @param {object} data The data for save file.
+     */
+    saveFile: function(data) {
+
+    },
+
+    /**
      * Add event to listview and inputview
      * @private
      */
     _addEvent: function() {
         this.listView.on('remove', this.removeFile, this);
-        this.inputView.on('change', this.sendFile, this);
+        if (this.isBatchTransfer) {
+            this.inputView.on('save', this.saveFile, this);
+        } else {
+            this.inputView.on('change', this.sendFile, this);
+        }
     }
 
 });

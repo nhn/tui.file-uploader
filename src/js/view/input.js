@@ -65,7 +65,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
      */
     _addEvent: function() {
         if (this._isBatchTransfer) {
-            this.$el.on('change', ne.util.bind(this.saveChange, this));
+            this.$el.on('change', ne.util.bind(this.onSave, this));
         } else {
             this.$el.on('change', ne.util.bind(this.onChange, this));
         }
@@ -83,7 +83,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
     /**
      * Event-Handle for save input element
      */
-    saveChange: function() {
+    onSave: function() {
         this.fire('save', {
            element: this.$el[0]
         });
