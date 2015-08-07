@@ -44,15 +44,18 @@ gulp.task('bundle', function() {
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('compress', function() {
+gulp.task('compress', ['bundle'], function() {
     gulp.src(filename + '.js')
         .pipe(uglify())
         .pipe(concat(filename + '.min.js'))
         .pipe(gulp.dest('./'));
 
-    gulp.src(filename + '.min.js')
-        .pipe(concat(filename + '.min.js'))
+});
+
+gulp.task('concat', ['compress'], function() {
+    gulp.src(filename + '.js')
+        .pipe(concat(filename + '.js'))
         .pipe(gulp.dest('./sample/js/'));
 });
 
-gulp.task('default', ['bundle', 'compress']);
+gulp.task('default', ['bundle', 'compress', 'concat']);

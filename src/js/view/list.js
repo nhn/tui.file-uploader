@@ -1,7 +1,7 @@
 /**
  * @fileoverview FileListView manage and display files state(like size, count) and list.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
+ * @author NHN Ent. FE Development Team <e0242@nhnent.com>
  */
 
 var static = require('../statics.js');
@@ -80,7 +80,7 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
         if (!ne.util.isExisty(size)) {
             size = this._getSumAllItemUsage();
         }
-
+        size = static.getFileSizeWithUnit(size);
         this.$size.html(size);
     },
 
@@ -97,7 +97,7 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
             totalUsage += parseFloat(item.size);
         });
 
-        return totalUsage + this.sizeunit;
+        return totalUsage;
     },
 
     /**
@@ -129,8 +129,7 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
             url: this.url,
             hiddenFrame: this.formTarget,
             hiddenFieldName: this.hiddenFieldName,
-            template: this.template && this.template.item,
-            unit: this.sizeunit
+            template: this.template && this.template.item
         });
         item.on('remove', this._removeFile, this);
         return item;

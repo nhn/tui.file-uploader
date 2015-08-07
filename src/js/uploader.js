@@ -1,18 +1,18 @@
 /**
  * @fileoverview FileUploader is core of file uploader component.<br>FileManager manage connector to connect server and update FileListView.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
+ * @author NHN Ent. FE Development Team <e0242@nhnent.com>
  */
 
 var static = require('./statics.js');
-var Connector = require('./connector/connector.js');
+var conn = require('./connector/connector.js');
 var Input = require('./view/input.js');
 var List = require('./view/list.js');
 
 /**
- * FileUploader act like bridge between connector and view.<br>
- * It makes connector and view with option and environment.<br>
- * It control and make connection among modules.<br>
+ * FileUploader act like bridge between connector and view.
+ * It makes connector and view with option and environment.
+ * It control and make connection among modules.
  * @constructor ne.component.Uploader
  * @example
  * var uploader = new ne.component.Uploader({
@@ -32,7 +32,6 @@ var List = require('./view/list.js');
  *         count: $('#file_count'),
  *         size: $('#size_count')
  *     },
- *     sizeunit: "KB",
  *     separator: ';'
  * }, $('#uploader'));
  */
@@ -51,8 +50,8 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
      *  @param {string} options.formTarget The target for x-domain jsonp case.
      *  @param {string} options.callbackName The name of jsonp callback function.
      *  @param {object} opitons.listInfo The element info to display file list information.
-     *  @param {string} options.sizeunit The unit of file usage.
      *  @param {string} options.separator The separator for jsonp helper response.
+     *  @param {string} [options.fileField=userFile] The field name of input file element.
      * @param {JqueryObject} $el Root Element of Uploader
      */
     init: function(options, $el) {
@@ -62,6 +61,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
         this.$el = $el;
         this.inputView = new Input(options, this);
         this.listView = new List(options, this);
+        this.fileField = this.fileField || static.CONF.FILE_FILED_NAME;
 
         this._addEvent();
     },
@@ -71,25 +71,28 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
      * @private
      */
     _setConnector: function() {
-        if (this.isCrossDomain()) {
+        if (this.isBatchTransfer) {
+            this.type = 'local';
+        } else if (this.isCrossDomain()) {
             if (this.helper) {
                 this.type = 'jsonp';
             } else {
                 alert(static.CONF.ERROR.NOT_SURPPORT);
             }
         } else {
-            if (this.useJsonp || !this._isSupportDataForm()) {
+            if (this.useJsonp || !static.isSupportFormData()) {
                 this.type = 'jsonp';
             } else {
                 this.type = 'ajax';
             }
         }
-        this._connector = new Connector(this);
+        this._connector = conn.getConnector(this);
     },
 
     /**
      * Update list view with custom or original data.
-     * @param info
+     * @param {object} info The data for update list
+     *  @param {string} info.action The action name to execute method
      */
     notify: function(info) {
         this.listView.update(info);
@@ -111,15 +114,6 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
     isCrossDomain: function() {
         var pageDomain = document.domain;
         return this.url.send.indexOf(pageDomain) === -1;
-    },
-
-    /**
-     * Check DataForm Object exist.
-     * @returns {boolean}
-     */
-    _isSupportDataForm: function() {
-        var FormData = FormData || null;
-        return ne.util.isExisty(FormData);
     },
 
     /**
@@ -161,24 +155,76 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
         });
     },
 
+    submit: function() {
+        this._connector.submit(function() {
+            console.log('uploader caomplete');
+        });
+    },
     /**
-     * Callback for custom save event
-     * @param {object} data The data for save file.
+     * Callback for custom remove event
+     * Remove input file's clone
+      * @param data
      */
-    saveFile: function(data) {
+    removeElement: function(data) {
 
     },
+
+    /**
+     * Get file info locally
+     * @param {HtmlElement} element Input element
+     * @private
+     */
+    _getFileInfo: function(element) {
+        var files;
+        if (this._isSupportFileSystem()) {
+            files = this._getFileList(element.files);
+        } else {
+            files = {
+                name: element.value,
+                id: element.value
+            }
+        }
+        return files;
+    },
+
+    /**
+     * Get file list from FileList object
+     * @param {FileList} files A FileList object
+     * @returns {Array}
+     * @private
+     */
+    _getFileList: function(files) {
+        return ne.util.map(files, function(file) {
+            console.log(file);
+            return {
+                name: file.name,
+                size: file.size,
+                id: file.name
+            };
+        });
+    },
+
+    /**
+     * Check whether support file api or not
+     * @returns {boolean}
+     * @private
+     */
+    _isSupportFileSystem: function() {
+        return !!(window.File && window.FileReader && window.FileList && window.Blob);
+    },
+
 
     /**
      * Add event to listview and inputview
      * @private
      */
     _addEvent: function() {
-        this.listView.on('remove', this.removeFile, this);
         if (this.isBatchTransfer) {
-            this.inputView.on('save', this.saveFile, this);
+            this.inputView.on('save', this.sendFile, this);
+            this.listView.on('remove', this.removeFile, this);
         } else {
             this.inputView.on('change', this.sendFile, this);
+            this.listView.on('remove', this.removeFile, this);
         }
     }
 

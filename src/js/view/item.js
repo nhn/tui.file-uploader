@@ -1,7 +1,7 @@
 /**
  * @fileoverview ItemView make element to display added file information. It has attached file ID to request for remove.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
+ * @author NHN Ent. FE Development Team <e0242@nhnent.com>
  */
 
 var static = require('../statics.js');
@@ -23,7 +23,6 @@ var Item = ne.util.defineClass(/** @lends ne.component.Uploader.Item.prototype *
      *  @param {string} [options.hiddenFieldName] The name of hidden filed. The hidden field is for connecting x-domian.
      *  @param {string} [options.deleteButtonClassName='uploader_btn_delete'] The class name is for delete button.
      *  @param {(string|number)} [options.size] File size (but ie low browser, x-domain)
-     *  @param {string} [options.unit] The unit of file usage.
      *  @param {object} [options.helper] The helper page info.
      */
     init: function(options) {
@@ -115,24 +114,11 @@ var Item = ne.util.defineClass(/** @lends ne.component.Uploader.Item.prototype *
         var map = {
             filetype: this._type,
             filename: this.name,
-            filesize: this._getSizeWithUnit(this.size),
+            filesize: static.getFileSizeWithUnit(this.size),
             deleteButtonClassName: this._btnClass
         };
 
-        html = html.replace(/\{\{([^\}]+)\}\}/g, function(mstr, name) {
-            return map[name];
-        });
-        return html;
-    },
-
-    /**
-     * Get formatting size
-     * @param {(string|number)} size File size
-     * @returns {string}
-     * @private
-     */
-    _getSizeWithUnit: function(size) {
-        return size + this._unit;
+        return static.template(map, html);
     },
 
     /**

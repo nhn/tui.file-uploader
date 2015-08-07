@@ -1,7 +1,7 @@
 /**
  * @fileoverview InputView make input form by template. Add event file upload event.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
+ * @author NHN Ent. FE Development Team <e0242@nhnent.com>
  */
 
 var static = require('../statics.js');
@@ -30,6 +30,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
             this._makeBridgeInfoElement(options.helper);
         }
 
+        this.$input = this.$el.find('input:file');
         this._addEvent();
     },
 
@@ -38,7 +39,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
      * @private
      */
     _render: function() {
-        this.$el = $(this.html);
+        this.$el = $(this._getHtml(this.html));
         this.$el.attr({
             action: this._url.send,
             method: 'post',
@@ -49,6 +50,19 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
     },
 
     /**
+     * Get html string from template
+     * @param {string} html The html to be converted.
+     * @returns {string}
+     * @private
+     */
+    _getHtml: function(html) {
+        var map = {
+            fileField: this._uploader.fileField
+        };
+        return static.template(map, html);
+    },
+
+    /**
      * Call methods those make each hidden element.
      * @private
      */
@@ -56,7 +70,6 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
         this._makeTargetFrame();
         this._makeResultTypeElement();
         this._makeCallbackElement();
-        this._makeSizeUnit();
     },
 
     /**
@@ -64,10 +77,16 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
      * @private
      */
     _addEvent: function() {
+        var submit = this.$el.find('button:submit'),
+            self = this;
         if (this._isBatchTransfer) {
-            this.$el.on('change', ne.util.bind(this.onSave, this));
+            this.$input.on('change', ne.util.bind(this.onSave, this));
+            this.$el.on('submit', function() {
+                self._uploader.submit();
+                return false;
+            });
         } else {
-            this.$el.on('change', ne.util.bind(this.onChange, this));
+            this.$input.on('change', ne.util.bind(this.onChange, this));
         }
     },
 
@@ -85,16 +104,17 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
      */
     onSave: function() {
         this.fire('save', {
-           element: this.$el[0]
+            element: this.$input[0],
+            callback: ne.util.bind(this._changeElement, this)
         });
-        this._changeElement();
     },
 
     /**
      * Change element for save file data
+     * @param {object} data
      */
-    _changeElement: function() {
-        this._render();
+    _changeElement: function(data) {
+        this._clone(data);
         this._addEvent();
     },
 
@@ -109,18 +129,6 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
             position: 'absolute'
         });
         this._uploader.$el.append(this._$target);
-    },
-
-    /**
-     * Make element has size unit.(like KB, MB..)
-     * @private
-     */
-    _makeSizeUnit: function() {
-        this._$sizeunit = this._makeHiddenElement({
-            'name': static.CONF.SIZE_UNIT,
-            'value': this._uploader.sizeunit
-        });
-        this.$el.append(this._$sizeunit);
     },
 
     /**
@@ -171,6 +179,15 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
             type: 'hidden'
         });
         return $('<input />').attr(options);
+    },
+
+    /**
+     * Clone Input element to send by form submit
+     * @param {object} info A information of clone element
+     */
+    _clone: function(info) {
+        this.$input.off();
+        // todo clone
     }
 });
 

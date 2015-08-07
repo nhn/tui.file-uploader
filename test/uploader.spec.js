@@ -37,11 +37,6 @@ describe('Uploader test', function() {
         expect(uploader.inputView).toBeDefined();
     });
 
-    it('_isSupportDataForm', function() {
-        var FormData = FormData || null,
-            result = !!FormData;
-        expect(uploader._isSupportDataForm()).toBe(result);
-    });
 
     it('send by change', function() {
         var result;

@@ -19,7 +19,7 @@ describe('List test', function() {
             type: 'jpg',
             url: 'http://localhost:8009/filename.jpg',
             hiddenFrame: {},
-            size: 10.15
+            size: 10
         };
 
         list = new List({
@@ -61,9 +61,9 @@ describe('List test', function() {
     });
 
     it('_updateTotalUsage', function() {
-        var size = 30.10;
+        var size = 30;
         list._updateTotalUsage(size);
-        expect(parseFloat(list.$size.html())).toBe(30.10);
+        expect(parseFloat(list.$size.html())).toBe(30);
     });
 
     it('_updateTotalUsage without param', function() {
@@ -74,18 +74,18 @@ describe('List test', function() {
     it('_updateTotalUsage without param, After file', function() {
         list._addFiles(itemInfo);
         list._updateTotalUsage();
-        expect(parseFloat(list.$size.html())).toBe(10.15);
+        expect(parseFloat(list.$size.html())).toBe(10);
     });
 
     it('updateTotalInfo', function() {
         var info = {
             count: 10,
-            size: 100.20
+            size: 1024
         };
 
         list.updateTotalInfo(info);
         expect(parseInt(list.$counter.html(), 10)).toBe(10);
-        expect(parseFloat(list.$size.html())).toBe(100.20);
+        expect(parseFloat(list.$size.html())).toBe(1);
     });
 
     it('removeFile', function() {

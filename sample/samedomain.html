@@ -5,7 +5,7 @@
     <title></title>
     <script type="text/javascript" src="../lib/jquery/jquery.js"></script>
     <script type="text/javascript" src="../lib/ne-code-snippet/code-snippet.js"></script>
-    <script type="text/javascript" src="js/file-uploader.min.js"></script>
+    <script type="text/javascript" src="js/file-uploader.js"></script>
     <!--<script type="text/javascript" src="../src/js/statics.js"></script>-->
     <!--<script type="text/javascript" src="../src/js/uploader.js"></script>-->
     <!--<script type="text/javascript" src="../src/js/connector/connector.js"></script>-->
@@ -32,10 +32,6 @@
             remove: "http://127.0.0.1:8008/server/remove.php"
         },
         isBatchTransfer: true,
-        helper: {
-            url: 'http://10.77.34.126:8009/samples/response.html',
-            name: 'REDIRECT_URL'
-        },
         resultTypeElementName: 'RESPONSE_TYPE',
         formTarget: 'hiddenFrame',
         callbackName: 'responseCallback',
@@ -45,7 +41,8 @@
             size: $('#size_count')
         },
         sizeunit: "KB",
-        separator: ';'
+        separator: ';',
+        fileField: 'userfile[]'
     }, $('#uploader'));
 
 </script>
