@@ -54,4 +54,5 @@ report
 dist
 *.vim
 
+server/files
 
