@@ -120,7 +120,16 @@ describe('List test', function() {
         expect(list.items.length).toBe(1);
     });
 
-    it('update remove file', function() {
+    it('remove file via _removeFileItem', function() {
+        list._addFileItems(itemInfo);
+
+        expect(list.items.length).toBe(1);
+
+        list._removeFileItem(itemInfo.name);
+        expect(list.items.length).toBe(0);
+    });
+
+    it('remove file via update', function() {
         list._addFileItems(itemInfo);
 
         expect(list.items.length).toBe(1);
@@ -134,7 +143,7 @@ describe('List test', function() {
         expect(list.items.length).toBe(0);
     });
 
-    it('update remove file but not match', function() {
+    it('remove file via update, but not match', function() {
         list._addFileItems(itemInfo);
 
         expect(list.items.length).toBe(1);
