@@ -23,7 +23,6 @@ var Pool = ne.util.defineClass(/** @lends ne.component.Uploader.Pool.prototype *
      * @param {object} file A input element that have to be saved
      */
     store: function(file) {
-        console.log(file, file.file_name);
         this.files[file.file_name] = file;
         this.frag.appendChild(file);
     },
@@ -33,7 +32,6 @@ var Pool = ne.util.defineClass(/** @lends ne.component.Uploader.Pool.prototype *
      * @param {string} name A file name that have to be removed.
      */
     remove: function(name) {
-        console.log(name);
         this.frag.removeChild(this.files[name]);
         delete this.files[name];
     },

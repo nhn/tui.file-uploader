@@ -190,7 +190,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
      */
     _getFileInfo: function(element) {
         var files;
-        if (this._isSupportFileSystem()) {
+        if (utils.isSupportFileSystem()) {
             files = this._getFileList(element.files);
         } else {
             files = {
@@ -216,16 +216,6 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
             };
         });
     },
-
-    /**
-     * Check whether support file api or not
-     * @returns {boolean}
-     * @private
-     */
-    _isSupportFileSystem: function() {
-        return !!(window.File && window.FileReader && window.FileList && window.Blob);
-    },
-
 
     /**
      * Add event to listview and inputview

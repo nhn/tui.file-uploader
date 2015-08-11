@@ -31,3 +31,12 @@ module.exports.template = function(map, html) {
     });
     return html;
 };
+
+/**
+ * Check whether support file api or not
+ * @returns {boolean}
+ * @private
+ */
+module.exports.isSupportFileSystem = function() {
+    return !!(window.File && window.FileReader && window.FileList && window.Blob);
+};
