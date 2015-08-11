@@ -1,3 +1,4 @@
+var utils = require('../../src/js/utils.js');
 var List = require('../../src/js/view/list.js');
 
 describe('List test', function() {
@@ -85,11 +86,11 @@ describe('List test', function() {
         var info = {
             count: 10,
             size: 1024
-        };
+        }, value = utils.isSupportFileSystem() ? 1 : NaN;
 
         list.updateTotalInfo(info);
         expect(parseInt(list.$counter.html(), 10)).toBe(10);
-        expect(parseFloat(list.$size.html())).toBe(1);
+        expect(parseFloat(list.$size.html())).toBe(value);
     });
 
     it('removeFile', function() {
