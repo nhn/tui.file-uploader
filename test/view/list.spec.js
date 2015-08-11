@@ -86,11 +86,15 @@ describe('List test', function() {
         var info = {
             count: 10,
             size: 1024
-        }, value = utils.isSupportFileSystem() ? 1 : NaN;
+        };
 
         list.updateTotalInfo(info);
         expect(parseInt(list.$counter.html(), 10)).toBe(10);
-        expect(parseFloat(list.$size.html())).toBe(value);
+        if (utils.isSupportFileSystem()) {
+            expect(parseFloat(list.$size.html())).toBe(value);
+        } else {
+            expect(parseFloat(list.$size.html())).not.toBe(value);
+        }
     });
 
     it('removeFile', function() {
