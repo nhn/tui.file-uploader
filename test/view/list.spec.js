@@ -91,9 +91,9 @@ describe('List test', function() {
         list.updateTotalInfo(info);
         expect(parseInt(list.$counter.html(), 10)).toBe(10);
         if (utils.isSupportFileSystem()) {
-            expect(parseFloat(list.$size.html())).toBe(value);
+            expect(parseFloat(list.$size.html())).toBe(1);
         } else {
-            expect(parseFloat(list.$size.html())).not.toBe(value);
+            expect(parseFloat(list.$size.html())).not.toBe(1);
         }
     });
 
