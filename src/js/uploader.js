@@ -170,17 +170,8 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
      */
     submit: function() {
         this._connector.submit(function() {
-
-            console.log('uploader caomplete');
+            // todo submit preprocess
         });
-    },
-    /**
-     * Callback for custom remove event
-     * Remove input file's clone
-      * @param data
-     */
-    removeElement: function(data) {
-
     },
 
     /**
@@ -244,7 +235,9 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
      * @param {string} name The file name to remove
      */
     remove: function(name) {
-        this._pool.remove(name);
+        if (!utils.isSupportFormData()) {
+            this._pool.remove(name);
+        }
     }
 });
 

@@ -31,19 +31,9 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
      */
     update: function(info) {
         if (info.action === 'remove') {
-            this.items = ne.util.filter(this.items, function(item) {
-                if (decodeURIComponent(info.name) === decodeURIComponent(item.name)) {
-                    item.destroy();
-                    if (!utils.isSupportFormData()) {
-                        this._uploader.remove(info.name);
-                    }
-                    return false;
-                } else {
-                    return true;
-                }
-            }, this);
+            this._removeFileItem(info.name);
         } else {
-            this._addFiles(info.items);
+            this._addFileItems(info.items);
         }
     },
 
@@ -110,12 +100,29 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
      * @param {object} target Target item infomations.
      * @private
      */
-    _addFiles: function(target) {
+    _addFileItems: function(target) {
         if (!ne.util.isArray(target)) {
             target = [target];
         }
         ne.util.forEach(target, function(data) {
             this.items.push(this._createItem(data));
+        }, this);
+    },
+
+    /**
+     * Remove file item
+     * @param {string} name The file name to remove
+     * @private
+     */
+    _removeFileItem: function(name) {
+        name = decodeURIComponent(name);
+        this.items = ne.util.filter(this.items, function(item) {
+            var isMatch = name === decodeURIComponent(item.name);
+            if (isMatch) {
+                item.destroy();
+                this._uploader.remove(name);
+            }
+            return !isMatch;
         }, this);
     },
 

@@ -76,7 +76,7 @@ describe('List test', function() {
     });
 
     it('_updateTotalUsage without param, After file', function() {
-        list._addFiles(itemInfo);
+        list._addFileItems(itemInfo);
         list._updateTotalUsage();
         expect(parseFloat(list.$size.html())).toBe(10);
     });
@@ -106,8 +106,8 @@ describe('List test', function() {
         expect(name).toBe('test');
     });
 
-    it('_addFiles', function() {
-        list._addFiles(itemInfo);
+    it('_addFileItems', function() {
+        list._addFileItems(itemInfo);
 
         expect(list.items.length).toBe(1);
     });
@@ -121,7 +121,7 @@ describe('List test', function() {
     });
 
     it('update remove file', function() {
-        list._addFiles(itemInfo);
+        list._addFileItems(itemInfo);
 
         expect(list.items.length).toBe(1);
 
@@ -135,7 +135,7 @@ describe('List test', function() {
     });
 
     it('update remove file but not match', function() {
-        list._addFiles(itemInfo);
+        list._addFileItems(itemInfo);
 
         expect(list.items.length).toBe(1);
 
