@@ -4,7 +4,7 @@
  * @author NHN Ent. FE Development Team <e0242@nhnent.com>
  */
 
-var static = require('../statics.js');
+var utils = require('../utils.js');
 var Item = require('./item.js');
 
 /**
@@ -34,11 +34,14 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
             this.items = ne.util.filter(this.items, function(item) {
                 if (decodeURIComponent(info.name) === decodeURIComponent(item.name)) {
                     item.destroy();
+                    if (!utils.isSupportFormData()) {
+                        this._uploader.remove(info.name);
+                    }
                     return false;
                 } else {
                     return true;
                 }
-            });
+            }, this);
         } else {
             this._addFiles(info.items);
         }
@@ -53,7 +56,9 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
      */
     updateTotalInfo: function(info) {
         this._updateTotalCount(info.count);
-        this._updateTotalUsage(info.size);
+        if (utils.isSupportFormData()) {
+            this._updateTotalUsage(info.size);
+        }
     },
 
     /**
@@ -80,7 +85,7 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
         if (!ne.util.isExisty(size)) {
             size = this._getSumAllItemUsage();
         }
-        size = static.getFileSizeWithUnit(size);
+        size = utils.getFileSizeWithUnit(size);
         this.$size.html(size);
     },
 

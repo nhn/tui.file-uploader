@@ -4,7 +4,8 @@
  * @author NHN Ent. FE Development Team <e0242@nhnent.com>
  */
 
-var static = require('../statics.js');
+var statics = require('../statics.js');
+var utils = require('../utils.js');
 
 /**
  * Class of item that is member of file list.
@@ -31,7 +32,7 @@ var Item = ne.util.defineClass(/** @lends ne.component.Uploader.Item.prototype *
         this._setItemInfo(options);
         this._setConnectInfo(options);
 
-        this.render(options.template || static.HTML.item);
+        this.render(options.template || statics.HTML.item);
 
         if (options.helper) {
             this._makeBridgeInfoElement(options.helper);
@@ -114,11 +115,11 @@ var Item = ne.util.defineClass(/** @lends ne.component.Uploader.Item.prototype *
         var map = {
             filetype: this._type,
             filename: this.name,
-            filesize: static.getFileSizeWithUnit(this.size),
+            filesize: this.size ? utils.getFileSizeWithUnit(this.size) : '',
             deleteButtonClassName: this._btnClass
         };
 
-        return static.template(map, html);
+        return utils.template(map, html);
     },
 
     /**

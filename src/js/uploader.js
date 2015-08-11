@@ -4,10 +4,12 @@
  * @author NHN Ent. FE Development Team <e0242@nhnent.com>
  */
 
-var static = require('./statics.js');
+var statics = require('./statics.js');
+var utils = require('./utils.js');
 var conn = require('./connector/connector.js');
 var Input = require('./view/input.js');
 var List = require('./view/list.js');
+var Pool = require('./view/pool.js');
 
 /**
  * FileUploader act like bridge between connector and view.
@@ -61,7 +63,8 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
         this.$el = $el;
         this.inputView = new Input(options, this);
         this.listView = new List(options, this);
-        this.fileField = this.fileField || static.CONF.FILE_FILED_NAME;
+        this.fileField = this.fileField || statics.CONF.FILE_FILED_NAME;
+        this._pool = new Pool(this.listView.$el[0]);
 
         this._addEvent();
     },
@@ -77,10 +80,10 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
             if (this.helper) {
                 this.type = 'jsonp';
             } else {
-                alert(static.CONF.ERROR.NOT_SURPPORT);
+                alert(statics.CONF.ERROR.NOT_SURPPORT);
             }
         } else {
-            if (this.useJsonp || !static.isSupportFormData()) {
+            if (this.useJsonp || !utils.isSupportFormData()) {
                 this.type = 'jsonp';
             } else {
                 this.type = 'ajax';
@@ -125,19 +128,26 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
         if (response && response.msg) {
             message = response.msg;
         } else {
-            message = static.CONF.ERROR.DEFAULT;
+            message = statics.CONF.ERROR.DEFAULT;
         }
         alert(message);
     },
 
     /**
      * Callback for custom send event
+     * @param {object} [data] The data include callback function for file clone
      */
-    sendFile: function() {
+    sendFile: function(data) {
         var callback = ne.util.bind(this.notify, this);
+
         this._connector.send({
             type: 'add',
-            success: callback,
+            success: function(result) {
+                if (data && data.callback) {
+                    data.callback(result);
+                }
+                callback(result);
+            },
             error: this.errorCallback
         });
     },
@@ -155,8 +165,12 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
         });
     },
 
+    /**
+     * Submit for data submit to server
+     */
     submit: function() {
         this._connector.submit(function() {
+
             console.log('uploader caomplete');
         });
     },
@@ -195,7 +209,6 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
      */
     _getFileList: function(files) {
         return ne.util.map(files, function(file) {
-            console.log(file);
             return {
                 name: file.name,
                 size: file.size,
@@ -226,8 +239,23 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
             this.inputView.on('change', this.sendFile, this);
             this.listView.on('remove', this.removeFile, this);
         }
-    }
+    },
 
+    /**
+     * Store input element to pool.
+     * @param {HTMLElement} input A input element[type=file] for store pool
+     */
+    store: function(input) {
+        this._pool.store(input);
+    },
+
+    /**
+     * Remove input element form pool.
+     * @param {string} name The file name to remove
+     */
+    remove: function(name) {
+        this._pool.remove(name);
+    }
 });
 
 ne.util.CustomEvents.mixin(Uploader);

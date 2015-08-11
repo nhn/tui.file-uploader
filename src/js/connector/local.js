@@ -2,21 +2,25 @@
  * @fileoveview This Connector make connection between Uploader and html5 file api.
  * @author NHN Ent. FE Development Team <e0242@nhnent.com>
  */
-var statics = require('../statics.js');
+var utils = require('../utils.js');
 
 /**
  * The modules will be mixed in connector by type.
  */
 var Local = {/** @lends ne.component.Uploader.Local */
     /**
+     * A result array to save file to send.
+     */
+    _result : null,
+    /**
      * Add Request, save files to array.
      * @param data
      */
     addRequest: function(data) {
-        this._saveFile(statics.isSupportFormData());
+        var isValidPool = utils.isSupportFormData(),
+            result = this._saveFile(isValidPool);
         data.success({
-            items: this._result,
-            isReset: true
+            items: result
         });
     },
 
@@ -31,9 +35,15 @@ var Local = {/** @lends ne.component.Uploader.Local */
             fileEl = inputView.$input[0],
             result = [];
 
+        if (!this._result) {
+            this._result = [];
+        }
+
         if (isSupportAjax) {
             ne.util.forEach(fileEl.files, function(item) {
-                result.push(item);
+                if (ne.util.isObject(item)) {
+                    result.push(item);
+                }
             }, this);
         } else {
             result.push({
@@ -42,7 +52,9 @@ var Local = {/** @lends ne.component.Uploader.Local */
             });
         }
 
-        this._result = result;
+        this._result = this._result.concat(result);
+
+        return result;
     },
 
     /**
@@ -52,15 +64,28 @@ var Local = {/** @lends ne.component.Uploader.Local */
      */
     _makeFormData : function() {
         var uploader = this._uploader,
-            form = new window.FormData(uploader.inputView.$el[0]);
+            form = new window.FormData();
+
         ne.util.forEach(this._result, function(item) {
             form.append(uploader.fileField, item);
         });
         return form;
     },
 
-    removeRequest: function(data) {
-        console.log('remove', data);
+    /**
+     * Remove file form result array
+     * @param {object} info The information set to remove file
+     */
+    removeRequest: function(info) {
+        var data = info.data;
+        this._result = ne.util.filter(this._result, function(el) {
+            return el.name !== data.filename;
+        });
+
+        info.success({
+            action: 'remove',
+            name: data.filename
+        });
     },
 
     /**

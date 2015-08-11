@@ -4,7 +4,8 @@
  * @author NHN Ent. FE Development Team <e0242@nhnent.com>
  */
 
-var static = require('../statics.js');
+var statics = require('../statics.js');
+var utils = require('../utils.js');
 
 /**
  * This view control input element typed file.
@@ -21,7 +22,9 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
         this._target = options.formTarget;
         this._url = options.url;
         this._isBatchTransfer = options.isBatchTransfer;
-        this.html = (options.template && options.template.input) || static.HTML.input;
+        this._inputHTML = (options.template && options.template.input) || statics.HTML.input;
+        this.html = (options.template && options.template.form) || statics.HTML.form;
+        this._isMultiple = !!(utils.isSupportFormData() && options.isMultiple);
 
         this._render();
         this._renderHiddenElements();
@@ -31,6 +34,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
         }
 
         this.$input = this.$el.find('input:file');
+        this.$button = $('button[type=submit]');
         this._addEvent();
     },
 
@@ -57,9 +61,10 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
      */
     _getHtml: function(html) {
         var map = {
-            fileField: this._uploader.fileField
+            fileField: this._uploader.fileField,
+            multiple: this._isMultiple ? 'multiple' : ''
         };
-        return static.template(map, html);
+        return utils.template(map, html);
     },
 
     /**
@@ -81,6 +86,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
             self = this;
         if (this._isBatchTransfer) {
             this.$input.on('change', ne.util.bind(this.onSave, this));
+            this.$el.off();
             this.$el.on('submit', function() {
                 self._uploader.submit();
                 return false;
@@ -103,18 +109,30 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
      * Event-Handle for save input element
      */
     onSave: function() {
+        var saveCallback = !utils.isSupportFormData() ? ne.util.bind(this._resetInputElement, this) : null;
         this.fire('save', {
             element: this.$input[0],
-            callback: ne.util.bind(this._changeElement, this)
+            callback: saveCallback
         });
     },
 
     /**
-     * Change element for save file data
+     * Reset Input element to save whole input=file element.
      * @param {object} data
      */
-    _changeElement: function(data) {
-        this._clone(data);
+    _resetInputElement: function() {
+        var inputEl = this.$input[0];
+        this.$input.off();
+
+        this._clone(inputEl);
+
+        this.$input = $(this._getHtml(this._inputHTML));
+
+        if (this.$button.length) {
+            this.$button.before(this.$input);
+        } else {
+            this.$el.append(this.$input);
+        }
         this._addEvent();
     },
 
@@ -137,7 +155,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
      */
     _makeCallbackElement: function() {
         this._$callback = this._makeHiddenElement({
-            'name': static.CONF.JSONPCALLBACK_NAME,
+            'name': statics.CONF.JSONPCALLBACK_NAME,
             'value': this._uploader.callbackName
         });
         this.$el.append(this._$callback);
@@ -149,7 +167,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
      */
     _makeResultTypeElement: function() {
         this._$resType = this._makeHiddenElement({
-            'name' : this._uploader.resultTypeElementName || static.CONF.RESPONSE_TYPE,
+            'name' : this._uploader.resultTypeElementName || statics.CONF.RESPONSE_TYPE,
             'value': this._uploader.type
         });
         this.$el.append(this._$resType);
@@ -162,14 +180,14 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
      */
     _makeBridgeInfoElement: function(helper) {
         this._$helper = this._makeHiddenElement({
-            'name' : helper.name || static.CONF.REDIRECT_URL,
+            'name' : helper.name || statics.CONF.REDIRECT_URL,
             'value': helper.url
         });
         this.$el.append(this._$helper);
     },
 
     /**
-     * Make Hidden input element with options
+     * Make hidden input element with options
      * @param {object} options The opitons to be attribute of input
      * @returns {*|jQuery}
      * @private
@@ -182,15 +200,16 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
     },
 
     /**
-     * Clone Input element to send by form submit
-     * @param {object} info A information of clone element
+     * Ask uploader to save input element to pool
+     * @param {HTMLElement} input A input element[type=file] for store pool
      */
-    _clone: function(info) {
-        this.$input.off();
-        // todo clone
+    _clone: function(input) {
+        // @todo fix setAttribute way
+        input.file_name = input.value;
+        this._uploader.store(input);
     }
-});
 
+});
 
 ne.util.CustomEvents.mixin(Input);
 

@@ -9,7 +9,11 @@ describe('List test', function() {
         itemInfo;
 
     beforeEach(function() {
-        uploader = {};
+        uploader = {
+            remove: function() {
+
+            }
+        };
         listEl = $('<div class="list"></div>');
         counterEl = $('<div class="counter"></div>');
         sizeEl = $('<div class="size"></div>');
