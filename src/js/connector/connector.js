@@ -10,71 +10,65 @@ var Local = require('./local.js');
 
 /**
  * The connector class could connect with server and return server response to callback.
- * @constructor
  */
-//var Connector = ne.util.defineClass(/** @lends ne.component.Uploader.Connector.prototype */{
-//    init: function(uploader) {
-//        var type = uploader.type.toLowerCase();
-//
-//        /**
-//         * The uploader core
-//         * @type ne.component.Uploader
-//         */
-//        this._uploader = uploader;
-//        /**
-//         * The connector module set
-//         * @type {object}
-//         */
-//        this.conn = ModuleSets[type] || Local;
-//    },
-//
-//    /**
-//     * Send request
-//     * @param {object} options
-//     *  @param {string} options.type Type of request
-//     */
-//    send: function(options) {
-//        if (options.type === 'remove') {
-//            this.conn.removeRequest(options);
-//        } else {
-//            this.conn.addRequest(options);
-//        }
-//    },
-//
-//    /**
-//     * Mixin with selected connector
-//     * @param {object} connector
-//     */
-//    mixin: function(connector) {
-//        ne.util.extend(this, connector);
-//    }
-//});
-
 var ModuleSets = {
     'ajax': Ajax,
     'jsonp': Jsonp,
     'local': Local
 };
 
-var connFactory = {
+/**
+ * This is act like Abstract class.
+ *
+ */
+var Connector = {
+
+    /**
+     * Send request for file add or remove.
+     * @param options
+     */
+    send: function(options) {
+        if (options.type === 'remove') {
+            this.removeRequest(options);
+        } else {
+            this.addRequest(options);
+        }
+    },
+
+    /**
+     * A interface removeRequest to implement
+     * @param {object} options A information for delete file
+     */
+    removeRequest: function(options) {
+        throw new Error('The interface removeRequest does not exist');
+    },
+
+    /**
+     * A interface addRequest to implement
+     * @param {object} options A information for add file
+     */
+    addRequest: function(options) {
+        throw new Error('The interface addRequest does not exist');
+    }
+
+};
+
+/**
+ * The factory module for connectors.
+ * Get each connector by each type.
+ */
+var Factory = {
     getConnector: function(uploader) {
 
-        var type = uploader.type.toLowerCase();
-        var conn = ne.util.extend({
+        var type = uploader.type.toLowerCase(),
+            conn = {
+                _uploader: uploader
+            };
 
-            _uplodaer: uploader,
-
-            send: function(options) {
-                if (options.type === 'remove') {
-                    this.removeRequest(options);
-                } else {
-                    this.addRequest(options);
-                }
-            }
-        }, ModuleSets[type] || Local);
+        ne.util.extend(conn, Connector, ModuleSets[type] || Local);
 
         return conn;
     }
 };
 
-module.exports = connFactory;
+module.exports = Factory;

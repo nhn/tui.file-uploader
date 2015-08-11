@@ -1,6 +1,3 @@
-var jsonp = require('../../src/js/connector/jsonp.js');
-var ajax = require('../../src/js/connector/ajax.js');
-var local = require('../../src/js/connector/local.js');
 var Connector = require('../../src/js/connector/connector.js');
 
 describe('Connector test', function() {
@@ -9,11 +6,11 @@ describe('Connector test', function() {
         connAjax;
 
     beforeEach(function() {
-        connJsonp = new Connector({
+        connJsonp = Connector.getConnector({
             type: 'jsonp'
         });
 
-        connAjax = new Connector({
+        connAjax = Connector.getConnector({
             type: 'ajax'
         });
     });
@@ -73,14 +70,4 @@ describe('Connector test', function() {
         expect(resultAdd.name).toBe(addName);
     });
 
-    it('_getModuleSet by type', function() {
-        var construct1 = connJsonp._getModuleSet('jsonp'),
-            construct2 = connJsonp._getModuleSet('ajax'),
-            construct3 = connJsonp._getModuleSet('local'),
-            construct4 = connJsonp._getModuleSet('xxx');
-        expect(construct1).toBe(jsonp);
-        expect(construct2).toBe(ajax);
-        expect(construct3).toBe(local);
-        expect(construct4).toBe(local);
-    });
 });
