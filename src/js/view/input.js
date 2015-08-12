@@ -78,19 +78,26 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
     },
 
     /**
-     * Add change event and custom Event
+     * Add event
      * @private
      */
     _addEvent: function() {
         var submit = this.$el.find('button:submit'),
             self = this;
+        this.$el.on('submit', function() {
+            self._uploader.submit();
+            return false;
+        });
+        this._addInputEvent();
+    },
+
+    /**
+     * Add input element change event by sending type
+     * @private
+     */
+    _addInputEvent: function() {
         if (this._isBatchTransfer) {
             this.$input.on('change', ne.util.bind(this.onSave, this));
-            this.$el.off();
-            this.$el.on('submit', function() {
-                self._uploader.submit();
-                return false;
-            });
         } else {
             this.$input.on('change', ne.util.bind(this.onChange, this));
         }
@@ -118,14 +125,10 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
 
     /**
      * Reset Input element to save whole input=file element.
-     * @param {object} data
      */
     _resetInputElement: function() {
-        var inputEl = this.$input[0];
         this.$input.off();
-
-        this._clone(inputEl);
-
+        this._clone(this.$input[0]);
         this.$input = $(this._getHtml(this._inputHTML));
 
         if (this.$button.length) {
@@ -133,7 +136,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
         } else {
             this.$el.append(this.$input);
         }
-        this._addEvent();
+        this._addInputEvent();
     },
 
     /**
@@ -204,7 +207,6 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
      * @param {HTMLElement} input A input element[type=file] for store pool
      */
     _clone: function(input) {
-        // @todo fix setAttribute way
         input.file_name = input.value;
         this._uploader.store(input);
     }
