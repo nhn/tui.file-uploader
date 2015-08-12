@@ -4,8 +4,8 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
-var statics = require('../statics.js');
-var utils = require('../utils.js');
+var statics = require('../statics');
+var utils = require('../utils');
 
 /**
  * Class of item that is member of file list.

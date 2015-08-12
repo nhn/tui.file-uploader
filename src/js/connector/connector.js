@@ -4,9 +4,9 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
-var Ajax = require('./ajax.js');
-var Jsonp = require('./jsonp.js');
-var Local = require('./local.js');
+var Ajax = require('./ajax');
+var Jsonp = require('./jsonp');
+var Local = require('./local');
 
 /**
  * The connector class could connect with server and return server response to callback.

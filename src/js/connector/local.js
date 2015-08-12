@@ -2,7 +2,7 @@
  * @fileoveview This Connector make connection between Uploader and html5 file api.
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
-var utils = require('../utils.js');
+var utils = require('../utils');
 
 /**
  * The modules will be mixed in connector by type.

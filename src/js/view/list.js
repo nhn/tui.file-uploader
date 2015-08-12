@@ -4,8 +4,8 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
-var utils = require('../utils.js');
-var Item = require('./item.js');
+var utils = require('../utils');
+var Item = require('./item');
 
 /**
  * List has items. It can add and remove item, and get total usage.

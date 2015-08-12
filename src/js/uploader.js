@@ -4,12 +4,12 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
-var statics = require('./statics.js');
-var utils = require('./utils.js');
-var conn = require('./connector/connector.js');
-var Input = require('./view/input.js');
-var List = require('./view/list.js');
-var Pool = require('./view/pool.js');
+var statics = require('./statics');
+var utils = require('./utils');
+var conn = require('./connector/connector');
+var Input = require('./view/input');
+var List = require('./view/list');
+var Pool = require('./view/pool');
 
 /**
  * FileUploader act like bridge between connector and view.
