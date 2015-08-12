@@ -27,10 +27,10 @@ module.exports.CONF = {
 module.exports.HTML = {
     form : ['<form enctype="multipart/form-data" id="formData" method="post">',
                 '<input type="hidden" name="MAX_FILE_SIZE" value="3000000" />',
-                '<input type="file" id="fileAttach" name="{{fileField}}" "{{multiple}}" />',
+                '<input type="file" id="fileAttach" {{webkitdirectory}} name="{{fileField}}" {{multiple}} />',
                 '<button class="batchSubmit" type="submit">SEND</button>',
             '</form>'].join(''),
-    input: ['<input type="file" id="fileAttach" name="{{fileField}}" "{{multiple}}}" />'].join(''),
+    input: ['<input type="file" id="fileAttach" {{webkitdirectory}} name="{{fileField}}" {{multiple}}} />'].join(''),
     item : ['<li class="filetypeDisplayClass">',
                 '<spna class="fileicon {{filetype}}">{{filetype}}</spna>',
                 '<span class="file_name">{{filename}}</span>',

@@ -54,6 +54,8 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
      *  @param {object} opitons.listInfo The element info to display file list information.
      *  @param {string} options.separator The separator for jsonp helper response.
      *  @param {string} [options.fileField=userFile] The field name of input file element.
+     *  @param {boolean} options.useFolder Whether select unit is folder of not. If this is ture, multiple will be ignored.
+     *  @param {boolean} options.isMultiple Whether enable multiple select or not.
      * @param {JqueryObject} $el Root Element of Uploader
      */
     init: function(options, $el) {

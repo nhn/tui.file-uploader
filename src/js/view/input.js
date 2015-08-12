@@ -25,6 +25,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
         this._inputHTML = (options.template && options.template.input) || statics.HTML.input;
         this.html = (options.template && options.template.form) || statics.HTML.form;
         this._isMultiple = !!(utils.isSupportFormData() && options.isMultiple);
+        this._useFolder = !!(utils.isSupportFormData() && options.useFolder);
 
         this._render();
         this._renderHiddenElements();
@@ -62,7 +63,8 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
     _getHtml: function(html) {
         var map = {
             fileField: this._uploader.fileField,
-            multiple: this._isMultiple ? 'multiple' : ''
+            multiple: this._isMultiple ? 'multiple' : '',
+            webkitdirectory: this._useFolder ? 'webkitdirectory' : ''
         };
         return utils.template(map, html);
     },
