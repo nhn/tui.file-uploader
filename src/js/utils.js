@@ -28,7 +28,6 @@ module.exports.isSupportFormData = function() {
  * Get item elemen HTML
  * @param {string} html HTML template
  * @returns {string}
- * @private
  */
 module.exports.template = function(map, html) {
     html = html.replace(/\{\{([^\}]+)\}\}/g, function(mstr, name) {
@@ -40,7 +39,6 @@ module.exports.template = function(map, html) {
 /**
  * Check whether support file api or not
  * @returns {boolean}
- * @private
  */
 module.exports.isSupportFileSystem = function() {
     return !!(window.File && window.FileReader && window.FileList && window.Blob);
