@@ -63,11 +63,11 @@ var Local = {/** @lends ne.component.Uploader.Local */
      * @private
      */
     _makeFormData : function() {
-        var uploader = this._uploader,
+        var field = this._uploader.fileField,
             form = new window.FormData();
 
         ne.util.forEach(this._result, function(item) {
-            form.append(uploader.fileField, item);
+            form.append(field, item);
         });
         return form;
     },
