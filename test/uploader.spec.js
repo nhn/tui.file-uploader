@@ -41,7 +41,7 @@ describe('Uploader test', function() {
     it('send by change', function() {
         var result;
         // mock connector
-        uploader._connector.send = function(data) {
+        uploader._connector.addRequest = function(data) {
             result = data;
         };
 
@@ -54,7 +54,7 @@ describe('Uploader test', function() {
         var result,
             name = 'remove.js';
         // mock connector
-        uploader._connector.send = function(data) {
+        uploader._connector.removeRequest = function(data) {
             result = data;
         };
 

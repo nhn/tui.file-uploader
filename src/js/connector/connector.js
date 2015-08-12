@@ -18,23 +18,9 @@ var ModuleSets = {
 };
 
 /**
- * This is act like Abstract class.
- *
+ * This is Interface to be implemented by connectors
  */
 var Connector = {
-
-    /**
-     * Send request for file add or remove.
-     * @param options
-     */
-    send: function(options) {
-        if (options.type === 'remove') {
-            this.removeRequest(options);
-        } else {
-            this.addRequest(options);
-        }
-    },
-
     /**
      * A interface removeRequest to implement
      * @param {object} options A information for delete file
@@ -59,14 +45,11 @@ var Connector = {
  */
 var Factory = {
     getConnector: function(uploader) {
-
         var type = uploader.type.toLowerCase(),
             conn = {
                 _uploader: uploader
             };
-
         ne.util.extend(conn, Connector, ModuleSets[type] || Local);
-
         return conn;
     }
 };

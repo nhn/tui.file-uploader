@@ -140,7 +140,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
     sendFile: function(data) {
         var callback = ne.util.bind(this.notify, this);
 
-        this._connector.send({
+        this._connector.addRequest({
             type: 'add',
             success: function(result) {
                 if (data && data.callback) {
@@ -158,7 +158,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
      */
     removeFile: function(data) {
         var callback = ne.util.bind(this.notify, this);
-        this._connector.send({
+        this._connector.removeRequest({
             type: 'remove',
             data: data,
             success: callback
@@ -187,7 +187,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
             files = {
                 name: element.value,
                 id: element.value
-            }
+            };
         }
         return files;
     },
