@@ -1,6 +1,11 @@
 /**
+ * @fileoverview This file contain utility methods for uploader.
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ */
+
+/**
  * Extract unit for file size
- * @param {number} size A usage of file
+ * @param {number} bytes A usage of file
  */
 module.exports.getFileSizeWithUnit = function(bytes) {
     var units = ['B', 'KB', 'MB', 'GB', 'TB'],

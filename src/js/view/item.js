@@ -1,7 +1,7 @@
 /**
  * @fileoverview ItemView make element to display added file information. It has attached file ID to request for remove.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author NHN Ent. FE Development Team <e0242@nhnent.com>
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
 var statics = require('../statics.js');

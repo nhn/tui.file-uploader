@@ -1,6 +1,6 @@
 /**
  * @fileoverview This is manager of input elements that act like file pool.
- * @author NHN Ent. FE Development Team <e0242@nhnent.com>
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
 /**
