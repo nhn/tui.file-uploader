@@ -8,14 +8,17 @@ describe('Input test', function() {
 
     beforeEach(function() {
         uploader = {
-            $el: $('<div id="uploader"></div>')
+            $el: $('<div id="uploader"></div>'),
+            store: function() {
+                // uploader store mock
+            }
         };
         input = new Input({
             sizeunit: 'kb',
             url: 'http://localhost:8080/uploader.php',
             formTarget: 'hiddenTarget',
             template: {
-                input: ['<form enctype="multipart/form-data" id="formData" method="post">',
+                form: ['<form enctype="multipart/form-data" id="formData" method="post">',
                     '<input type="hidden" name="MAX_FILE_SIZE" value="3000000" />',
                     '<input type="file" id="fileAttach" name="userfile[]" multiple="true" />',
                     '</form>'].join('')
@@ -36,7 +39,7 @@ describe('Input test', function() {
         expect(input).toBeDefined();
     });
 
-    it('onChange', function() {
+    it('onChange event fire from onChange event handler', function() {
         var data;
         input.on('change', function(param) {
             data = param.target;
@@ -46,7 +49,7 @@ describe('Input test', function() {
         expect(data).toBe(input);
     });
 
-    it('saveChange', function() {
+    it('saveChange event filre form onSave(onChange) event handler', function() {
         var data;
         input.on('save', function(param) {
             data = param.element;
@@ -54,6 +57,12 @@ describe('Input test', function() {
 
         input.onSave();
         expect(data).not.toBe(input.$el[0]);
+    });
+
+    it('_resetInputElement, after onChange event callback called.', function() {
+        var $input = input.$input;
+        input._resetInputElement();
+        expect(input.$input).not.toBe($input);
     });
 
 });
