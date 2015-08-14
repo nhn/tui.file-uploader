@@ -42,7 +42,7 @@ var Local = {/** @lends ne.component.Uploader.Local */
         }
 
         if (isSupportAjax) {
-					files = files || fileEl.fiels;
+            files = files || fileEl.fiels;
             ne.util.forEach(files, function(item) {
                 if (ne.util.isObject(item)) {
                     result.push(item);

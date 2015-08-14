@@ -19,7 +19,7 @@ var Ajax = {/** @lends ne.component.Uploader.Ajax */
      */
     addRequest: function(config, files) {
         var uploader = this._uploader,
-				$form = uploader.inputView.$el,
+            $form = uploader.inputView.$el,
             callback = ne.util.bind(this.successPadding, this, config.success);
     
 		if (files) {
