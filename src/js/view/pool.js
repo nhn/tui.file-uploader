@@ -12,9 +12,21 @@ var Pool = ne.util.defineClass(/** @lends ne.component.Uploader.Pool.prototype *
     /**
      * initialize
      */
-    init: function(submitter) {
-        this.submitter = submitter;
+    init: function(planet) {
+        /**
+         * Submitter for file element to server
+         * @type {HTMLElement}
+         */
+        this.planet = planet;
+        /**
+         * File data structure object(key=name : value=iuput elmeent);
+         * @type {object}
+         */
         this.files = {};
+        /**
+         * Acts pool to save input element
+         * @type {DocumentFragment}
+         */
         this.frag = document.createDocumentFragment();
     },
 
@@ -49,9 +61,9 @@ var Pool = ne.util.defineClass(/** @lends ne.component.Uploader.Pool.prototype *
      * Plant files on pool to form input
      */
     plant: function() {
-        var submitter = this.submitter;
+        var planet = this.planet;
         ne.util.forEach(this.files, function(data) {
-            submitter.appendChild(data);
+            planet.appendChild(data);
             delete this.files[data.file_name];
         }, this);
     }

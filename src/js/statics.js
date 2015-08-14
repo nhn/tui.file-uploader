@@ -17,6 +17,7 @@ module.exports.CONF = {
         DEFAULT: 'Unknown error.',
         NOT_SURPPORT: 'This is x-domain connection, you have to make helper page.'
     },
+		DRAG_DEFAULT_ENABLE_CLASS: 'enableClass',
     FILE_FILED_NAME: 'userfile[]'
 };
 
@@ -36,5 +37,6 @@ module.exports.HTML = {
                 '<span class="file_name">{{filename}}</span>',
                 '<span class="file_size">{{filesize}}</span>',
                 '<button type="button" class="{{deleteButtonClassName}}">Delete</button>',
-            '</li>'].join('')
+            '</li>'].join(''),
+	drag: ['<div class="dragzone"></div>'].join('')
 };

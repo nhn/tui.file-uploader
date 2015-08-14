@@ -14,11 +14,12 @@ var Local = {/** @lends ne.component.Uploader.Local */
     _result : null,
     /**
      * Add Request, save files to array.
-     * @param data
+     * @param {object} data The data of connection for server
+		 * @param {object} [files] The files to save
      */
-    addRequest: function(data) {
+    addRequest: function(data, files) {
         var isValidPool = utils.isSupportFormData(),
-            result = this._saveFile(isValidPool);
+            result = this._saveFile(isValidPool, files);
         data.success({
             items: result
         });
@@ -27,20 +28,22 @@ var Local = {/** @lends ne.component.Uploader.Local */
     /**
      * Save file to pool
      * @param {boolean} isSupportAjax Whether FormData is supported or not
+		 * @param {object} [files] The files to save
      * @private
      */
-    _saveFile: function(isSupportAjax) {
+    _saveFile: function(isSupportAjax, files) {
         var uploader = this._uploader,
             inputView = uploader.inputView,
             fileEl = inputView.$input[0],
-            result = [];
+						result = [];
 
         if (!this._result) {
             this._result = [];
         }
 
         if (isSupportAjax) {
-            ne.util.forEach(fileEl.files, function(item) {
+					files = files || fileEl.fiels;
+            ne.util.forEach(files, function(item) {
                 if (ne.util.isObject(item)) {
                     result.push(item);
                 }

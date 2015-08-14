@@ -10,6 +10,7 @@ var conn = require('./connector/connector');
 var Input = require('./view/input');
 var List = require('./view/list');
 var Pool = require('./view/pool');
+var DragAndDrop = require('./view/drag');
 
 /**
  * FileUploader act like bridge between connector and view.
@@ -63,11 +64,16 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
         this._setConnector();
 
         this.$el = $el;
+
+        if(this.useDrag && utils.isSupportFileSystem()) {
+            this.dragView = new DragAndDrop(options, this);
+        }
+
         this.inputView = new Input(options, this);
         this.listView = new List(options, this);
-        this.fileField = this.fileField || statics.CONF.FILE_FILED_NAME;
-        this._pool = new Pool(this.listView.$el[0]);
 
+				this.fileField = this.fileField || statics.CONF.FILE_FILED_NAME;
+        this._pool = new Pool(this.listView.$el[0]);
         this._addEvent();
     },
 
@@ -140,7 +146,8 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
      * @param {object} [data] The data include callback function for file clone
      */
     sendFile: function(data) {
-        var callback = ne.util.bind(this.notify, this);
+        var callback = ne.util.bind(this.notify, this),
+				files = data && data.files;
 
         this._connector.addRequest({
             type: 'add',
@@ -151,7 +158,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
                 callback(result);
             },
             error: this.errorCallback
-        });
+        }, files);
     },
 
     /**
@@ -215,6 +222,12 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
      * @private
      */
     _addEvent: function() {
+
+        if(this.useDrag && this.dragView) {
+
+            // @todo top 처리가 따로 필요함, sendFile 사용 안됨
+            this.dragView.on('drop', this.sendFile, this);
+        }
         if (this.isBatchTransfer) {
             this.inputView.on('save', this.sendFile, this);
             this.listView.on('remove', this.removeFile, this);

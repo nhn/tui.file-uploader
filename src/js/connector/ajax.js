@@ -17,11 +17,18 @@ var Ajax = {/** @lends ne.component.Uploader.Ajax */
      *  @param {function} config.success Callback function when request suceess.
      *  @param {function} config.error Callback function when request faild.
      */
-    addRequest: function(config) {
-        var $form = this._uploader.inputView.$el,
+    addRequest: function(config, files) {
+        var uploader = this._uploader,
+				$form = uploader.inputView.$el,
             callback = ne.util.bind(this.successPadding, this, config.success);
-        this.formData = new FormData($form[0]);
-        $.ajax({
+    
+		if (files) {
+			this.formData = new FormData();
+			this.formData.append(uploader.fileField, files);
+		} else {
+			this.formData = new FormData($form[0]);
+		}
+		$.ajax({
             url: this._uploader.url.send,
             type: this.type,
             data: this.formData,
