@@ -12,206 +12,245 @@ var utils = require('../utils');
  * @constructor ne.component.FileUploader.InputView
  */
 var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype **/{
-    /**
-     * Initialize input element.
-     * @param {object} [options]
-     */
-    init: function(options, uploader) {
+	/**
+	 * Initialize input element.
+	 * @param {object} [options]
+	 */
+	init: function(options, uploader) {
 
-        this._uploader = uploader;
-        this._target = options.formTarget;
-        this._url = options.url;
-        this._isBatchTransfer = options.isBatchTransfer;
-        this._inputHTML = (options.template && options.template.input) || statics.HTML.input;
-        this.html = (options.template && options.template.form) || statics.HTML.form;
-        this._isMultiple = !!(utils.isSupportFormData() && options.isMultiple);
-        this._useFolder = !!(utils.isSupportFormData() && options.useFolder);
+		this._uploader = uploader;
+		this._target = options.formTarget;
+		this._url = options.url;
+		this._isBatchTransfer = options.isBatchTransfer;
+		this._isMultiple = !!(utils.isSupportFormData() && options.isMultiple);
+		this._useFolder = !!(utils.isSupportFormData() && options.useFolder);
 
-        this._render();
-        this._renderHiddenElements();
+		this._html = this._setHTML();
 
-        if (options.helper) {
-            this._makeBridgeInfoElement(options.helper);
-        }
+		this._render();
+		this._renderHiddenElements();
 
-        this.$input = this.$el.find('input:file');
-        this.$button = $('button[type=submit]');
-        this._addEvent();
-    },
+		if (options.helper) {
+			this._makeBridgeInfoElement(options.helper);
+		}
 
-    /**
-     * Render input area
-     * @private
-     */
-    _render: function() {
-        this.$el = $(this._getHtml(this.html));
-        this.$el.attr({
-            action: this._url.send,
-            method: 'post',
-            enctype: "multipart/form-data",
-            target: this._target
-        });
-        this._uploader.$el.append(this.$el);
-    },
+		this._addEvent();
+	},
 
-    /**
-     * Get html string from template
-     * @param {string} html The html to be converted.
-     * @returns {string}
-     * @private
-     */
-    _getHtml: function(html) {
-        var map = {
-            fileField: this._uploader.fileField,
-            multiple: this._isMultiple ? 'multiple' : '',
-            webkitdirectory: this._useFolder ? 'webkitdirectory' : ''
-        };
-        return utils.template(map, html);
-    },
+	/**
+	 * Render input area
+	 * @private
+	 */
+	_render: function() {
+		this.$el = $(this._getHtml());
+		this.$el.attr({
+			action: this._url.send,
+			method: 'post',
+			enctype: "multipart/form-data",
+			target: this._target
+		});
+		this.$input = this._getInputElement();
+		this.$submit = this._getSubmitElement();
+		this.$input.appendTo(this.$el);
+		if (this.$submit) {
+			this.$submit.appendTo(this.$el);
+		}
+		this._uploader.$el.append(this.$el);
+	},
 
-    /**
-     * Call methods those make each hidden element.
-     * @private
-     */
-    _renderHiddenElements: function() {
-        this._makeTargetFrame();
-        this._makeResultTypeElement();
-        this._makeCallbackElement();
-    },
+	/**
+	 * Set all of input elements html strings.
+	 * @param {object} [template] The template is set form customer.
+	 * @return {object} The html string set for inputView
+	 */
+	_setHTML: function(template) {
+		if (!template) {
+			template = {};
+		}
 
-    /**
-     * Add event
-     * @private
-     */
-    _addEvent: function() {
-        var submit = this.$el.find('button:submit'),
-            self = this;
-        this.$el.on('submit', function() {
-            self._uploader.submit();
-            return false;
-        });
-        this._addInputEvent();
-    },
+		return {
+			input: template.input || statics.HTML.input,
+			submit: template.submit || statics.HTML.submit,
+			form: template.form || statics.HTML.form
+		}
+	},
+	/**
+	 * Get html string from template
+	 * @return {object}
+	 * @private
+	 */
+	_getHtml: function() {
+		return this._html.form;
+	},
 
-    /**
-     * Add input element change event by sending type
-     * @private
-     */
-    _addInputEvent: function() {
-        if (this._isBatchTransfer) {
-            this.$input.on('change', ne.util.bind(this.onSave, this));
-        } else {
-            this.$input.on('change', ne.util.bind(this.onChange, this));
-        }
-    },
+	/**
+	 * Makes and returns jquery element
+	 * @return {object} The jquery object wrapping original input element
+	 */
+	_getInputElement: function() {
+		var map = {
+			multiple: this._isMultiple ? 'multiple' : '',
+			fileField: this._uploader.fileField,
+			webkitdirectory: this._useFolder ? 'webkitdirectory' : ''
+		};
 
-    /**
-     * Event-Handle for input element change
-     */
-    onChange: function() {
-        this.fire('change', {
-            target: this
-        });
-    },
+		return $(utils.template(map, this._html.input));
+	},
 
-    /**
-     * Event-Handle for save input element
-     */
-    onSave: function() {
-        var saveCallback = !utils.isSupportFormData() ? ne.util.bind(this._resetInputElement, this) : null;
-        this.fire('save', {
-            element: this.$input[0],
-            callback: saveCallback
-        });
-    },
+	/**
+	 * Makes and returns jquery element
+	 * @return {object} The jquery object wrapping sumbit button element
+	 */
+	_getSubmitElement: function() {
+		if (this._isBatchTransfer) {
+			return $(this._html.submit);
+		} else {
+			return false;	
+		}
+	},
 
-    /**
-     * Reset Input element to save whole input=file element.
-     */
-    _resetInputElement: function() {
-        this.$input.off();
-        this._clone(this.$input[0]);
-        this.$input = $(this._getHtml(this._inputHTML));
+	/**
+	 * Call methods those make each hidden element.
+	 * @private
+	 */
+	_renderHiddenElements: function() {
+		this._makeTargetFrame();
+		this._makeResultTypeElement();
+		this._makeCallbackElement();
+	},
 
-        if (this.$button.length) {
-            this.$button.before(this.$input);
-        } else {
-            this.$el.append(this.$input);
-        }
-        this._addInputEvent();
-    },
+	/**
+	 * Add event
+	 * @private
+	 */
+	_addEvent: function() {
+		if (this._isBatchTarnsfer) {
+			this.$el.on('submit', ne.util.bind(function() {
+				this._uploader.submit();
+			}, this));
+		}
+		this._addInputEvent();
+	},
 
-    /**
-     * Make element to be target of submit form form element.
-     * @private
-     */
-    _makeTargetFrame: function() {
-        this._$target = $('<iframe name="' + this._target + '"></iframe>');
-        this._$target.css({
-            visibility: 'hidden',
-            position: 'absolute'
-        });
-        this._uploader.$el.append(this._$target);
-    },
+	/**
+	 * Add input element change event by sending type
+	 * @private
+	 */
+	_addInputEvent: function() {
+		if (this._isBatchTransfer) {
+			this.$input.on('change', ne.util.bind(this.onSave, this));
+		} else {
+			this.$input.on('change', ne.util.bind(this.onChange, this));
+		}
+	},
 
-    /**
-     * Make element to be callback function name
-     * @private
-     */
-    _makeCallbackElement: function() {
-        this._$callback = this._makeHiddenElement({
-            'name': statics.CONF.JSONPCALLBACK_NAME,
-            'value': this._uploader.callbackName
-        });
-        this.$el.append(this._$callback);
-    },
+	/**
+	 * Event-Handle for input element change
+	 */
+	onChange: function() {
+		this.fire('change', {
+			target: this
+		});
+	},
 
-    /**
-     * Make element to know which type request
-     * @private
-     */
-    _makeResultTypeElement: function() {
-        this._$resType = this._makeHiddenElement({
-            'name' : this._uploader.resultTypeElementName || statics.CONF.RESPONSE_TYPE,
-            'value': this._uploader.type
-        });
-        this.$el.append(this._$resType);
-    },
+	/**
+	 * Event-Handle for save input element
+	 */
+	onSave: function() {
+		console.log(this.$input);
+		var saveCallback = !utils.isSupportFormData() ? ne.util.bind(this._resetInputElement, this) : null;
+		this.fire('save', {
+			element: this.$input[0],
+			callback: saveCallback
+		});
+	},
 
-    /**
-     * Make element that has redirect page information used by Server side.
-     * @param {object} helper Redirection information for clear x-domain problem.
-     * @private
-     */
-    _makeBridgeInfoElement: function(helper) {
-        this._$helper = this._makeHiddenElement({
-            'name' : helper.name || statics.CONF.REDIRECT_URL,
-            'value': helper.url
-        });
-        this.$el.append(this._$helper);
-    },
+	/**
+	 * Reset Input element to save whole input=file element.
+	 */
+	_resetInputElement: function() {
+		this.$input.off();
+		this._clone(this.$input[0]);
+		this.$input = $(this._getHtml(this._inputHTML));
+		if (this.$button) {
+			this.$button.before(this.$input);
+		} else {
+			this.$el.append(this.$input);
+		}
+		this._addInputEvent();
+	},
 
-    /**
-     * Make hidden input element with options
-     * @param {object} options The opitons to be attribute of input
-     * @returns {*|jQuery}
-     * @private
-     */
-    _makeHiddenElement: function(options) {
-        ne.util.extend(options, {
-            type: 'hidden'
-        });
-        return $('<input />').attr(options);
-    },
+	/**
+	 * Makes element to be target of submit form element.
+	 * @private
+	 */
+	_makeTargetFrame: function() {
+		this._$target = $('<iframe name="' + this._target + '"></iframe>');
+		this._$target.css({
+			visibility: 'hidden',
+			position: 'absolute'
+		});
+		this._uploader.$el.append(this._$target);
+	},
 
-    /**
-     * Ask uploader to save input element to pool
-     * @param {HTMLElement} input A input element[type=file] for store pool
-     */
-    _clone: function(input) {
-        input.file_name = input.value;
-        this._uploader.store(input);
-    }
+	/**
+	 * Make element to be callback function name
+	 * @private
+	 */
+	_makeCallbackElement: function() {
+		this._$callback = this._makeHiddenElement({
+			'name': statics.CONF.JSONPCALLBACK_NAME,
+			'value': this._uploader.callbackName
+		});
+		this.$el.append(this._$callback);
+	},
+
+	/**
+	 * Makes element to know which type request
+	 * @private
+	 */
+	_makeResultTypeElement: function() {
+		this._$resType = this._makeHiddenElement({
+			'name' : this._uploader.resultTypeElementName || statics.CONF.RESPONSE_TYPE,
+			'value': this._uploader.type
+		});
+		this.$el.append(this._$resType);
+	},
+
+	/**
+	 * Make element that has redirect page information used by Server side.
+	 * @param {object} helper Redirection information for clear x-domain problem.
+	 * @private
+	 */
+	_makeBridgeInfoElement: function(helper) {
+		this._$helper = this._makeHiddenElement({
+			'name' : helper.name || statics.CONF.REDIRECT_URL,
+			'value': helper.url
+		});
+		this.$el.append(this._$helper);
+	},
+
+	/**
+	 * Make hidden input element with options
+	 * @param {object} options The opitons to be attribute of input
+	 * @returns {*|jQuery}
+	 * @private
+	 */
+	_makeHiddenElement: function(options) {
+		ne.util.extend(options, {
+			type: 'hidden'
+		});
+		return $('<input />').attr(options);
+	},
+
+	/**
+	 * Ask uploader to save input element to pool
+	 * @param {HTMLElement} input A input element[type=file] for store pool
+	 */
+	_clone: function(input) {
+		input.file_name = input.value;
+		this._uploader.store(input);
+	}
 
 });
 

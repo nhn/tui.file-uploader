@@ -107,6 +107,9 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
         ne.util.forEach(target, function(data) {
             this.items.push(this._createItem(data));
         }, this);
+		this._uploader.fire('fileAdded', {
+			target: target
+		});
     },
 
     /**
@@ -121,6 +124,9 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
             if (isMatch) {
                 item.destroy();
                 this._uploader.remove(name);
+					this._uploader.fire('fileRemoved', {
+						name: name
+					});
             }
             return !isMatch;
         }, this);

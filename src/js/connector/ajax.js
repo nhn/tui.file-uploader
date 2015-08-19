@@ -24,7 +24,9 @@ var Ajax = {/** @lends ne.component.Uploader.Ajax */
     
 		if (files) {
 			this.formData = new FormData();
-			this.formData.append(uploader.fileField, files);
+			ne.util.forEach(files, function(e) {
+				this.formData.append(uploader.fileField, e);
+			}, this);
 		} else {
 			this.formData = new FormData($form[0]);
 		}

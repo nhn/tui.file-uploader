@@ -19,7 +19,7 @@ var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
         callback = config.success;
         ne.util.defineNamespace(callbackName,  ne.util.bind(this.successPadding, this, callback));
 
-        this._uploader.inputView.$el.submit();
+		this._uploader.inputView.$el.submit();
     },
 
     /**
@@ -30,7 +30,7 @@ var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
     successPadding: function(callback, response) {
         var result = {};
 
-        if (this._uploader.isCrossDomain()) {
+		if (this._uploader.isCrossDomain()) {
             result.items = this._getSplitItems(response);
         } else {
             result.items = response.filelist;

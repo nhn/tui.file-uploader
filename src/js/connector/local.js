@@ -42,7 +42,7 @@ var Local = {/** @lends ne.component.Uploader.Local */
         }
 
         if (isSupportAjax) {
-            files = files || fileEl.fiels;
+            files = files || fileEl.files;
             ne.util.forEach(files, function(item) {
                 if (ne.util.isObject(item)) {
                     result.push(item);
@@ -55,25 +55,36 @@ var Local = {/** @lends ne.component.Uploader.Local */
             });
         }
 
-        this._result = this._result.concat(result);
-
+		this._result = this._result.concat(result);
         return result;
     },
 
     /**
-     * Make form data to send POST(FormDate supported case)
+     * Makes form data to send POST(FormDate supported case)
      * @returns {*}
      * @private
      */
-    _makeFormData : function() {
-        var field = this._uploader.fileField,
-            form = new window.FormData();
+    _makeFormData: function() {
+        var uploader = this._uploader,
+		field = uploader.fileField,
+		input = uploader.inputView,
+		form = new window.FormData(this._extractForm(input));
 
         ne.util.forEach(this._result, function(item) {
             form.append(field, item);
         });
         return form;
     },
+
+	/**
+	 * Extracts Form from inputView
+	 * @param {object} input The input view for extracting 
+	 */
+	_extractForm: function(input) {
+	var form = input.$el.clone();
+		// append to pool
+		return form[0];
+	},
 
     /**
      * Remove file form result array
@@ -96,7 +107,7 @@ var Local = {/** @lends ne.component.Uploader.Local */
      * @param callback
      */
     submit: function(callback) {
-        var form = this._makeFormData();
+        var form = this._makeFormData(inputView);
         $.ajax({
             url: this._uploader.url.send,
             type: 'POST',
