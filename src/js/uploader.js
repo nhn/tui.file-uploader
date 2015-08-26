@@ -73,7 +73,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 		this.listView = new List(options, this);
 
 		this.fileField = this.fileField || statics.CONF.FILE_FILED_NAME;
-		this._pool = new Pool(this.listView.$el[0]);
+		this._pool = new Pool(this.inputView.$el[0]);
 		this._addEvent();
 	},
 	
@@ -180,7 +180,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 	 */
 	submit: function() {
 		if (this._connector.submit) {
-			if (utils.isSupportDataForm()) {
+			if (utils.isSupportFormData()) {
 				this._connector.submit(ne.util.bind(function() {
 					this.fire('beforesubmit', this);
 				}, this));

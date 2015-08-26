@@ -25,7 +25,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
 		this._isMultiple = !!(utils.isSupportFormData() && options.isMultiple);
 		this._useFolder = !!(utils.isSupportFormData() && options.useFolder);
 
-		this._html = this._setHTML();
+		this._html = this._setHTML(options.template);
 
 		this._render();
 		this._renderHiddenElements();
@@ -47,7 +47,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
 			action: this._url.send,
 			method: 'post',
 			enctype: "multipart/form-data",
-			target: this._target
+			target: (!this._isBatchTransfer ? this._target : '')
 		});
 		this.$input = this._getInputElement();
 		this.$submit = this._getSubmitElement();
@@ -124,7 +124,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
 	 * @private
 	 */
 	_addEvent: function() {
-		if (this._isBatchTarnsfer) {
+		if (this._isBatchTransfer) {
 			this.$el.on('submit', ne.util.bind(function() {
 				this._uploader.submit();
 			}, this));
@@ -160,7 +160,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
 	 * Event-Handle for save input element
 	 */
 	onSave: function() {
-		if (!this.$el[0].value) {
+		if (!this.$input[0].value) {
             return;
         }
         var saveCallback = !utils.isSupportFormData() ? ne.util.bind(this._resetInputElement, this) : null;
@@ -176,9 +176,9 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
 	_resetInputElement: function() {
 		this.$input.off();
 		this._clone(this.$input[0]);
-		this.$input = $(this._getHtml(this._inputHTML));
-		if (this.$button) {
-			this.$button.before(this.$input);
+		this.$input = this._getInputElement();
+		if (this.$submit) {
+			this.$submit.before(this.$input);
 		} else {
 			this.$el.append(this.$input);
 		}
@@ -240,7 +240,7 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
 	 * @param {object} options The opitons to be attribute of input
 	 * @returns {*|jQuery}
 	 * @private
-	 */
+     */	
 	_makeHiddenElement: function(options) {
 		ne.util.extend(options, {
 			type: 'hidden'
