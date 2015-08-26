@@ -46,9 +46,7 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
      */
     updateTotalInfo: function(info) {
         this._updateTotalCount(info.count);
-        if (utils.isSupportFormData()) {
-            this._updateTotalUsage(info.size);
-        }
+        this._updateTotalUsage(info.size);
     },
 
     /**
@@ -75,8 +73,13 @@ var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype *
         if (!ne.util.isExisty(size)) {
             size = this._getSumAllItemUsage();
         }
-        size = utils.getFileSizeWithUnit(size);
-        this.$size.html(size);
+        if (ne.util.isNumber(size) && !isNaN(size)) {
+            size = utils.getFileSizeWithUnit(size);
+            this.$size.html(size);
+            this.$size.show();
+        } else {
+            this.$size.hide();
+        }
     },
 
     /**
