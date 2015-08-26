@@ -35,7 +35,8 @@ The component support to upload files to server.
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
-| <a href="http://nhnent.github.io/fe.component-file-uploader/1.0.0/">1.0.0</a> | Release | 2015.07 | NHN Entertainment FE dev team Jein Yi <jein.yi@nhnent.com> |
+| 1.0.1 | Drag and Drop, folder select, batch transfer | NHN Ent. FE dev team <dl_javascript@nhnent.com>
+| <a href="http://nhnent.github.io/fe.component-file-uploader/1.0.0/">1.0.0</a> | Release | 2015.07 | NHN Ent. FE dev team <dl_javascript@nhnent.com> |
 
 ## LICENSE
 [MIT LICENSE](LICENSE)
