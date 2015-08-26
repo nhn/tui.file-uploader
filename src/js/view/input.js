@@ -148,7 +148,10 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
 	 * Event-Handle for input element change
 	 */
 	onChange: function() {
-		this.fire('change', {
+		if (!this.$input[0].value) {
+            return; 
+        }
+        this.fire('change', {
 			target: this
 		});
 	},
@@ -157,8 +160,10 @@ var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype 
 	 * Event-Handle for save input element
 	 */
 	onSave: function() {
-		console.log(this.$input);
-		var saveCallback = !utils.isSupportFormData() ? ne.util.bind(this._resetInputElement, this) : null;
+		if (!this.$el[0].value) {
+            return;
+        }
+        var saveCallback = !utils.isSupportFormData() ? ne.util.bind(this._resetInputElement, this) : null;
 		this.fire('save', {
 			element: this.$input[0],
 			callback: saveCallback

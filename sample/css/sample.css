@@ -8,7 +8,7 @@ ul, ol { list-style:none; }
 #uploader .dragzone.enableClass { background-color: yellow; }
 #list {width:450px; margin:20px 0 0 30px; }
 #list .size, #list .count { float:left; width:150px; padding-bottom:30px;  }
-#list #files { clear:both; width: 100%; border: 1px solid #eee; min-height:150px; padding: 10px 0; }
+#list #files { clear:both; width: 100%; border: 1px solid #eee; min-height:150px; padding: 10px 0; overflow:auto; }
 #list #files li {float:left; padding: 4px 5px 4px 15px; }
 #list #files li .uploader_btn_delete {  width:15px; height:15px; background:url('../img/sp_cnt.png') no-repeat -167px 4px; font-size:0;text-indent:-9999em; vertical-align:middle; border:1px solid #eee; margin-left:10px;}
 #list #files .fileicon { width:16px; height:16px; display:inline-block; background:url('../img/icons.png') no-repeat -172px -1px; font-size:0; text-indent:-9999em;vertical-align:middle; margin-right:10px;  }
