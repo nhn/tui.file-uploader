@@ -33,7 +33,7 @@ var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
 		if (this._uploader.isCrossDomain()) {
             result.items = this._getSplitItems(response);
         } else {
-            result.items = response.filelist;
+            result.items = ne.util.toArray(response.filelist);
         }
 
         callback(result);
