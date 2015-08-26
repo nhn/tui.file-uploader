@@ -89,6 +89,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 				this.type = 'jsonp';
 			} else {
 				alert(statics.CONF.ERROR.NOT_SURPPORT);
+                this.type = 'local';    
 			}
 		} else {
 			if (this.useJsonp || !utils.isSupportFormData()) {
