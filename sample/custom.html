@@ -25,6 +25,7 @@
     <ul id="files">
     </ul>
 </div>
+<div id="status"></div>
 <script type="text/javascript">
     var uploader = new ne.component.Uploader({
         url: {
@@ -43,11 +44,17 @@
         sizeunit: "KB",
         separator: ';',
         fileField: 'userfile[]',
-        isMultiple: true,
-        useDrag: true
+        isMultiple: true
     }, $('#uploader'));
 
+		uploader.on('fileAdded', function(data) {
+			$('#status').html(data.target.length + 'files added');
+		});
+		uploader.on('fileRemoved', function(data) {
+			$('#status').html(data.name + 'file removed');
+		});
 </script>
+
 
 </body>
 </html>
