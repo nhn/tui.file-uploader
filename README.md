@@ -14,6 +14,8 @@ The component support to upload files to server.
 
 ## Sample (Internal Network only)
 * [Sample Page] (http://fe.nhnent.com/etc/sample/component-uploader/samedomain.html)
+* [Batch Transfer] (http://fe.nhnent.com/etc/sample/component-uploader/batch.html)
+* [Custom Event](http://fe.nhnent.com/etc/sample/component-uploader/custom.html)
 
 ## Dependency
 * ne-code-snippet: ~1.0.4
