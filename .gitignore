@@ -53,3 +53,6 @@ demo
 report
 dist
 *.vim
+*.swp
+server/files
+

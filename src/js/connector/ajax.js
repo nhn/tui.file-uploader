@@ -2,15 +2,13 @@
  * @fileoverview This Connector make connection between FileManager and file server api at modern browser.<br>
  *     This Connector use ajax.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
-
-ne.util.defineNamespace('ne.component.Uploader.Ajax');
 
 /**
  * The modules will be mixed in connector by type.
  */
-ne.component.Uploader.Ajax = {/** @lends ne.component.Uploader.Ajax */
+var Ajax = {/** @lends ne.component.Uploader.Ajax */
     type: 'POST',
     /**
      * Request ajax by config to add files.
@@ -19,11 +17,20 @@ ne.component.Uploader.Ajax = {/** @lends ne.component.Uploader.Ajax */
      *  @param {function} config.success Callback function when request suceess.
      *  @param {function} config.error Callback function when request faild.
      */
-    addRequest: function(config) {
-        var $form = this._uploader.inputView.$el,
+    addRequest: function(config, files) {
+        var uploader = this._uploader,
+            $form = uploader.inputView.$el,
             callback = ne.util.bind(this.successPadding, this, config.success);
-        this.formData = new FormData($form[0]);
-        $.ajax({
+    
+		if (files) {
+			this.formData = new FormData();
+			ne.util.forEach(files, function(e) {
+				this.formData.append(uploader.fileField, e);
+			}, this);
+		} else {
+			this.formData = new FormData($form[0]);
+		}
+		$.ajax({
             url: this._uploader.url.send,
             type: this.type,
             data: this.formData,
@@ -76,3 +83,5 @@ ne.component.Uploader.Ajax = {/** @lends ne.component.Uploader.Ajax */
         callback(result);
     }
 };
+
+module.exports = Ajax;

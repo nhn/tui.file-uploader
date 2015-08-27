@@ -2,15 +2,13 @@
  * @fileoverview This Connector make connection between FileManager and file server api at old browser.<br>
  *     This Connector use hidden iframe.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
-
-ne.util.defineNamespace('ne.component.Uploader.Jsonp');
 
 /**
  * The modules will be mixed in connector by type.
  */
-ne.component.Uploader.Jsonp = {/** @lends ne.component.Uploader.Jsonp */
+var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
     /**
      * Request by form submit.
      * @param {object} config Configuration for submit form.
@@ -21,7 +19,7 @@ ne.component.Uploader.Jsonp = {/** @lends ne.component.Uploader.Jsonp */
         callback = config.success;
         ne.util.defineNamespace(callbackName,  ne.util.bind(this.successPadding, this, callback));
 
-        this._uploader.inputView.$el.submit();
+		this._uploader.inputView.$el.submit();
     },
 
     /**
@@ -32,10 +30,10 @@ ne.component.Uploader.Jsonp = {/** @lends ne.component.Uploader.Jsonp */
     successPadding: function(callback, response) {
         var result = {};
 
-        if (this._uploader.isCrossDomain()) {
+		if (this._uploader.isCrossDomain()) {
             result.items = this._getSplitItems(response);
         } else {
-            result.items = response.filelist;
+            result.items = ne.util.toArray(response.filelist);
         }
 
         callback(result);
@@ -51,6 +49,7 @@ ne.component.Uploader.Jsonp = {/** @lends ne.component.Uploader.Jsonp */
             status = data.status.split(sep),
             names = data.names.split(sep),
             sizes = data.sizes.split(sep),
+            ids = ne.util.isString(data.ids) ? data.ids.split(sep) : names,
             items = [];
 
         ne.util.forEach(status, function(item, index) {
@@ -58,7 +57,8 @@ ne.component.Uploader.Jsonp = {/** @lends ne.component.Uploader.Jsonp */
                 var nItem = {
                     name: names[index],
                     status: status[index],
-                    size: sizes[index]
+                    size: sizes[index],
+                    id: ids[index]
                 };
                 items.push(nItem);
             }
@@ -101,3 +101,5 @@ ne.component.Uploader.Jsonp = {/** @lends ne.component.Uploader.Jsonp */
         callback(result);
     }
 };
+
+module.exports = Jsonp;

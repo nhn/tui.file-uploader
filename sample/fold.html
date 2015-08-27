@@ -5,7 +5,15 @@
     <title></title>
     <script type="text/javascript" src="../lib/jquery/jquery.js"></script>
     <script type="text/javascript" src="../lib/ne-code-snippet/code-snippet.js"></script>
-    <script type="text/javascript" src="../file-uploader.js"></script>
+    <script type="text/javascript" src="js/file-uploader.js"></script>
+    <!--<script type="text/javascript" src="../src/js/statics.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/uploader.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/connector/connector.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/connector/ajax.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/connector/jsonp.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/view/input.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/view/list.js"></script>-->
+    <!--<script type="text/javascript" src="../src/js/view/item.js"></script>-->
     <link href="css/sample.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -20,13 +28,10 @@
 <script type="text/javascript">
     var uploader = new ne.component.Uploader({
         url: {
-            send: "http://10.77.45.101:8008/server/uploader.php",
-            remove: "http://121.169.207.93:8080/remove.php"
+            send: "http://127.0.0.1:8008/server/uploader.php",
+            remove: "http://127.0.0.1:8008/server/remove.php"
         },
-        helper: {
-            url: 'http://localhost:8008/sample/response.html',
-            name: 'REDIRECT_URL'
-        },
+        isBatchTransfer: false,
         resultTypeElementName: 'RESPONSE_TYPE',
         formTarget: 'hiddenFrame',
         callbackName: 'responseCallback',
@@ -36,7 +41,9 @@
             size: $('#size_count')
         },
         sizeunit: "KB",
-        separator: ';'
+        separator: ';',
+        fileField: 'userfile[]',
+        useFolder: true
     }, $('#uploader'));
 
 </script>

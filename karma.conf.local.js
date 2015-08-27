@@ -1,12 +1,21 @@
+var istanbul = require('browserify-istanbul');
+var hbsfy = require('hbsfy');
+
 module.exports = function(config) {
     config.set({
         basePath: '',
 
-        frameworks: ['jasmine'],
+
+        frameworks: [
+            'browserify',
+            'jasmine'
+        ],
 
         files: [
-            'bower_components/json2/json2.js',
-            'bower_components/jquery/jquery.js',
+            'lib/json2/json2.js',
+            'lib/jquery/jquery.js',
+            'lib/ne-code-snippet/code-snippet.js',
+            'src/**/uploader.js',
             'src/**/*.js',
             'test/**/*.spec.js'
         ],
@@ -15,7 +24,9 @@ module.exports = function(config) {
         ],
 
         preprocessors: {
-            'src/**/*.js': ['coverage']
+            'index.js': ['browserify'],
+            'src/**/*.js': ['browserify'],
+            'test/**/*.js': ['browserify']
         },
 
         reporters: [
@@ -24,13 +35,23 @@ module.exports = function(config) {
             'junit'
         ],
 
+        browserify: {
+            debug: true,
+            bundleDelay: 1000,
+            transform:[hbsfy, istanbul({
+                ignore: [
+                    'index.js'
+                ]
+            })]
+        },
+
         coverageReporter: {
             type: 'html',
             dir: 'report/'
         },
 
         junitReporter: {
-            outputFile: 'report/junit-result.xml',
+            outputDir: 'report/',
             suite: ''
         },
 

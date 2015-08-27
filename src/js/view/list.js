@@ -1,17 +1,18 @@
 /**
  * @fileoverview FileListView manage and display files state(like size, count) and list.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author  NHN entertainment FE dev team Jein Yi <jein.yi@nhnent.com>
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
-ne.util.defineNamespace('ne.component.Uploader.View.List');
+var utils = require('../utils');
+var Item = require('./item');
 
 /**
  * List has items. It can add and remove item, and get total usage.
  * @constructor
  */
-ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Uploader.View.List.prototype */{
-    init : function(options, uploader, $el) {
+var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype */{
+    init : function(options, uploader) {
         var listInfo = options.listInfo;
         this.items = [];
         this.$el = listInfo.list;
@@ -30,16 +31,9 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
      */
     update: function(info) {
         if (info.action === 'remove') {
-            this.items = ne.util.filter(this.items, function(item) {
-                if (decodeURIComponent(info.name) === decodeURIComponent(item.name)) {
-                    item.destroy();
-                    return false;
-                } else {
-                    return true;
-                }
-            });
+            this._removeFileItem(info.name);
         } else {
-            this._addFiles(info.items);
+            this._addFileItems(info.items);
         }
     },
 
@@ -79,8 +73,13 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
         if (!ne.util.isExisty(size)) {
             size = this._getSumAllItemUsage();
         }
-
-        this.$size.html(size);
+        if (ne.util.isNumber(size) && !isNaN(size)) {
+            size = utils.getFileSizeWithUnit(size);
+            this.$size.html(size);
+            this.$size.show();
+        } else {
+            this.$size.hide();
+        }
     },
 
     /**
@@ -93,10 +92,10 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
             totalUsage = 0;
 
         ne.util.forEach(items, function(item) {
-            totalUsage += parseInt(item.size, 10);
+            totalUsage += parseFloat(item.size);
         });
 
-        return totalUsage + this.sizeunit;
+        return totalUsage;
     },
 
     /**
@@ -104,12 +103,35 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
      * @param {object} target Target item infomations.
      * @private
      */
-    _addFiles: function(target) {
+    _addFileItems: function(target) {
         if (!ne.util.isArray(target)) {
             target = [target];
         }
         ne.util.forEach(target, function(data) {
             this.items.push(this._createItem(data));
+        }, this);
+		this._uploader.fire('fileAdded', {
+			target: target
+		});
+    },
+
+    /**
+     * Remove file item
+     * @param {string} name The file name to remove
+     * @private
+     */
+    _removeFileItem: function(name) {
+        name = decodeURIComponent(name);
+        this.items = ne.util.filter(this.items, function(item) {
+            var isMatch = name === decodeURIComponent(item.name);
+            if (isMatch) {
+                item.destroy();
+                this._uploader.remove(name);
+					this._uploader.fire('fileRemoved', {
+						name: name
+					});
+            }
+            return !isMatch;
         }, this);
     },
 
@@ -120,7 +142,7 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
      * @private
      */
     _createItem: function(data) {
-        var item = new ne.component.Uploader.View.Item({
+        var item = new Item({
             root: this,
             name: data.name,
             size: data.size,
@@ -128,8 +150,7 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
             url: this.url,
             hiddenFrame: this.formTarget,
             hiddenFieldName: this.hiddenFieldName,
-            template: this.template && this.template.item,
-            unit: this.sizeunit
+            template: this.template && this.template.item
         });
         item.on('remove', this._removeFile, this);
         return item;
@@ -145,4 +166,6 @@ ne.component.Uploader.View.List = ne.util.defineClass(/** @lends ne.component.Up
     }
 });
 
-ne.util.CustomEvents.mixin(ne.component.Uploader.View.List);
+ne.util.CustomEvents.mixin(List);
+
+module.exports = List;
