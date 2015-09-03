@@ -9,9 +9,9 @@ var Item = require('./item');
 
 /**
  * List has items. It can add and remove item, and get total usage.
- * @constructor
+ * @class View.List
  */
-var List = ne.util.defineClass(/** @lends ne.component.Uploader.List.prototype */{
+var List = ne.util.defineClass(/** @lends View.List.prototype */{
     init : function(options, uploader) {
         var listInfo = options.listInfo;
         this.items = [];

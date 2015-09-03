@@ -9,9 +9,9 @@ var utils = require('../utils');
 
 /**
  * This view control input element typed file.
- * @constructor ne.component.FileUploader.InputView
+ * @constructor View.InputView
  */
-var Input = ne.util.defineClass(/**@lends ne.component.Uploader.Input.prototype **/{
+var Input = ne.util.defineClass(/**@lends View.Input.prototype **/{
 	/**
 	 * Initialize input element.
 	 * @param {object} [options]

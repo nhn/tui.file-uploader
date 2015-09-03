@@ -6,9 +6,9 @@
 /**
  * The pool for save files.
  * It's only for input[file] element save at browser that does not support file api.
- * @type {*}
+ * @class View.Pool
  */
-var Pool = ne.util.defineClass(/** @lends ne.component.Uploader.Pool.prototype */{
+var Pool = ne.util.defineClass(/** @lends View.Pool.prototype */{
     /**
      * initialize
      */

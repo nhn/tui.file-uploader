@@ -8,9 +8,6 @@ var Ajax = require('./ajax');
 var Jsonp = require('./jsonp');
 var Local = require('./local');
 
-/**
- * The connector class could connect with server and return server response to callback.
- */
 var ModuleSets = {
     'ajax': Ajax,
     'jsonp': Jsonp,
@@ -19,11 +16,13 @@ var ModuleSets = {
 
 /**
  * This is Interface to be implemented by connectors
+ * @namespace Connector
  */
 var Connector = {
     /**
      * A interface removeRequest to implement
      * @param {object} options A information for delete file
+     * @memberof Connector
      */
     removeRequest: function(options) {
         throw new Error('The interface removeRequest does not exist');
@@ -32,6 +31,7 @@ var Connector = {
     /**
      * A interface addRequest to implement
      * @param {object} options A information for add file
+     * @memberof Connector
      */
     addRequest: function(options) {
         throw new Error('The interface addRequest does not exist');
@@ -42,12 +42,14 @@ var Connector = {
 /**
  * The factory module for connectors.
  * Get each connector by each type.
+ * @namespace Factory
  */
 var Factory = {
     /**
      * Choose connector
      * @param uploader
      * @returns {{_uploader: *}}
+     * @memberof Factory
      */
     getConnector: function(uploader) {
         var type = uploader.type.toLowerCase(),

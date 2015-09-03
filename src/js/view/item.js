@@ -9,9 +9,9 @@ var utils = require('../utils');
 
 /**
  * Class of item that is member of file list.
- * @constructor
+ * @class View.Item
  */
-var Item = ne.util.defineClass(/** @lends ne.component.Uploader.Item.prototype **/ {
+var Item = ne.util.defineClass(/** @lends View.Item.prototype **/ {
     /**
      * Initialize item
      * @param {object} options
@@ -52,6 +52,7 @@ var Item = ne.util.defineClass(/** @lends ne.component.Uploader.Item.prototype *
     /**
      * Set file information.
      * @param {object} options Same with init options parameter.
+     * @private
      */
     _setItemInfo: function(options) {
         this.name = options.name;

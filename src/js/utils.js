@@ -3,11 +3,17 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
+
+/**
+ * @namespace utils
+ */
+
 /**
  * Extract unit for file size
  * @param {number} bytes A usage of file
+ * @memberof utils
  */
-module.exports.getFileSizeWithUnit = function(bytes) {
+var getFileSizeWithUnit = function(bytes) {
     var units = ['B', 'KB', 'MB', 'GB', 'TB'],
         bytes = parseInt(bytes, 10),
         exp = Math.log(bytes) / Math.log(1024) | 0,
@@ -18,8 +24,9 @@ module.exports.getFileSizeWithUnit = function(bytes) {
 
 /**
  * Whether the browser support FormData or not
+ * @memberof utils
  */
-module.exports.isSupportFormData = function() {
+var isSupportFormData = function() {
     var FormData = (window.FormData || null);
     return !!FormData;
 };
@@ -28,8 +35,9 @@ module.exports.isSupportFormData = function() {
  * Get item elemen HTML
  * @param {string} html HTML template
  * @returns {string}
+ * @memberof utils
  */
-module.exports.template = function(map, html) {
+var template = function(map, html) {
     html = html.replace(/\{\{([^\}]+)\}\}/g, function(mstr, name) {
         return map[name];
     });
@@ -39,7 +47,15 @@ module.exports.template = function(map, html) {
 /**
  * Check whether support file api or not
  * @returns {boolean}
+ * @memberof utils
  */
-module.exports.isSupportFileSystem = function() {
+var isSupportFileSystem = function() {
     return !!(window.File && window.FileReader && window.FileList && window.Blob);
 };
+
+module.exports = {
+    getFileSizeWithUnit: getFileSizeWithUnit,
+    isSupportFileSystem: isSupportFileSystem,
+    isSupportFormData: isSupportFormData,
+    template: template
+}

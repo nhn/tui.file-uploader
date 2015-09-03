@@ -6,8 +6,9 @@ var utils = require('../utils');
 
 /**
  * The modules will be mixed in connector by type.
+ * @namespace Connector.Local
  */
-var Local = {/** @lends ne.component.Uploader.Local */
+var Local = {/** @lends Connector.Local.prototype */
     /**
      * A result array to save file to send.
      */
@@ -16,6 +17,7 @@ var Local = {/** @lends ne.component.Uploader.Local */
      * Add Request, save files to array.
      * @param {object} data The data of connection for server
 		 * @param {object} [files] The files to save
+     * @memberof Connector.Local
      */
     addRequest: function(data, files) {
         var isValidPool = utils.isSupportFormData(),
@@ -30,6 +32,7 @@ var Local = {/** @lends ne.component.Uploader.Local */
      * @param {boolean} isSupportAjax Whether FormData is supported or not
 		 * @param {object} [files] The files to save
      * @private
+     * @memberof Connector.Local
      */
     _saveFile: function(isSupportAjax, files) {
         var uploader = this._uploader,
@@ -63,6 +66,7 @@ var Local = {/** @lends ne.component.Uploader.Local */
      * Makes form data to send POST(FormDate supported case)
      * @returns {*}
      * @private
+     * @memberof Connector.Local
      */
     _makeFormData: function() {
         var uploader = this._uploader,
@@ -79,7 +83,9 @@ var Local = {/** @lends ne.component.Uploader.Local */
 	/**
 	 * Extracts Form from inputView
 	 * @param {object} input The input view for extracting 
-	 */
+     * @memberof Connector.Local
+     * @private
+     */
 	_extractForm: function(input) {
 	var form = input.$el.clone();
 		// append to pool
@@ -89,6 +95,7 @@ var Local = {/** @lends ne.component.Uploader.Local */
     /**
      * Remove file form result array
      * @param {object} info The information set to remove file
+     * @memberof Connector.Local
      */
     removeRequest: function(info) {
         var data = info.data;
@@ -105,6 +112,7 @@ var Local = {/** @lends ne.component.Uploader.Local */
     /**
      * Send files in a batch.
      * @param callback
+     * @memberof Connector.Local
      */
     submit: function(callback) {
         var form = this._makeFormData(inputView);

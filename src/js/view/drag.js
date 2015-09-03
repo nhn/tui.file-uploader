@@ -8,9 +8,9 @@ var utils = require('../utils');
 
 /**
  * Makes drag and drop area, the dropped file is added via event drop event.
- * @class DragAndDrop
+ * @class View.DragAndDrop
  */
-var DragAndDrop = ne.util.defineClass({
+var DragAndDrop = ne.util.defineClass(/** @lends View.DragAndDrop.prototype */{
 	/**
 	 * initialize DragAndDrop
 	 */
@@ -25,6 +25,7 @@ var DragAndDrop = ne.util.defineClass({
 	 * Renders drag and drop area
 	 * @param {string} html The html string to make darg zone
 	 * @param {object} uploader The core instance of this component
+     * @private
 	 */
 	_render: function(html, uploader) {
 		this.$el = $(html);
@@ -33,6 +34,7 @@ var DragAndDrop = ne.util.defineClass({
 
 	/**
 	 * Adds drag and drop event
+     * @private
 	 */
 	_addEvent: function() {
 		this.$el.on('dragenter', ne.util.bind(this.onDragEnter, this));

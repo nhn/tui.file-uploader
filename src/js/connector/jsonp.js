@@ -7,12 +7,14 @@
 
 /**
  * The modules will be mixed in connector by type.
+ * @namespace Connector.Jsonp
  */
-var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
+var Jsonp = {/** @lends Connector.Jsonp.prototype */
     /**
      * Request by form submit.
      * @param {object} config Configuration for submit form.
      *  @param {function} config.success Callback when post submit complate.
+     * @memberof Connector.Jsonp
      */
     addRequest: function(config) {
         var callbackName = this._uploader.callbackName,
@@ -26,6 +28,7 @@ var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
      * Preprocessing response before callback run.
      * @param {function} callback Request Callback function
      * @param {object} response Response from server
+     * @memberof Connector.Jsonp
      */
     successPadding: function(callback, response) {
         var result = {};
@@ -43,6 +46,7 @@ var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
      * Make query data to array
      * @param {object} data The Data extracted from querystring separated by '&'
      * @private
+     * @memberof Connector.Jsonp
      */
     _getSplitItems: function(data) {
         var sep = this._uploader.separator,
@@ -69,6 +73,7 @@ var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
     /**
      * Request ajax by config to remove file.
      * @param {object} config
+     * @memberof Connector.Jsonp
      */
     removeRequest: function(config) {
         var callbackName = this._uploader.callbackName,
@@ -92,6 +97,7 @@ var Jsonp = {/** @lends ne.component.Uploader.Jsonp */
      * Preprocessing response before callback run.
      * @param {function} callback Request Callback function
      * @param {object} response Response from server
+     * @memberof Connector.Jsonp
      */
     removePadding: function(callback, response) {
         var result = {};

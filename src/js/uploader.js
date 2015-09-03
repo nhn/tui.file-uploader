@@ -114,7 +114,8 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 	/**
 	 * Set field data by option values.
 	 * @param options
-	 */
+	 * @private
+     */
 	_setData: function(options) {
 		ne.util.extend(this, options);
 	},

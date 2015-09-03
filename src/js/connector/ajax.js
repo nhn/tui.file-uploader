@@ -7,8 +7,9 @@
 
 /**
  * The modules will be mixed in connector by type.
+ * @namespace Connector.Ajax
  */
-var Ajax = {/** @lends ne.component.Uploader.Ajax */
+var Ajax = {/** @lends Connector.Ajax */
     type: 'POST',
     /**
      * Request ajax by config to add files.
@@ -16,6 +17,7 @@ var Ajax = {/** @lends ne.component.Uploader.Ajax */
      *  @param {string} config.url Request url(upload url or remove url)
      *  @param {function} config.success Callback function when request suceess.
      *  @param {function} config.error Callback function when request faild.
+     *  @memberof Connector.Ajax
      */
     addRequest: function(config, files) {
         var uploader = this._uploader,
@@ -45,6 +47,7 @@ var Ajax = {/** @lends ne.component.Uploader.Ajax */
      * Preprocessing callback before callback run.
      * @param {function} callback Request Callback function
      * @param {object} response Response from server
+     * @memberof Connector.Ajax
      */
     successPadding: function(callback, response) {
         var json = JSON.parse(response),
@@ -57,6 +60,7 @@ var Ajax = {/** @lends ne.component.Uploader.Ajax */
     /**
      * Request ajax by config to remove file.
      * @param {object} config
+     * @memberof Connector.Ajax
      */
     removeRequest: function(config) {
         var callback = ne.util.bind(this.removePadding, this, config.success);
@@ -72,6 +76,7 @@ var Ajax = {/** @lends ne.component.Uploader.Ajax */
      * Preprocessing response before callback run.
      * @param {function} callback Request Callback function
      * @param {object} response Response from server
+     * @memberof Connector.Ajax
      */
     removePadding: function(callback, response) {
         var json = JSON.parse(response),
