@@ -11,7 +11,7 @@ var Item = require('./item');
  * List has items. It can add and remove item, and get total usage.
  * @class View.List
  */
-var List = ne.util.defineClass(/** @lends View.List.prototype */{
+var List = tui.util.defineClass(/** @lends View.List.prototype */{
     init : function(options, uploader) {
         var listInfo = options.listInfo;
         this.items = [];
@@ -20,7 +20,7 @@ var List = ne.util.defineClass(/** @lends View.List.prototype */{
         this.$size = listInfo.size;
         this._uploader = uploader;
 
-        ne.util.extend(this, options);
+        tui.util.extend(this, options);
     },
 
     /**
@@ -56,7 +56,7 @@ var List = ne.util.defineClass(/** @lends View.List.prototype */{
      */
     _updateTotalCount: function(count) {
 
-        if (!ne.util.isExisty(count)) {
+        if (!tui.util.isExisty(count)) {
             count = this.items.length;
         }
 
@@ -70,10 +70,10 @@ var List = ne.util.defineClass(/** @lends View.List.prototype */{
      */
     _updateTotalUsage: function(size) {
 
-        if (!ne.util.isExisty(size)) {
+        if (!tui.util.isExisty(size)) {
             size = this._getSumAllItemUsage();
         }
-        if (ne.util.isNumber(size) && !isNaN(size)) {
+        if (tui.util.isNumber(size) && !isNaN(size)) {
             size = utils.getFileSizeWithUnit(size);
             this.$size.html(size);
             this.$size.show();
@@ -91,7 +91,7 @@ var List = ne.util.defineClass(/** @lends View.List.prototype */{
         var items = this.items,
             totalUsage = 0;
 
-        ne.util.forEach(items, function(item) {
+        tui.util.forEach(items, function(item) {
             totalUsage += parseFloat(item.size);
         });
 
@@ -104,10 +104,10 @@ var List = ne.util.defineClass(/** @lends View.List.prototype */{
      * @private
      */
     _addFileItems: function(target) {
-        if (!ne.util.isArray(target)) {
+        if (!tui.util.isArray(target)) {
             target = [target];
         }
-        ne.util.forEach(target, function(data) {
+        tui.util.forEach(target, function(data) {
             this.items.push(this._createItem(data));
         }, this);
 		this._uploader.fire('fileAdded', {
@@ -122,7 +122,7 @@ var List = ne.util.defineClass(/** @lends View.List.prototype */{
      */
     _removeFileItem: function(name) {
         name = decodeURIComponent(name);
-        this.items = ne.util.filter(this.items, function(item) {
+        this.items = tui.util.filter(this.items, function(item) {
             var isMatch = name === decodeURIComponent(item.name);
             if (isMatch) {
                 item.destroy();
@@ -166,6 +166,6 @@ var List = ne.util.defineClass(/** @lends View.List.prototype */{
     }
 });
 
-ne.util.CustomEvents.mixin(List);
+tui.util.CustomEvents.mixin(List);
 
 module.exports = List;

@@ -19,7 +19,7 @@ var Jsonp = {/** @lends Connector.Jsonp.prototype */
     addRequest: function(config) {
         var callbackName = this._uploader.callbackName,
         callback = config.success;
-        ne.util.defineNamespace(callbackName,  ne.util.bind(this.successPadding, this, callback));
+        tui.util.defineNamespace(callbackName,  tui.util.bind(this.successPadding, this, callback));
 
 		this._uploader.inputView.$el.submit();
     },
@@ -36,7 +36,7 @@ var Jsonp = {/** @lends Connector.Jsonp.prototype */
 		if (this._uploader.isCrossDomain()) {
             result.items = this._getSplitItems(response);
         } else {
-            result.items = ne.util.toArray(response.filelist);
+            result.items = tui.util.toArray(response.filelist);
         }
 
         callback(result);
@@ -53,10 +53,10 @@ var Jsonp = {/** @lends Connector.Jsonp.prototype */
             status = data.status.split(sep),
             names = data.names.split(sep),
             sizes = data.sizes.split(sep),
-            ids = ne.util.isString(data.ids) ? data.ids.split(sep) : names,
+            ids = tui.util.isString(data.ids) ? data.ids.split(sep) : names,
             items = [];
 
-        ne.util.forEach(status, function(item, index) {
+        tui.util.forEach(status, function(item, index) {
             if (item === 'success') {
                 var nItem = {
                     name: names[index],
@@ -82,13 +82,13 @@ var Jsonp = {/** @lends Connector.Jsonp.prototype */
             },
             callback = config.success;
 
-        ne.util.defineNamespace(callbackName, ne.util.bind(this.removePadding, this, callback), true);
+        tui.util.defineNamespace(callbackName, tui.util.bind(this.removePadding, this, callback), true);
 
         $.ajax({
             url: this._uploader.url.remove,
             dataType: 'jsonp',
             jsonp: callbackName,
-            data: ne.util.extend(data, config.data)
+            data: tui.util.extend(data, config.data)
         });
 
     },

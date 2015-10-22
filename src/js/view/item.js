@@ -11,7 +11,7 @@ var utils = require('../utils');
  * Class of item that is member of file list.
  * @class View.Item
  */
-var Item = ne.util.defineClass(/** @lends View.Item.prototype **/ {
+var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
     /**
      * Initialize item
      * @param {object} options
@@ -138,7 +138,7 @@ var Item = ne.util.defineClass(/** @lends View.Item.prototype **/ {
     _addEvent: function() {
         var query = '.' + this._btnClass,
             $delBtn = this._$el.find(query);
-        $delBtn.on('click', ne.util.bind(this._onClickEvent, this));
+        $delBtn.on('click', tui.util.bind(this._onClickEvent, this));
     },
 
     /**
@@ -165,6 +165,6 @@ var Item = ne.util.defineClass(/** @lends View.Item.prototype **/ {
     }
 });
 
-ne.util.CustomEvents.mixin(Item);
+tui.util.CustomEvents.mixin(Item);
 
 module.exports = Item;

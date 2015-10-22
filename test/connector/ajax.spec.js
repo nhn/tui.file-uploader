@@ -7,7 +7,7 @@ describe('Ajax Connector util test', function() {
         conn = {
             _uploader: {}
         };
-        ne.util.extend(conn, ajax);
+        tui.util.extend(conn, ajax);
     });
 
     it('successPadding', function() {

@@ -46,8 +46,8 @@ var Local = {/** @lends Connector.Local.prototype */
 
         if (isSupportAjax) {
             files = files || fileEl.files;
-            ne.util.forEach(files, function(item) {
-                if (ne.util.isObject(item)) {
+            tui.util.forEach(files, function(item) {
+                if (tui.util.isObject(item)) {
                     result.push(item);
                 }
             }, this);
@@ -74,7 +74,7 @@ var Local = {/** @lends Connector.Local.prototype */
 		input = uploader.inputView,
 		form = new window.FormData(this._extractForm(input));
 
-        ne.util.forEach(this._result, function(item) {
+        tui.util.forEach(this._result, function(item) {
             form.append(field, item);
         });
         return form;
@@ -99,7 +99,7 @@ var Local = {/** @lends Connector.Local.prototype */
      */
     removeRequest: function(info) {
         var data = info.data;
-        this._result = ne.util.filter(this._result, function(el) {
+        this._result = tui.util.filter(this._result, function(el) {
             return el.name !== data.filename;
         });
 

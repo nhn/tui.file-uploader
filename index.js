@@ -1,2 +1,2 @@
-ne.util.defineNamespace('ne.component.Uploader', require('./src/js/uploader.js'));
+tui.util.defineNamespace('tui.component.Uploader', require('./src/js/uploader.js'));
 

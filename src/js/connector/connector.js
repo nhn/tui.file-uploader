@@ -56,7 +56,7 @@ var Factory = {
             conn = {
                 _uploader: uploader
             };
-        ne.util.extend(conn, Connector, ModuleSets[type] || Local);
+        tui.util.extend(conn, Connector, ModuleSets[type] || Local);
         return conn;
     }
 };

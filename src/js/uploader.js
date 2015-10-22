@@ -16,9 +16,9 @@ var DragAndDrop = require('./view/drag');
  * FileUploader act like bridge between connector and view.
  * It makes connector and view with option and environment.
  * It control and make connection among modules.
- * @constructor ne.component.Uploader
+ * @constructor tui.component.Uploader
  * @example
- * var uploader = new ne.component.Uploader({
+ * var uploader = new tui.component.Uploader({
  *     url: {
  *         send: "http://fe.nhnent.com/etc/etc/uploader/uploader.php",
  *         remove: "http://fe.nhnent.com/etc/etc/uploader/remove.php"
@@ -38,7 +38,7 @@ var DragAndDrop = require('./view/drag');
  *     separator: ';'
  * }, $('#uploader'));
  */
-var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
+var Uploader = tui.util.defineClass(/**@lends tui.component.Uploader.prototype */{
 
 	/**
 	 * initialize options
@@ -117,7 +117,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 	 * @private
      */
 	_setData: function(options) {
-		ne.util.extend(this, options);
+		tui.util.extend(this, options);
 	},
 
 	/**
@@ -148,7 +148,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 	 * @param {object} [data] The data include callback function for file clone
 	 */
 	sendFile: function(data) {
-		var callback = ne.util.bind(this.notify, this),
+		var callback = tui.util.bind(this.notify, this),
 		files = data && data.files;
 		
 		this._connector.addRequest({
@@ -168,7 +168,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 	 * @param {object} data The data for remove file.
 	 */
 	removeFile: function(data) {
-		var callback = ne.util.bind(this.notify, this);
+		var callback = tui.util.bind(this.notify, this);
 		this._connector.removeRequest({
 			type: 'remove',
 			data: data,
@@ -182,7 +182,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 	submit: function() {
 		if (this._connector.submit) {
 			if (utils.isSupportFormData()) {
-				this._connector.submit(ne.util.bind(function() {
+				this._connector.submit(tui.util.bind(function() {
 					this.fire('beforesubmit', this);
 				}, this));
 			} else {
@@ -216,7 +216,7 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 	 * @private
 	 */
 	_getFileList: function(files) {
-		return ne.util.map(files, function(file) {
+		return tui.util.map(files, function(file) {
 			return {
 				name: file.name,
 				size: file.size,
@@ -263,5 +263,5 @@ var Uploader = ne.util.defineClass(/**@lends ne.component.Uploader.prototype */{
 	}
 });
 
-ne.util.CustomEvents.mixin(Uploader);
+tui.util.CustomEvents.mixin(Uploader);
 module.exports = Uploader;

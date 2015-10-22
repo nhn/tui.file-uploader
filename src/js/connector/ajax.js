@@ -22,11 +22,11 @@ var Ajax = {/** @lends Connector.Ajax */
     addRequest: function(config, files) {
         var uploader = this._uploader,
             $form = uploader.inputView.$el,
-            callback = ne.util.bind(this.successPadding, this, config.success);
+            callback = tui.util.bind(this.successPadding, this, config.success);
     
 		if (files) {
 			this.formData = new FormData();
-			ne.util.forEach(files, function(e) {
+			tui.util.forEach(files, function(e) {
 				this.formData.append(uploader.fileField, e);
 			}, this);
 		} else {
@@ -63,7 +63,7 @@ var Ajax = {/** @lends Connector.Ajax */
      * @memberof Connector.Ajax
      */
     removeRequest: function(config) {
-        var callback = ne.util.bind(this.removePadding, this, config.success);
+        var callback = tui.util.bind(this.removePadding, this, config.success);
         $.ajax({
             url: this._uploader.url.remove,
             data: config.data,

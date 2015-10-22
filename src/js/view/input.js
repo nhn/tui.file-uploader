@@ -11,7 +11,7 @@ var utils = require('../utils');
  * This view control input element typed file.
  * @constructor View.InputView
  */
-var Input = ne.util.defineClass(/**@lends View.Input.prototype **/{
+var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
 	/**
 	 * Initialize input element.
 	 * @param {object} [options]
@@ -125,7 +125,7 @@ var Input = ne.util.defineClass(/**@lends View.Input.prototype **/{
 	 */
 	_addEvent: function() {
 		if (this._isBatchTransfer) {
-			this.$el.on('submit', ne.util.bind(function() {
+			this.$el.on('submit', tui.util.bind(function() {
 				this._uploader.submit();
 			}, this));
 		}
@@ -138,9 +138,9 @@ var Input = ne.util.defineClass(/**@lends View.Input.prototype **/{
 	 */
 	_addInputEvent: function() {
 		if (this._isBatchTransfer) {
-			this.$input.on('change', ne.util.bind(this.onSave, this));
+			this.$input.on('change', tui.util.bind(this.onSave, this));
 		} else {
-			this.$input.on('change', ne.util.bind(this.onChange, this));
+			this.$input.on('change', tui.util.bind(this.onChange, this));
 		}
 	},
 
@@ -163,7 +163,7 @@ var Input = ne.util.defineClass(/**@lends View.Input.prototype **/{
 		if (!this.$input[0].value) {
             return;
         }
-        var saveCallback = !utils.isSupportFormData() ? ne.util.bind(this._resetInputElement, this) : null;
+        var saveCallback = !utils.isSupportFormData() ? tui.util.bind(this._resetInputElement, this) : null;
 		this.fire('save', {
 			element: this.$input[0],
 			callback: saveCallback
@@ -242,7 +242,7 @@ var Input = ne.util.defineClass(/**@lends View.Input.prototype **/{
 	 * @private
      */	
 	_makeHiddenElement: function(options) {
-		ne.util.extend(options, {
+		tui.util.extend(options, {
 			type: 'hidden'
 		});
 		return $('<input />').attr(options);
@@ -259,6 +259,6 @@ var Input = ne.util.defineClass(/**@lends View.Input.prototype **/{
 
 });
 
-ne.util.CustomEvents.mixin(Input);
+tui.util.CustomEvents.mixin(Input);
 
 module.exports = Input;

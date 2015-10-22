@@ -21,8 +21,8 @@ describe('Jsonp Connector test', function() {
                 separator: ';'
             }
         };
-        ne.util.extend(conn, jsonp);
-        ne.util.extend(conn2, jsonp);
+        tui.util.extend(conn, jsonp);
+        tui.util.extend(conn2, jsonp);
     });
 
     it('_getSplitItems with id', function() {

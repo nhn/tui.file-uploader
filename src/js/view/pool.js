@@ -8,7 +8,7 @@
  * It's only for input[file] element save at browser that does not support file api.
  * @class View.Pool
  */
-var Pool = ne.util.defineClass(/** @lends View.Pool.prototype */{
+var Pool = tui.util.defineClass(/** @lends View.Pool.prototype */{
     /**
      * initialize
      */
@@ -52,7 +52,7 @@ var Pool = ne.util.defineClass(/** @lends View.Pool.prototype */{
      * Empty pool
      */
     empty: function() {
-        ne.util.forEach(this.files, function(data) {
+        tui.util.forEach(this.files, function(data) {
             this.remove(data.file_name);
         }, this);
     },
@@ -62,7 +62,7 @@ var Pool = ne.util.defineClass(/** @lends View.Pool.prototype */{
      */
     plant: function() {
         var planet = this.planet;
-        ne.util.forEach(this.files, function(data) {
+        tui.util.forEach(this.files, function(data) {
             planet.appendChild(data);
             delete this.files[data.file_name];
         }, this);

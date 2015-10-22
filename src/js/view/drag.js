@@ -10,7 +10,7 @@ var utils = require('../utils');
  * Makes drag and drop area, the dropped file is added via event drop event.
  * @class View.DragAndDrop
  */
-var DragAndDrop = ne.util.defineClass(/** @lends View.DragAndDrop.prototype */{
+var DragAndDrop = tui.util.defineClass(/** @lends View.DragAndDrop.prototype */{
 	/**
 	 * initialize DragAndDrop
 	 */
@@ -37,10 +37,10 @@ var DragAndDrop = ne.util.defineClass(/** @lends View.DragAndDrop.prototype */{
      * @private
 	 */
 	_addEvent: function() {
-		this.$el.on('dragenter', ne.util.bind(this.onDragEnter, this));
-		this.$el.on('dragover', ne.util.bind(this.onDragOver, this));
-		this.$el.on('drop', ne.util.bind(this.onDrop, this));
-		this.$el.on('dragleave', ne.util.bind(this.onDragLeave, this));
+		this.$el.on('dragenter', tui.util.bind(this.onDragEnter, this));
+		this.$el.on('dragover', tui.util.bind(this.onDragOver, this));
+		this.$el.on('drop', tui.util.bind(this.onDrop, this));
+		this.$el.on('dragleave', tui.util.bind(this.onDragLeave, this));
 	},
 
 	/**
@@ -90,6 +90,6 @@ var DragAndDrop = ne.util.defineClass(/** @lends View.DragAndDrop.prototype */{
 	}
 });
 
-ne.util.CustomEvents.mixin(DragAndDrop);
+tui.util.CustomEvents.mixin(DragAndDrop);
 
 module.exports = DragAndDrop;

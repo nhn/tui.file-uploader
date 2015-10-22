@@ -83,7 +83,7 @@ describe('Input elements[type=files] pool behavior test.', function() {
                     $.contains(planet, inputF3)];
 
         // check planet has inputs
-        expect(ne.util.filter(contains, function(el) {
+        expect(tui.util.filter(contains, function(el) {
             return el;
         }).length).toBe(3);
 
