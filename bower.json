@@ -1,6 +1,6 @@
 {
     "name": "component-file-uploader",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "authors": ["NHNEnt FE Development Team <e0242@nhnent.com>"],
     "description": "",
     "license": "MIT",
@@ -12,7 +12,7 @@
         "tests"
     ],
     "dependencies": {
-        "ne-code-snippet": "~1.0.3",
+        "tui-code-snippet": "~1.0.3",
         "json2": "latest",
         "jquery": "1.8.3"
     }

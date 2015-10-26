@@ -18,7 +18,7 @@ The component support to upload files to server.
 * [Custom Event](http://fe.nhnent.com/etc/sample/component-uploader/custom.html)
 
 ## Dependency
-* ne-code-snippet: ~1.0.4
+* tui-code-snippet: ~1.0.4
 * jquery: ~1.8.3
 
 ## Test environment
