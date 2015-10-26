@@ -29,8 +29,8 @@ The component support to upload files to server.
 
 ## Download/Install
 * Bower:
-   * latest : `bower install ne-component-file-uploader#master`
-   * each version : `bower install ne-component-file-uploader[#tag]`
+   * latest : `bower install tui-component-file-uploader#master`
+   * each version : `bower install tui-component-file-uploader[#tag]`
 * Download: https://github.com/nhnent/tui.component.file-uploader
 
 ## History
