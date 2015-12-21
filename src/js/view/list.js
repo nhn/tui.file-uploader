@@ -100,7 +100,7 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
 
     /**
      * Add file items
-     * @param {object} target Target item infomations.
+     * @param {object} target Target item information.
      * @private
      */
     _addFileItems: function(target) {
@@ -110,7 +110,8 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
         tui.util.forEach(target, function(data) {
             this.items.push(this._createItem(data));
         }, this);
-		this._uploader.fire('fileAdded', {
+
+        this.fire('fileAdded', {
 			target: target
 		});
     },
@@ -127,9 +128,9 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
             if (isMatch) {
                 item.destroy();
                 this._uploader.remove(name);
-					this._uploader.fire('fileRemoved', {
-						name: name
-					});
+                this.fire('fileRemoved', {
+                    name: name
+                });
             }
             return !isMatch;
         }, this);

@@ -35,8 +35,7 @@
   },
   "opts": {
     "recurse": true,
-    "private": true,
     "destination": "doc",
-    "tutorials": "samples"
+    "name": "File Uploader"
   }
 }

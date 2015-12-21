@@ -58,4 +58,4 @@ module.exports = {
     isSupportFileSystem: isSupportFileSystem,
     isSupportFormData: isSupportFormData,
     template: template
-}
+};

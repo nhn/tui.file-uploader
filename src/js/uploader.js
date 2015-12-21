@@ -16,7 +16,23 @@ var DragAndDrop = require('./view/drag');
  * FileUploader act like bridge between connector and view.
  * It makes connector and view with option and environment.
  * It control and make connection among modules.
- * @constructor tui.component.Uploader
+ * @constructor
+ * @param {object} options The options to set up file uploader modules.
+ *  @param {object} options.url The url is file server.
+ *      @param {string} options.url.send The url is for file attach.
+ *      @param {string} options.url.remove The url is for file detach.
+ *  @param {object} options.helper The helper object info is for x-domain.
+ *      @param {string} options.helper.url The url is helper page url.
+ *      @param {string} options.helper.name The name of hidden element for sending server helper page information.
+ *  @param {string} options.resultTypeElementName The type of hidden element for sending server response type information.
+ *  @param {string} options.formTarget The target for x-domain jsonp case.
+ *  @param {string} options.callbackName The name of jsonp callback function.
+ *  @param {object} options.listInfo The element info to display file list information.
+ *  @param {string} options.separator The separator for jsonp helper response.
+ *  @param {string} [options.fileField=userFile] The field name of input file element.
+ *  @param {boolean} options.useFolder Whether select unit is folder of not. If this is ture, multiple will be ignored.
+ *  @param {boolean} options.isMultiple Whether enable multiple select or not.
+ * @param {jQuery} $el Root Element of Uploader
  * @example
  * var uploader = new tui.component.Uploader({
  *     url: {
@@ -38,26 +54,10 @@ var DragAndDrop = require('./view/drag');
  *     separator: ';'
  * }, $('#uploader'));
  */
-var Uploader = tui.util.defineClass(/**@lends tui.component.Uploader.prototype */{
+var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
 
 	/**
-	 * initialize options
-	 * @param {object} options The options to set up file uploader modules.
-	 *  @param {object} options.url The url is file server.
-	 *      @param {string} options.url.send The url is for file attach.
-	 *      @param {string} options.url.remove The url is for file detach.
-	 *  @param {object} options.helper The helper object info is for x-domain.
-	 *      @param {string} options.helper.url The url is helper page url.
-	 *      @param {string} options.helper.name The name of hidden element for sending server helper page information.
-	 *  @param {string} options.resultTypeElementName The type of hidden element for sending server response type information.
-	 *  @param {string} options.formTarget The target for x-domain jsonp case.
-	 *  @param {string} options.callbackName The name of jsonp callback function.
-	 *  @param {object} opitons.listInfo The element info to display file list information.
-	 *  @param {string} options.separator The separator for jsonp helper response.
-	 *  @param {string} [options.fileField=userFile] The field name of input file element.
-	 *  @param {boolean} options.useFolder Whether select unit is folder of not. If this is ture, multiple will be ignored.
-	 *  @param {boolean} options.isMultiple Whether enable multiple select or not.
-	 * @param {JqueryObject} $el Root Element of Uploader
+	 * initialize
 	 */
 	init: function(options, $el) {
 		this._setData(options);
@@ -178,11 +178,17 @@ var Uploader = tui.util.defineClass(/**@lends tui.component.Uploader.prototype *
 
 	/**
 	 * Submit for data submit to server
+     * @api
 	 */
 	submit: function() {
 		if (this._connector.submit) {
 			if (utils.isSupportFormData()) {
 				this._connector.submit(tui.util.bind(function() {
+					/**
+					 * @api
+					 * @event Uploader#beforesubmit
+                     * @param {Uploader} uploader - uploader instance
+					 */
 					this.fire('beforesubmit', this);
 				}, this));
 			} else {
@@ -230,6 +236,7 @@ var Uploader = tui.util.defineClass(/**@lends tui.component.Uploader.prototype *
 	 * @private
 	 */
 	_addEvent: function() {
+        var self = this;
 
 		if(this.useDrag && this.dragView) {
 			// @todo top 처리가 따로 필요함, sendFile 사용 안됨
@@ -242,6 +249,26 @@ var Uploader = tui.util.defineClass(/**@lends tui.component.Uploader.prototype *
 			this.inputView.on('change', this.sendFile, this);
 			this.listView.on('remove', this.removeFile, this);
 		}
+
+        /**
+         * Custom Events
+         * @api
+         * @event Uploader#fileAdded
+         * @param {object} target - Target item information
+         */
+        this.listView.on('fileAdded', function(target) {
+            self.fire(target);
+        });
+
+        /**
+         * Custom Events
+         * @api
+         * @event Uploader#fileRemoved
+         * @param {object} name - The file name to remove
+         */
+        this.listView.on('fileRemoved', function(name) {
+            self.fire(name);
+        });
 	},
 
 	/**
