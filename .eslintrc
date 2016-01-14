@@ -13,11 +13,11 @@
     },
     "rules": {
         "strict": [2, "global"],
+        "no-shadow": 0,
 
-        //Possible Errors 
+        //Possible Errors
         "no-console": 1,
         "no-extra-parens": 0,
-        "no-reserved-keys": 2,
         "valid-jsdoc": [2, {
             "requireReturn": false
         }],
@@ -40,6 +40,7 @@
 
         //Variables
         "no-undefined": 2,
+        "no-unused-var": 2,
         "no-use-before-define": [2, "nofunc"],
         "no-alert": 0,
 
@@ -57,11 +58,11 @@
         "quotes": [1, "single"],
         "one-var": 0,
         "padded-blocks": [2, "never"],
-        "space-after-function-name": 2,
         "space-after-keywords": 2,
         "space-before-blocks": 2,
-        "space-in-brackets": 2,
+        "object-curly-spacing": [2, "never"],
         "space-in-parens": 2,
+        "array-bracket-spacing": [2, "never"],
 
         //Node.js
         "no-mixed-requires": [2, true],

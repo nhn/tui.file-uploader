@@ -4,7 +4,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
-var statics = require('./statics');
+var consts = require('./consts');
 var utils = require('./utils');
 var conn = require('./connector/connector');
 var Input = require('./view/input');
@@ -55,7 +55,6 @@ var DragAndDrop = require('./view/drag');
  * }, $('#uploader'));
  */
 var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
-
 	/**
 	 * initialize
 	 */
@@ -72,7 +71,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
 		this.inputView = new Input(options, this);
 		this.listView = new List(options, this);
 
-		this.fileField = this.fileField || statics.CONF.FILE_FILED_NAME;
+		this.fileField = this.fileField || consts.CONF.FILE_FILED_NAME;
 		this._pool = new Pool(this.inputView.$el[0]);
 		this._addEvent();
 	},
@@ -88,7 +87,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
 			if (this.helper) {
 				this.type = 'jsonp';
 			} else {
-				alert(statics.CONF.ERROR.NOT_SURPPORT);
+				alert(consts.CONF.ERROR.NOT_SURPPORT);
                 this.type = 'local';    
 			}
 		} else {
@@ -138,7 +137,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
 		if (response && response.msg) {
 			message = response.msg;
 		} else {
-			message = statics.CONF.ERROR.DEFAULT;
+			message = consts.CONF.ERROR.DEFAULT;
 		}
 		alert(message);
 	},

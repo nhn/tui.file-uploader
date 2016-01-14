@@ -3,7 +3,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
-var statics = require('../statics');
+var consts = require('../consts');
 var utils = require('../utils');
 
 /**
@@ -15,8 +15,8 @@ var DragAndDrop = tui.util.defineClass(/** @lends View.DragAndDrop.prototype */{
 	 * initialize DragAndDrop
 	 */
 	init: function(options, uploader) {
-		var html = options.template && options.template.drag || statics.HTML.drag;
-		this._enableClass = options.drag && options.drag.enableClass || statics.CONF.DRAG_DEFAULT_ENABLE_CLASS;
+		var html = options.template && options.template.drag || consts.HTML.drag;
+		this._enableClass = options.drag && options.drag.enableClass || consts.CONF.DRAG_DEFAULT_ENABLE_CLASS;
 		this._render(html, uploader);
 		this._addEvent();
 	},

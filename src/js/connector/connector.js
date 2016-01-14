@@ -36,7 +36,6 @@ var Connector = {
     addRequest: function(options) {
         throw new Error('The interface addRequest does not exist');
     }
-
 };
 
 /**

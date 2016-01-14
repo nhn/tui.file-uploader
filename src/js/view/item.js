@@ -4,7 +4,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
-var statics = require('../statics');
+var consts = require('../consts');
 var utils = require('../utils');
 
 /**
@@ -32,7 +32,7 @@ var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
         this._setItemInfo(options);
         this._setConnectInfo(options);
 
-        this.render(options.template || statics.HTML.item);
+        this.render(options.template || consts.HTML.item);
 
         if (options.helper) {
             this._makeBridgeInfoElement(options.helper);

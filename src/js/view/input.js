@@ -4,7 +4,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
-var statics = require('../statics');
+var consts = require('../consts');
 var utils = require('../utils');
 
 /**
@@ -69,9 +69,9 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
 		}
 
 		return {
-			input: template.input || statics.HTML.input,
-			submit: template.submit || statics.HTML.submit,
-			form: template.form || statics.HTML.form
+			input: template.input || consts.HTML.input,
+			submit: template.submit || consts.HTML.submit,
+			form: template.form || consts.HTML.form
 		}
 	},
 	/**
@@ -204,7 +204,7 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
 	 */
 	_makeCallbackElement: function() {
 		this._$callback = this._makeHiddenElement({
-			'name': statics.CONF.JSONPCALLBACK_NAME,
+			'name': consts.CONF.JSONPCALLBACK_NAME,
 			'value': this._uploader.callbackName
 		});
 		this.$el.append(this._$callback);
@@ -216,7 +216,7 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
 	 */
 	_makeResultTypeElement: function() {
 		this._$resType = this._makeHiddenElement({
-			'name' : this._uploader.resultTypeElementName || statics.CONF.RESPONSE_TYPE,
+			'name' : this._uploader.resultTypeElementName || consts.CONF.RESPONSE_TYPE,
 			'value': this._uploader.type
 		});
 		this.$el.append(this._$resType);
@@ -229,7 +229,7 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
 	 */
 	_makeBridgeInfoElement: function(helper) {
 		this._$helper = this._makeHiddenElement({
-			'name' : helper.name || statics.CONF.REDIRECT_URL,
+			'name' : helper.name || consts.CONF.REDIRECT_URL,
 			'value': helper.url
 		});
 		this.$el.append(this._$helper);
