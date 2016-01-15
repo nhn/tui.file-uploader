@@ -18,10 +18,10 @@ var Jsonp = {/** @lends Connector.Jsonp.prototype */
      */
     addRequest: function(config) {
         var callbackName = this._uploader.callbackName,
-        callback = config.success;
-        tui.util.defineNamespace(callbackName,  tui.util.bind(this.successPadding, this, callback));
+            callback = config.success;
 
-		this._uploader.inputView.$el.submit();
+        tui.util.defineNamespace(callbackName,  tui.util.bind(this.successPadding, this, callback));
+        this._uploader.inputView.$el.submit();
     },
 
     /**
@@ -33,7 +33,7 @@ var Jsonp = {/** @lends Connector.Jsonp.prototype */
     successPadding: function(callback, response) {
         var result = {};
 
-		if (this._uploader.isCrossDomain()) {
+        if (this._uploader.isCrossDomain()) {
             result.items = this._getSplitItems(response);
         } else {
             result.items = tui.util.toArray(response.filelist);

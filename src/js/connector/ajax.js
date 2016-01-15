@@ -11,6 +11,7 @@
  */
 var Ajax = {/** @lends Connector.Ajax */
     type: 'POST',
+
     /**
      * Request ajax by config to add files.
      * @param {object} config The configuration for ajax request
@@ -23,16 +24,16 @@ var Ajax = {/** @lends Connector.Ajax */
         var uploader = this._uploader,
             $form = uploader.inputView.$el,
             callback = tui.util.bind(this.successPadding, this, config.success);
-    
-		if (files) {
-			this.formData = new FormData();
-			tui.util.forEach(files, function(e) {
-				this.formData.append(uploader.fileField, e);
-			}, this);
-		} else {
-			this.formData = new FormData($form[0]);
-		}
-		$.ajax({
+
+        if (files) {
+            this.formData = new FormData();
+            tui.util.forEach(files, function(e) {
+                this.formData.append(uploader.fileField, e);
+            }, this);
+        } else {
+            this.formData = new FormData($form[0]);
+        }
+        $.ajax({
             url: this._uploader.url.send,
             type: this.type,
             data: this.formData,

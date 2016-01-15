@@ -55,199 +55,199 @@ var DragAndDrop = require('./view/drag');
  * }, $('#uploader'));
  */
 var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
-	/**
-	 * initialize
-	 */
-	init: function(options, $el) {
-		this._setData(options);
-		this._setConnector();
-
-		this.$el = $el;
-
-		if(this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
-			this.dragView = new DragAndDrop(options, this);
-		}
-
-		this.inputView = new Input(options, this);
-		this.listView = new List(options, this);
-
-		this.fileField = this.fileField || consts.CONF.FILE_FILED_NAME;
-		this._pool = new Pool(this.inputView.$el[0]);
-		this._addEvent();
-	},
-	
-	/**
-	 * Set Connector by useJsonp flag and whether.
-	 * @private
-	 */
-	_setConnector: function() {
-		if (this.isBatchTransfer) {
-			this.type = 'local';
-		} else if (this.isCrossDomain()) {
-			if (this.helper) {
-				this.type = 'jsonp';
-			} else {
-				alert(consts.CONF.ERROR.NOT_SURPPORT);
-                this.type = 'local';    
-			}
-		} else {
-			if (this.useJsonp || !utils.isSupportFormData()) {
-				this.type = 'jsonp';
-			} else {
-				this.type = 'ajax';
-			}
-		}
-		this._connector = conn.getConnector(this);
-	},
-
-	/**
-	 * Update list view with custom or original data.
-	 * @param {object} info The data for update list
-	 *  @param {string} info.action The action name to execute method
-	 */
-	notify: function(info) {
-		this.listView.update(info);
-		this.listView.updateTotalInfo(info);
-	},
-
-	/**
-	 * Set field data by option values.
-	 * @param options
-	 * @private
+    /**
+     * initialize
      */
-	_setData: function(options) {
-		tui.util.extend(this, options);
-	},
+    init: function(options, $el) {
+        this._setData(options);
+        this._setConnector();
 
-	/**
-	 * Extract protocol + domain from url to find out whether cross-domain or not.
-	 * @returns {boolean}
-	 */
-	isCrossDomain: function() {
-		var pageDomain = document.domain;
-		return this.url.send.indexOf(pageDomain) === -1;
-	},
+        this.$el = $el;
 
-	/**
-	 * Callback for error
-	 * @param {object} response Error response
-	 */
-	errorCallback: function(response) {
-		var message;
-		if (response && response.msg) {
-			message = response.msg;
-		} else {
-			message = consts.CONF.ERROR.DEFAULT;
-		}
-		alert(message);
-	},
+        if(this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
+            this.dragView = new DragAndDrop(options, this);
+        }
 
-	/**
-	 * Callback for custom send event
-	 * @param {object} [data] The data include callback function for file clone
-	 */
-	sendFile: function(data) {
-		var callback = tui.util.bind(this.notify, this),
-		files = data && data.files;
-		
-		this._connector.addRequest({
-			type: 'add',
-			success: function(result) {
-				if (data && data.callback) {
-					data.callback(result);
-				}
-				callback(result);
-			},
-			error: this.errorCallback
-		}, files);
-	},
+        this.inputView = new Input(options, this);
+        this.listView = new List(options, this);
 
-	/**
-	 * Callback for custom remove event
-	 * @param {object} data The data for remove file.
-	 */
-	removeFile: function(data) {
-		var callback = tui.util.bind(this.notify, this);
-		this._connector.removeRequest({
-			type: 'remove',
-			data: data,
-			success: callback
-		});
-	},
+        this.fileField = this.fileField || consts.CONF.FILE_FILED_NAME;
+        this._pool = new Pool(this.inputView.$el[0]);
+        this._addEvent();
+    },
 
-	/**
-	 * Submit for data submit to server
+    /**
+     * Set Connector
+     * @private
+     */
+    _setConnector: function() {
+        if (this.isBatchTransfer) {
+            this.type = 'local';
+        } else if (this.isCrossDomain()) {
+            if (this.helper) {
+                this.type = 'jsonp';
+            } else {
+                alert(consts.CONF.ERROR.NOT_SURPPORT);
+                this.type = 'local';
+            }
+        } else {
+            if (this.useJsonp || !utils.isSupportFormData()) {
+                this.type = 'jsonp';
+            } else {
+                this.type = 'ajax';
+            }
+        }
+        this._connector = conn.getConnector(this);
+    },
+
+    /**
+     * Update list view with custom or original data.
+     * @param {object} info The data for update list
+     *  @param {string} info.action The action name to execute method
+     */
+    notify: function(info) {
+        this.listView.update(info);
+        this.listView.updateTotalInfo(info);
+    },
+
+    /**
+     * Set field data by option values.
+     * @param options
+     * @private
+     */
+    _setData: function(options) {
+        tui.util.extend(this, options);
+    },
+
+    /**
+     * Extract protocol + domain from url to find out whether cross-domain or not.
+     * @returns {boolean}
+     */
+    isCrossDomain: function() {
+        var pageDomain = document.domain;
+        return this.url.send.indexOf(pageDomain) === -1;
+    },
+
+    /**
+     * Callback for error
+     * @param {object} response Error response
+     */
+    errorCallback: function(response) {
+        var message;
+        if (response && response.msg) {
+            message = response.msg;
+        } else {
+            message = consts.CONF.ERROR.DEFAULT;
+        }
+        alert(message);
+    },
+
+    /**
+     * Callback for custom send event
+     * @param {object} [data] The data include callback function for file clone
+     */
+    sendFile: function(data) {
+        var callback = tui.util.bind(this.notify, this),
+            files = data && data.files;
+
+        this._connector.addRequest({
+            type: 'add',
+            success: function(result) {
+                if (data && data.callback) {
+                    data.callback(result);
+                }
+                callback(result);
+            },
+            error: this.errorCallback
+        }, files);
+    },
+
+    /**
+     * Callback for custom remove event
+     * @param {object} data The data for remove file.
+     */
+    removeFile: function(data) {
+        var callback = tui.util.bind(this.notify, this);
+        this._connector.removeRequest({
+            type: 'remove',
+            data: data,
+            success: callback
+        });
+    },
+
+    /**
+     * Submit for data submit to server
      * @api
-	 */
-	submit: function() {
-		if (this._connector.submit) {
-			if (utils.isSupportFormData()) {
-				this._connector.submit(tui.util.bind(function() {
-					/**
-					 * @api
-					 * @event Uploader#beforesubmit
+     */
+    submit: function() {
+        if (this._connector.submit) {
+            if (utils.isSupportFormData()) {
+                this._connector.submit(tui.util.bind(function() {
+                    /**
+                     * @api
+                     * @event Uploader#beforesubmit
                      * @param {Uploader} uploader - uploader instance
-					 */
-					this.fire('beforesubmit', this);
-				}, this));
-			} else {
-				this._pool.plant();
-			}
-		} 
-	},
+                     */
+                    this.fire('beforesubmit', this);
+                }, this));
+            } else {
+                this._pool.plant();
+            }
+        }
+    },
 
-	/**
-	 * Get file info locally
-	 * @param {HtmlElement} element Input element
-	 * @private
-	 */
-	_getFileInfo: function(element) {
-		var files;
-		if (utils.isSupportFileSystem()) {
-			files = this._getFileList(element.files);
-		} else {
-			files = {
-				name: element.value,
-				id: element.value
-			};
-		}
-		return files;
-	},
+    /**
+     * Get file info locally
+     * @param {HtmlElement} element Input element
+     * @private
+     */
+    _getFileInfo: function(element) {
+        var files;
+        if (utils.isSupportFileSystem()) {
+            files = this._getFileList(element.files);
+        } else {
+            files = {
+                name: element.value,
+                id: element.value
+            };
+        }
+        return files;
+    },
 
-	/**
-	 * Get file list from FileList object
-	 * @param {FileList} files A FileList object
-	 * @returns {Array}
-	 * @private
-	 */
-	_getFileList: function(files) {
-		return tui.util.map(files, function(file) {
-			return {
-				name: file.name,
-				size: file.size,
-				id: file.name
-			};
-		});
-	},
+    /**
+     * Get file list from FileList object
+     * @param {FileList} files A FileList object
+     * @returns {Array}
+     * @private
+     */
+    _getFileList: function(files) {
+        return tui.util.map(files, function(file) {
+            return {
+                name: file.name,
+                size: file.size,
+                id: file.name
+            };
+        });
+    },
 
-	/**
-	 * Add event to listview and inputview
-	 * @private
-	 */
-	_addEvent: function() {
+    /**
+     * Add event to listview and inputview
+     * @private
+     */
+    _addEvent: function() {
         var self = this;
 
-		if(this.useDrag && this.dragView) {
-			// @todo top 처리가 따로 필요함, sendFile 사용 안됨
-			this.dragView.on('drop', this.sendFile, this);
-		}
-		if (this.isBatchTransfer) {
-			this.inputView.on('save', this.sendFile, this);
-			this.listView.on('remove', this.removeFile, this);
-		} else {
-			this.inputView.on('change', this.sendFile, this);
-			this.listView.on('remove', this.removeFile, this);
-		}
+        if(this.useDrag && this.dragView) {
+            // @todo top 처리가 따로 필요함, sendFile 사용 안됨
+            this.dragView.on('drop', this.sendFile, this);
+        }
+        if (this.isBatchTransfer) {
+            this.inputView.on('save', this.sendFile, this);
+            this.listView.on('remove', this.removeFile, this);
+        } else {
+            this.inputView.on('change', this.sendFile, this);
+            this.listView.on('remove', this.removeFile, this);
+        }
 
         /**
          * Custom Events
@@ -268,25 +268,25 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
         this.listView.on('fileRemoved', function(name) {
             self.fire(name);
         });
-	},
+    },
 
-	/**
-	 * Store input element to pool.
-	 * @param {HTMLElement} input A input element[type=file] for store pool
-	 */
-	store: function(input) {
-		this._pool.store(input);
-	},
+    /**
+     * Store input element to pool.
+     * @param {HTMLElement} input A input element[type=file] for store pool
+     */
+    store: function(input) {
+        this._pool.store(input);
+    },
 
-	/**
-	 * Remove input element form pool.
-	 * @param {string} name The file name to remove
-	 */
-	remove: function(name) {
-		if (!utils.isSupportFormData()) {
-			this._pool.remove(name);
-		}
-	}
+    /**
+     * Remove input element form pool.
+     * @param {string} name The file name to remove
+     */
+    remove: function(name) {
+        if (!utils.isSupportFormData()) {
+            this._pool.remove(name);
+        }
+    }
 });
 
 tui.util.CustomEvents.mixin(Uploader);

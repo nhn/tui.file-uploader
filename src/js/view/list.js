@@ -112,8 +112,8 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
         }, this);
 
         this.fire('fileAdded', {
-			target: target
-		});
+            target: target
+        });
     },
 
     /**
