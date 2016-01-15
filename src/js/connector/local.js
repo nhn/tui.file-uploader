@@ -87,6 +87,7 @@ var Local = {/** @lends Connector.Local.prototype */
      */
 	_extractForm: function(input) {
 	    var form = input.$el.clone();
+        form.find('input[type="file"]').remove();
 		return form[0];
 	},
 

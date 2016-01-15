@@ -126,8 +126,8 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
 	_addEvent: function() {
 		if (this._isBatchTransfer) {
 			this.$el.on('submit', tui.util.bind(function(event) {
-				this._uploader.submit();
 				event.preventDefault();
+				this._uploader.submit();
 			}, this));
 		}
 		this._addInputEvent();
