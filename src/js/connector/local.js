@@ -16,7 +16,7 @@ var Local = {/** @lends Connector.Local.prototype */
     /**
      * Add Request, save files to array.
      * @param {object} data The data of connection for server
-		 * @param {object} [files] The files to save
+     * @param {object} [files] The files to save
      * @memberof Connector.Local
      */
     addRequest: function(data, files) {
@@ -30,7 +30,7 @@ var Local = {/** @lends Connector.Local.prototype */
     /**
      * Save file to pool
      * @param {boolean} isSupportAjax Whether FormData is supported or not
-		 * @param {object} [files] The files to save
+     * @param {object} [files] The files to save
      * @private
      * @memberof Connector.Local
      */
@@ -58,7 +58,7 @@ var Local = {/** @lends Connector.Local.prototype */
             });
         }
 
-		this._result = this._result.concat(result);
+        this._result = this._result.concat(result);
         return result;
     },
 
@@ -70,26 +70,27 @@ var Local = {/** @lends Connector.Local.prototype */
      */
     _makeFormData: function() {
         var uploader = this._uploader,
-		field = uploader.fileField,
-		input = uploader.inputView,
-		form = new window.FormData(this._extractForm(input));
+            field = uploader.fileField,
+            input = uploader.inputView,
+            form = new window.FormData(this._extractForm(input));
+
         tui.util.forEach(this._result, function(item) {
             form.append(field, item);
         });
         return form;
     },
 
-	/**
-	 * Extracts Form from inputView
-	 * @param {object} input The input view for extracting 
+    /**
+     * Extracts Form from inputView
+     * @param {object} input The input view for extracting
      * @memberof Connector.Local
      * @private
      */
-	_extractForm: function(input) {
-	    var form = input.$el.clone();
+    _extractForm: function(input) {
+        var form = input.$el.clone();
         form.find('input[type="file"]').remove();
-		return form[0];
-	},
+        return form[0];
+    },
 
     /**
      * Remove file form result array
