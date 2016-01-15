@@ -38,7 +38,7 @@ var Local = {/** @lends Connector.Local.prototype */
         var uploader = this._uploader,
             inputView = uploader.inputView,
             fileEl = inputView.$input[0],
-						result = [];
+            result = [];
 
         if (!this._result) {
             this._result = [];
@@ -73,7 +73,6 @@ var Local = {/** @lends Connector.Local.prototype */
 		field = uploader.fileField,
 		input = uploader.inputView,
 		form = new window.FormData(this._extractForm(input));
-
         tui.util.forEach(this._result, function(item) {
             form.append(field, item);
         });
@@ -87,8 +86,7 @@ var Local = {/** @lends Connector.Local.prototype */
      * @private
      */
 	_extractForm: function(input) {
-	var form = input.$el.clone();
-		// append to pool
+	    var form = input.$el.clone();
 		return form[0];
 	},
 
@@ -115,7 +113,8 @@ var Local = {/** @lends Connector.Local.prototype */
      * @memberof Connector.Local
      */
     submit: function(callback) {
-        var form = this._makeFormData(inputView);
+        var form = this._makeFormData(this._uploader.inputView);
+
         $.ajax({
             url: this._uploader.url.send,
             type: 'POST',
