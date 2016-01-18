@@ -9,6 +9,7 @@ describe('Input test', function() {
     beforeEach(function() {
         uploader = {
             $el: $('<div id="uploader"></div>'),
+            fileField: 'userfile[]',
             store: function() {
                 // uploader store mock
             }
@@ -20,11 +21,12 @@ describe('Input test', function() {
             template: {
                 form: ['<form enctype="multipart/form-data" id="formData" method="post">',
                     '<input type="hidden" name="MAX_FILE_SIZE" value="3000000" />',
-                    '<input type="file" id="fileAttach" name="userfile[]" multiple="true" />',
+                    //'<input type="file" id="fileAttach" name="userfile[]" multiple="true" />',
                     '</form>'].join('')
             },
             helper: 'http://localhost:8080/'
         }, uploader);
+
         inputBatchTransfer = new Input({
             sizeunit: 'kb',
             url: 'http://localhost:8080/uploader.php',
@@ -41,6 +43,11 @@ describe('Input test', function() {
 
     it('onChange event fire from onChange event handler', function() {
         var data;
+
+        input.$input[0] = {
+            value: 'changed file'
+        };
+
         input.on('change', function(param) {
             data = param.target;
         });

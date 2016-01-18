@@ -32,7 +32,7 @@ var isSupportFormData = function() {
 };
 
 /**
- * Get item elemen HTML
+ * Get item elements HTML
  * @param {string} html HTML template
  * @returns {string}
  * @memberof utils
