@@ -22,32 +22,27 @@ describe('Input elements[type=files] pool behavior test.', function() {
     });
 
     it('store file to pool', function() {
-        var files = pool.files;
-
         pool.store(inputF1);
         pool.store(inputF2);
         pool.store(inputF3);
 
-        expect(files[fileName1]).toBe(inputF1);
-        expect(files[fileName2]).toBe(inputF2);
-        expect(files[fileName3]).toBe(inputF3);
+        expect(pool.files[fileName1]).toEqual([inputF1]);
+        expect(pool.files[fileName2]).toEqual([inputF2]);
+        expect(pool.files[fileName3]).toEqual([inputF3]);
     });
 
     it('remove file from pool', function() {
-        var files = pool.files;
-
         pool.store(inputF1);
         pool.store(inputF2);
         pool.store(inputF3);
 
         pool.remove(fileName1);
 
-        expect(files[fileName1]).not.toBeDefined();
+        expect(pool.files[fileName1]).not.toBeDefined();
 
     });
 
     it('remove file from pool', function() {
-        var files = pool.files;
 
         pool.store(inputF1);
         pool.store(inputF2);
@@ -55,15 +50,14 @@ describe('Input elements[type=files] pool behavior test.', function() {
 
         pool.empty();
 
-        expect(files[fileName1]).not.toBeDefined();
-        expect(files[fileName2]).not.toBeDefined();
-        expect(files[fileName3]).not.toBeDefined();
+        expect(pool.files[fileName1]).not.toBeDefined();
+        expect(pool.files[fileName2]).not.toBeDefined();
+        expect(pool.files[fileName3]).not.toBeDefined();
 
     });
 
     it('plant pool elements to other element', function() {
-        var contains,
-            files = pool.files;
+        var contains;
 
         // store inputs
         pool.store(inputF1);
@@ -74,9 +68,9 @@ describe('Input elements[type=files] pool behavior test.', function() {
         pool.plant(planet);
 
         // check plant result
-        expect(files[fileName1]).not.toBeDefined();
-        expect(files[fileName2]).not.toBeDefined();
-        expect(files[fileName3]).not.toBeDefined();
+        expect(pool.files[fileName1]).not.toBeDefined();
+        expect(pool.files[fileName2]).not.toBeDefined();
+        expect(pool.files[fileName3]).not.toBeDefined();
 
         contains = [$.contains(planet, inputF1),
                     $.contains(planet, inputF2),

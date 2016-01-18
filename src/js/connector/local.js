@@ -9,6 +9,7 @@ var utils = require('../utils');
  * @namespace Connector.Local
  */
 var Local = {/** @lends Connector.Local.prototype */
+    _isSupportingFormData: utils.isSupportFormData(),
     /**
      * A result array to save file to send.
      */
@@ -22,6 +23,7 @@ var Local = {/** @lends Connector.Local.prototype */
     addRequest: function(data, files) {
         var isValidPool = utils.isSupportFormData(),
             result = this._saveFile(isValidPool, files);
+
         data.success({
             items: result
         });
@@ -45,7 +47,7 @@ var Local = {/** @lends Connector.Local.prototype */
         }
 
         if (isSupportAjax) {
-            files = files || fileEl.files;
+            files = tui.util.toArray(files || fileEl.files);
             tui.util.forEach(files, function(item) {
                 if (tui.util.isObject(item)) {
                     result.push(item);
@@ -109,9 +111,6 @@ var Local = {/** @lends Connector.Local.prototype */
             }
         });
 
-        //this._result = tui.util.filter(this._result, function(el) {
-        //    return el.name !== data.filename;
-        //});
         info.success({
             action: 'remove',
             name: data.filename

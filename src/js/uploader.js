@@ -185,10 +185,10 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
                 this._connector.submit(tui.util.bind(function() {
                     /**
                      * @api
-                     * @event Uploader#beforesubmit
+                     * @event Uploader#batchSuccess
                      * @param {Uploader} uploader - uploader instance
                      */
-                    this.fire('beforesubmit', this);
+                    this.fire('batchSuccess', this);
                 }, this));
             } else {
                 this._pool.plant();
