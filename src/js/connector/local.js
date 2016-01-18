@@ -98,11 +98,20 @@ var Local = {/** @lends Connector.Local.prototype */
      * @memberof Connector.Local
      */
     removeRequest: function(info) {
-        var data = info.data;
-        this._result = tui.util.filter(this._result, function(el) {
-            return el.name !== data.filename;
+        var data = info.data,
+            filename = data.filename,
+            result = this._result;
+
+        tui.util.forEach(result, function(el, index) {
+            if (el.name === filename) {
+                result.splice(index, 1);
+                return false;
+            }
         });
 
+        //this._result = tui.util.filter(this._result, function(el) {
+        //    return el.name !== data.filename;
+        //});
         info.success({
             action: 'remove',
             name: data.filename

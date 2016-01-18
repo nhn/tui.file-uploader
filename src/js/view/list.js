@@ -123,16 +123,16 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
      */
     _removeFileItem: function(name) {
         name = decodeURIComponent(name);
-        this.items = tui.util.filter(this.items, function(item) {
-            var isMatch = name === decodeURIComponent(item.name);
-            if (isMatch) {
+        tui.util.forEach(this.items, function(item, index) {
+            if (name === decodeURIComponent(item.name)) {
                 item.destroy();
                 this._uploader.remove(name);
                 this.fire('fileRemoved', {
                     name: name
                 });
+                this.items.splice(index, 1);
+                return false;
             }
-            return !isMatch;
         }, this);
     },
 
