@@ -3,11 +3,10 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 
-
+'use strict';
 /**
  * @namespace utils
  */
-
 /**
  * Extract unit for file size
  * @param {number} bytes A usage of file

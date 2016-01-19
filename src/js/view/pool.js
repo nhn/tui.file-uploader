@@ -2,7 +2,7 @@
  * @fileoverview This is manager of input elements that act like file pool.
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
-
+'use strict';
 var forEach = tui.util.forEach;
 
 /**

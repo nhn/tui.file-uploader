@@ -4,7 +4,7 @@
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
-
+'use strict';
 /**
  * The modules will be mixed in connector by type.
  * @namespace Connector.Ajax
@@ -18,6 +18,7 @@ var Ajax = {/** @lends Connector.Ajax */
      *  @param {string} config.url Request url(upload url or remove url)
      *  @param {function} config.success Callback function when request suceess.
      *  @param {function} config.error Callback function when request faild.
+     * @param {Array} files Files
      *  @memberof Connector.Ajax
      */
     addRequest: function(config, files) {
@@ -27,8 +28,8 @@ var Ajax = {/** @lends Connector.Ajax */
 
         if (files) {
             this.formData = new FormData();
-            tui.util.forEach(files, function(e) {
-                this.formData.append(uploader.fileField, e);
+            tui.util.forEach(files, function(file) {
+                this.formData.append(uploader.fileField, file);
             }, this);
         } else {
             this.formData = new FormData($form[0]);
@@ -60,7 +61,7 @@ var Ajax = {/** @lends Connector.Ajax */
 
     /**
      * Request ajax by config to remove file.
-     * @param {object} config
+     * @param {object} config Configuration for remove
      * @memberof Connector.Ajax
      */
     removeRequest: function(config) {

@@ -2,7 +2,7 @@
  * @fileoverview Configuration or default values.
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
-
+'use strict';
 /**
  * Configuration of connection with server.
  * @type {{RESPONSE_TYPE: string, REDIRECT_URL: string}}

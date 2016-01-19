@@ -3,7 +3,7 @@
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
-
+'use strict';
 var Ajax = require('./ajax');
 var Jsonp = require('./jsonp');
 var Local = require('./local');
