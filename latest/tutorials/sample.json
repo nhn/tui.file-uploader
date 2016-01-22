@@ -1,0 +1,17 @@
+{
+  "samedomain": {
+    "title": "Same domain"
+  },
+  "xdomain": {
+    "title": "X domain"
+  },
+  "fold": {
+    "title": "folder"
+  },
+  "batch": {
+    "title": "batch"
+  },
+  "custom": {
+    "title": "custom"
+  }
+}

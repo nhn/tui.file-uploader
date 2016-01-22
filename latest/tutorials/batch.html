@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" href="../styles/prettify-jsdoc.css" />
+    <link type="text/css" rel="stylesheet" href="../styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="../styles/tui.css">
+    <title></title>
+    <link href="css/sample.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<div class="wrap"></div>
+<div id="uploader"></div>
+<div id="list">
+    <div class="count">count : <strong id="file_count"></strong></div>
+    <div class="size">size : <strong id="size_count"></strong></div>
+    <ul id="files">
+    </ul>
+</div>
+
+<div class="codeArea"></div>
+
+<script type="text/javascript" src="../lib/jquery/jquery.js"></script>
+<script type="text/javascript" src="../lib/tui-code-snippet/code-snippet.js"></script>
+<script type="text/javascript" src="js/file-uploader.js"></script>
+
+<script src="../scripts/prettify/prettify.js"></script>
+<script src="../scripts/prettify/lang-css.js"></script>
+<script src="../scripts/samplecode.js"></script>
+<script class="serviceCode">
+    var uploader = new tui.component.Uploader({
+        url: {
+            send: "http://127.0.0.1:8008/server/uploader.php",
+            remove: "http://127.0.0.1:8008/server/remove.php"
+        },
+        isBatchTransfer: true,
+        resultTypeElementName: 'RESPONSE_TYPE',
+        formTarget: 'hiddenFrame',
+        callbackName: 'responseCallback',
+        listInfo: {
+            list: $('#files'),
+            count: $('#file_count'),
+            size: $('#size_count')
+        },
+        sizeunit: "KB",
+        separator: ';',
+        fileField: 'userfile[]',
+        isMultiple: true,
+        useDrag: true
+    }, $('#uploader'));
+
+</script>
+
+</body>
+</html>

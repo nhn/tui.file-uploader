@@ -1,0 +1,27 @@
+body { font: normal normal normal 11px/normal '.HelveticaNeueDeskInterface-Regular';
+font-family: '나눔고딕',NanumGothic,'맑은 고딕',malgungothic,'굴림',Gulim,AppleGothic,sans-serif; }
+* {margin:0; padding:0}
+ul, ol { list-style:none; }
+
+#uploader { width:300px; margin: 30px 0 0 30px; }
+#uploader .dragzone {width:100%; height:50px; outline: 5px dashed #eee;margin-bottom: 30px; background-color: transparent;  }
+#uploader .dragzone.enableClass { background-color: yellow; }
+#list {width:450px; margin:20px 0 0 30px; }
+#list .size, #list .count { float:left; width:150px; padding-bottom:30px;  }
+#list #files { clear:both; width: 100%; border: 1px solid #eee; min-height:150px; padding: 10px 0; overflow:auto; }
+#list #files li {float:left; padding: 4px 5px 4px 15px; }
+#list #files li .uploader_btn_delete {  width:15px; height:15px; background:url('../img/sp_cnt.png') no-repeat -167px 4px; font-size:0;text-indent:-9999em; vertical-align:middle; border:1px solid #eee; margin-left:10px;}
+#list #files .fileicon { width:16px; height:16px; display:inline-block; background:url('../img/icons.png') no-repeat -172px -1px; font-size:0; text-indent:-9999em;vertical-align:middle; margin-right:10px;  }
+#list #files .fileicon.jpg, #list #files .fileicon.jpeg, #list #files .fileicon.png { background-position:-1px -1px; }
+#list #files .fileicon.doc, #list #files .fileicon.docx { background-position:-20px -1px; }
+#list #files .fileicon.ppt, #list #files .fileicon.pptx { background-position:-39px -1px; }
+#list #files .fileicon.xls, #list #files .fileicon.xlsx { background-position:-58px -1px; }
+#list #files .fileicon.txt, #list #files .fileicon.text { background-position:-96px -1px; }
+#list #files .fileicon.swf, #list #files .fileicon.fla { background-position:-191px -1px; }
+#list #files .fileicon.avi, #list #files .fileicon.mp4, #list #files .fileicon.mkv { background-position:-210px -1px; }
+#list #files .fileicon.mp3, #list #files .fileicon.wma { background-position:-229px -1px; }
+#list #files .fileicon.gif { background-position:-286px -1px; }
+#list #files .fileicon.pdf { background-position:-115px -1px; }
+#list #files li .file_name { width: 300px; display:inline-block; vertical-align: middle; overflow:hidden; white-space: nowrap;  text-overflow: ellipsis;}
+#list #files li .file_size { font-size:9px; color:#000066; }
+#status { margin:20px 30px; width:300px; padding:10px; border:1px solid #eee; }
