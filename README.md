@@ -12,11 +12,6 @@ The component support to upload files to server.
 * **API** : https://nhnent.github.io/tui.component.file-uploader/latest
 * **Tutorial** : https://github.com/nhnent/tui.component.file-uploader/wiki/File-Uploader-Tutorial
 
-## Sample (Internal Network only)
-* [Sample Page] (http://fe.nhnent.com/etc/sample/component-uploader/samedomain.html)
-* [Batch Transfer] (http://fe.nhnent.com/etc/sample/component-uploader/batch.html)
-* [Custom Event](http://fe.nhnent.com/etc/sample/component-uploader/custom.html)
-
 ## Dependency
 * tui-code-snippet: ~1.0.4
 * jquery: ~1.8.3
@@ -36,9 +31,14 @@ The component support to upload files to server.
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
-| 1.0.1 | Namespace changed | 2015.10 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> | 
-| 1.0.1 | Drag and Drop, folder select, batch transfer | 2015.08 | NHN Ent. FE dev team <dl_javascript@nhnent.com> | 
+| 1.0.1a | fix bugs - batch transfer, file remove | 2016.01 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> |
+| 1.0.1 | Namespace changed | 2015.10 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> |
+| 1.0.1 | Drag and Drop, folder select, batch transfer | 2015.08 | NHN Ent. FE dev team <dl_javascript@nhnent.com> |
 | <a href="http://nhnent.github.io/tui.component.file-uploader/1.0.0/">1.0.0</a> | Release | 2015.07 | NHN Ent. FE dev team <dl_javascript@nhnent.com> |
 
 ## LICENSE
 [MIT LICENSE](LICENSE)
+
+## Sponsor
+* <img src="https://cloud.githubusercontent.com/assets/12269563/12287774/8cf4d2c0-ba12-11e5-9fa8-0a9c452cca05.png" height="30"><br>
+ [BrowserStack](https://www.browserstack.com/) is a cloud based cross browser testing tool

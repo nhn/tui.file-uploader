@@ -1,6 +1,6 @@
 {
     "name": "component-file-uploader",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "authors": ["NHNEnt FE Development Team <e0242@nhnent.com>"],
     "description": "",
     "license": "MIT",
@@ -8,6 +8,7 @@
         "**/.*",
         "node_modules",
         "bower_components",
+        "lib",
         "test",
         "tests"
     ],
