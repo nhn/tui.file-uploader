@@ -9,7 +9,6 @@ var buffer = require('vinyl-buffer');
 var karma = require('karma').server;
 var hbsfy = require('hbsfy');
 var uglify = require('gulp-uglify');
-var gutil = require('gulp-util');
 var concat = require('gulp-concat');
 var filename = require('./package.json').name.replace('component-', '');
 
@@ -55,7 +54,7 @@ gulp.task('compress', ['bundle'], function() {
 gulp.task('concat', ['compress'], function() {
     gulp.src(filename + '.js')
         .pipe(concat(filename + '.js'))
-        .pipe(gulp.dest('./sample/js/'));
+        .pipe(gulp.dest('./samples/js/'));
 });
 
 gulp.task('default', ['bundle', 'compress', 'concat']);

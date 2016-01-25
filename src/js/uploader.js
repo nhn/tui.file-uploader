@@ -256,7 +256,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          * @param {object} target - Target item information
          */
         this.listView.on('fileAdded', function(target) {
-            self.fire(target);
+            self.fire('fileAdded', target);
         });
 
         /**
@@ -266,7 +266,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          * @param {object} name - The file name to remove
          */
         this.listView.on('fileRemoved', function(name) {
-            self.fire(name);
+            self.fire('fileRemoved', name);
         });
     },
 
