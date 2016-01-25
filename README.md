@@ -36,7 +36,7 @@ The component support to upload files to server.
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
-| 1.0.1a | fix bugs - batch transfer, file remove | 2016.01 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> |
+| 1.0.2 | fix bugs - batch transfer, file remove | 2016.01 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> |
 | 1.0.1 | Namespace changed | 2015.10 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> |
 | 1.0.1 | Drag and Drop, folder select, batch transfer | 2015.08 | NHN Ent. FE dev team <dl_javascript@nhnent.com> |
 | <a href="http://nhnent.github.io/tui.component.file-uploader/1.0.0/">1.0.0</a> | Release | 2015.07 | NHN Ent. FE dev team <dl_javascript@nhnent.com> |
