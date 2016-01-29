@@ -7,28 +7,48 @@
 /**
  * @namespace utils
  */
+var IS_SUPPORT_FILE_SYSTEM = !!(window.File && window.FileReader && window.FileList && window.Blob),
+    IS_SUPPORT_FORM_DATA = !!(window.FormData || null);
+
+
+function parseURL(url) {
+    var a = document.createElement('a');
+    a.href = url;
+    return {
+        href:     a.href,
+        host:     a.host || location.host,
+        port:     ('0' === a.port || '' === a.port) ? port(a.protocol) : a.port,
+        hash:     a.hash,
+        hostname: a.hostname || location.hostname,
+        pathname: a.pathname.charAt(0) != '/' ? '/' + a.pathname : a.pathname,
+        protocol: !a.protocol || ':' == a.protocol ? location.protocol : a.protocol,
+        search:   a.search,
+        query:    a.search.slice(1)
+    };
+}
+
+
 /**
  * Extract unit for file size
  * @param {number} bytes A usage of file
  * @memberof utils
  */
-var getFileSizeWithUnit = function(bytes) {
+function getFileSizeWithUnit(bytes) {
     var units = ['B', 'KB', 'MB', 'GB', 'TB'],
         bytes = parseInt(bytes, 10),
         exp = Math.log(bytes) / Math.log(1024) | 0,
         result = (bytes / Math.pow(1024, exp)).toFixed(2);
 
     return result + units[exp];
-};
+}
 
 /**
  * Whether the browser support FormData or not
  * @memberof utils
  */
-var isSupportFormData = function() {
-    var FormData = (window.FormData || null);
-    return !!FormData;
-};
+function isSupportFormData() {
+    return IS_SUPPORT_FORM_DATA;
+}
 
 /**
  * Get item elements HTML
@@ -36,25 +56,34 @@ var isSupportFormData = function() {
  * @returns {string}
  * @memberof utils
  */
-var template = function(map, html) {
-    html = html.replace(/\{\{([^\}]+)\}\}/g, function(mstr, name) {
+function template(map, html) {
+    html = html.replace(/\{\{([^\}]+)\}\}/g, function (mstr, name) {
         return map[name];
     });
     return html;
-};
+}
 
 /**
  * Check whether support file api or not
  * @returns {boolean}
  * @memberof utils
  */
-var isSupportFileSystem = function() {
-    return !!(window.File && window.FileReader && window.FileList && window.Blob);
-};
+function isSupportFileSystem() {
+    return IS_SUPPORT_FILE_SYSTEM;
+}
+
+function isCrossDomain(url) {
+    var location = parseURL(window.location.href);
+    url = parseURL(url);
+    return url.hostname !== location.hostname
+        || url.port !== location.port
+        || url.protocol !== location.protocol;
+}
 
 module.exports = {
     getFileSizeWithUnit: getFileSizeWithUnit,
     isSupportFileSystem: isSupportFileSystem,
     isSupportFormData: isSupportFormData,
-    template: template
+    template: template,
+    isCrossDomain: isCrossDomain
 };

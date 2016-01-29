@@ -6,11 +6,11 @@
 'use strict';
 var consts = require('./consts');
 var utils = require('./utils');
-var conn = require('./connector/connector');
 var Input = require('./view/input');
 var List = require('./view/list');
-var Pool = require('./view/pool');
 var DragAndDrop = require('./view/drag');
+var OldRequester = require('./requester/old');
+var ModernRequester = require('./requester/modern');
 
 /**
  * FileUploader act like bridge between connector and view.
@@ -21,15 +21,9 @@ var DragAndDrop = require('./view/drag');
  *  @param {object} options.url The url is file server.
  *      @param {string} options.url.send The url is for file attach.
  *      @param {string} options.url.remove The url is for file detach.
- *  @param {object} options.helper The helper object info is for x-domain.
- *      @param {string} options.helper.url The url is helper page url.
- *      @param {string} options.helper.name The name of hidden element for sending server helper page information.
- *  @param {string} options.resultTypeElementName The type of hidden element for sending server response type information.
  *  @param {string} options.formTarget The target for x-domain jsonp case.
- *  @param {string} options.callbackName The name of jsonp callback function.
  *  @param {object} options.listInfo The element info to display file list information.
- *  @param {string} options.separator The separator for jsonp helper response.
- *  @param {string} [options.fileField=userFile] The field name of input file element.
+ *  @param {string} [options.fileField='userFile[]'] The field name of input file element.
  *  @param {boolean} options.useFolder Whether select unit is folder of not. If this is ture, multiple will be ignored.
  *  @param {boolean} options.isMultiple Whether enable multiple select or not.
  * @param {jQuery} $el Root Element of Uploader
@@ -39,19 +33,12 @@ var DragAndDrop = require('./view/drag');
  *         send: "http://fe.nhnent.com/etc/etc/uploader/uploader.php",
  *         remove: "http://fe.nhnent.com/etc/etc/uploader/remove.php"
  *     },
- *     helper: {
- *         url: 'http://10.77.34.126:8009/samples/response.html',
- *         name: 'REDIRECT_URL'
- *     },
- *     resultTypeElementName: 'RESPONSE_TYPE',
  *     formTarget: 'hiddenFrame',
- *     callbackName: 'responseCallback',
  *     listInfo: {
  *         list: $('#files'),
  *         count: $('#file_count'),
  *         size: $('#size_count')
- *     },
- *     separator: ';'
+ *     }
  * }, $('#uploader'));
  */
 var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
@@ -60,20 +47,16 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
      */
     init: function(options, $el) {
         this._setData(options);
-        this._setConnector();
-
         this.$el = $el;
-
-        if(this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
+        this.fileField = this.fileField || consts.CONF.FILE_FILED_NAME;
+        if (this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
             this.dragView = new DragAndDrop(options, this);
         }
-
-        this.inputView = new Input(options, this);
+        this.inputView = new Input(this, options);
         this.listView = new List(options, this);
-
-        this.fileField = this.fileField || consts.CONF.FILE_FILED_NAME;
-        this._pool = new Pool(this.inputView.$el[0]);
+        this._setConnector();
         this._addEvent();
+        this.isCrossDomain = utils.isCrossDomain(this.url.send);
     },
 
     /**
@@ -81,23 +64,27 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
      * @private
      */
     _setConnector: function() {
-        if (this.isBatchTransfer) {
-            this.type = 'local';
-        } else if (this.isCrossDomain()) {
-            if (this.helper) {
-                this.type = 'jsonp';
-            } else {
-                alert(consts.CONF.ERROR.NOT_SURPPORT);
-                this.type = 'local';
-            }
+        if (utils.isSupportFormData()) {
+            this._requester = new ModernRequester(this);
         } else {
-            if (this.useJsonp || !utils.isSupportFormData()) {
-                this.type = 'jsonp';
-            } else {
-                this.type = 'ajax';
-            }
+            this.$target = this._createTargetFrame();
+            this.$el.append(this.$target);
+            this._requester = new OldRequester(this);
         }
-        this._connector = conn.getConnector(this);
+    },
+
+    /**
+     * Makes element to be target of submit form element.
+     * @private
+     */
+    _createTargetFrame: function() {
+        var $target = $('<iframe name="' + this.formTarget + '"></iframe>');
+        $target.css({
+            visibility: 'hidden',
+            position: 'absolute'
+        });
+
+        return $target;
     },
 
     /**
@@ -105,7 +92,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
      * @param {object} info The data for update list
      *  @param {string} info.action The action name to execute method
      */
-    notify: function(info) {
+    updateList: function(info) {
         this.listView.update(info);
         this.listView.updateTotalInfo(info);
     },
@@ -144,22 +131,10 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
 
     /**
      * Callback for custom send event
-     * @param {object} [data] The data include callback function for file clone
      */
-    sendFile: function(data) {
-        var callback = tui.util.bind(this.notify, this),
-            files = data && data.files;
-
-        this._connector.addRequest({
-            type: 'add',
-            success: function(result) {
-                if (data && data.callback) {
-                    data.callback(result);
-                }
-                callback(result);
-            },
-            error: this.errorCallback
-        }, files);
+    sendFile: function() {
+        this._requester.store();
+        this._requester.upload();
     },
 
     /**
@@ -167,12 +142,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
      * @param {object} data The data for remove file.
      */
     removeFile: function(data) {
-        var callback = tui.util.bind(this.notify, this);
-        this._connector.removeRequest({
-            type: 'remove',
-            data: data,
-            success: callback
-        });
+        this._requester.remove(data);
     },
 
     /**
@@ -180,20 +150,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
      * @api
      */
     submit: function() {
-        if (this._connector.submit) {
-            if (utils.isSupportFormData()) {
-                this._connector.submit(tui.util.bind(function() {
-                    /**
-                     * @api
-                     * @event Uploader#batchSuccess
-                     * @param {Uploader} uploader - uploader instance
-                     */
-                    this.fire('batchSuccess', this);
-                }, this));
-            } else {
-                this._pool.plant();
-            }
-        }
+        this._requester.upload();
     },
 
     /**
@@ -235,57 +192,57 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
      * @private
      */
     _addEvent: function() {
-        var self = this;
+        this._requester.on('removed', function(data) {
+            this.listView.update(data);
+            this.fire('remove', data);
+        }, this);
 
-        if(this.useDrag && this.dragView) {
+        this._requester.on('error', function(data) {
+            this.fire('error', data);
+        }, this);
+
+        if (this.useDrag && this.dragView) {
             // @todo top 처리가 따로 필요함, sendFile 사용 안됨
-            this.dragView.on('drop', this.sendFile, this);
+            this.dragView.on('drop', this._store, this);
         }
+
         if (this.isBatchTransfer) {
-            this.inputView.on('save', this.sendFile, this);
+            this.inputView.on('change', this._store, this);
             this.listView.on('remove', this.removeFile, this);
+            this._requester.on({
+                uploaded: function(data) {
+                    this.clear();
+                    this.fire('success', data);
+                },
+                stored: function(data) {
+                    this.updateList(data);
+                    this.fire('update', data);
+                }
+            }, this);
         } else {
             this.inputView.on('change', this.sendFile, this);
             this.listView.on('remove', this.removeFile, this);
+            this._requester.on({
+                uploaded: function(data) {
+                    this.updateList(data.filelist);
+                    this.fire('success', data);
+                }
+            }, this);
         }
+    },
 
-        /**
-         * Custom Events
-         * @api
-         * @event Uploader#fileAdded
-         * @param {object} target - Target item information
-         */
-        this.listView.on('fileAdded', function(target) {
-            self.fire('fileAdded', target);
-        });
-
-        /**
-         * Custom Events
-         * @api
-         * @event Uploader#fileRemoved
-         * @param {object} name - The file name to remove
-         */
-        this.listView.on('fileRemoved', function(name) {
-            self.fire('fileRemoved', name);
-        });
+    clear: function() {
+        this._requester.clear();
+        this.inputView.clear();
+        this.listView.clear();
     },
 
     /**
      * Store input element to pool.
-     * @param {HTMLElement} input A input element[type=file] for store pool
+     //* @param {HTMLElement} input A input element[type=file] for store pool
      */
-    store: function(input) {
-        this._pool.store(input);
-    },
-
-    /**
-     * Remove input element form pool.
-     * @param {string} name The file name to remove
-     */
-    remove: function(name) {
-        if (!utils.isSupportFormData()) {
-            this._pool.remove(name);
-        }
+    _store: function() {
+        this._requester.store();
     }
 });
 

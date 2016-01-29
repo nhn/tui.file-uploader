@@ -28,24 +28,47 @@
 <script type="text/javascript">
     var uploader = new tui.component.Uploader({
         url: {
-            send: "http://127.0.0.1:8008/server/uploader.php",
-            remove: "http://127.0.0.1:8008/server/remove.php"
+//            send: 'http://10.77.29.126:3000/upload',
+//            remove: 'http://10.77.29.126:3000/remove'
+            send: 'http://10.77.34.120:3001/upload',
+            remove: 'http://10.77.34.120:3001/remove'
+//          send: "http://127.0.0.1:8008/server/uploader.php",
+//          remove: "http://127.0.0.1:8008/server/remove.php"
         },
         isBatchTransfer: true,
-        resultTypeElementName: 'RESPONSE_TYPE',
         formTarget: 'hiddenFrame',
-        callbackName: 'responseCallback',
         listInfo: {
             list: $('#files'),
             count: $('#file_count'),
             size: $('#size_count')
         },
         sizeunit: "KB",
-        separator: ';',
         fileField: 'userfile[]',
         isMultiple: true,
         useDrag: true
     }, $('#uploader'));
+
+    uploader.on('success', function(data) {
+        console.log(data);
+    });
+
+    uploader.on('error', function(data) {
+        alert(data.status + ' ' + data.message);
+    });
+
+//
+//    uploader.on('batchSuccess', function(response) {
+//        console.log(response);
+//    });
+//
+//    var $iframe = $('iframe');
+//    $iframe.on('load', function() {
+//        if (this.contentDocument) {
+//            alert(this.contentDocument.body.innerHTML);
+//        } else if (this.contentWindow) {
+//            alert(this.contentWindow.document.body.innerHTML);
+//        }
+//    });
 
 </script>
 

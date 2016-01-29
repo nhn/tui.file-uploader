@@ -29,32 +29,27 @@
 <script type="text/javascript">
     var uploader = new tui.component.Uploader({
         url: {
-            send: "http://127.0.0.1:8008/server/uploader.php",
-            remove: "http://127.0.0.1:8008/server/remove.php"
+            send: 'http://10.77.29.126:3000/upload',
+            remove: 'http://10.77.29.126:3000/remove'
         },
         isBatchTransfer: false,
-        resultTypeElementName: 'RESPONSE_TYPE',
         formTarget: 'hiddenFrame',
-        callbackName: 'responseCallback',
         listInfo: {
             list: $('#files'),
             count: $('#file_count'),
             size: $('#size_count')
         },
         sizeunit: "KB",
-        separator: ';',
         fileField: 'userfile[]',
         isMultiple: true
     }, $('#uploader'));
 
-		uploader.on('fileAdded', function(data) {
-			$('#status').html(data.target.length + 'files added');
-		});
-		uploader.on('fileRemoved', function(data) {
-			$('#status').html(data.name + 'file removed');
-		});
+    uploader.on('success', function(data) {
+        $('#status').html(data.success + 'files added');
+    });
+    uploader.on('remove', function(data) {
+        $('#status').html(data.name + 'file removed');
+    });
 </script>
-
-
 </body>
 </html>

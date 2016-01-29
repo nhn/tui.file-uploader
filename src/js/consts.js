@@ -4,22 +4,18 @@
  */
 'use strict';
 /**
- * Configuration of connection with server.
- * @type {{RESPONSE_TYPE: string, REDIRECT_URL: string}}
+ * Uploader config
  */
 module.exports.CONF = {
-    RESPONSE_TYPE: 'RESPONSE_TYPE',
-    REDIRECT_URL: 'REDIRECT_URL',
-    JSONPCALLBACK_NAME: 'CALLBACK_NAME',
     SIZE_UNIT: 'SIZE_UNIT',
-    REMOVE_CALLBACK : 'responseRemoveCallback',
     ERROR: {
-        DEFAULT: 'Unknown error.',
-        NOT_SURPPORT: 'This is x-domain connection, you have to make helper page.'
+        DEFAULT: 'Unknown error.'
     },
     DRAG_DEFAULT_ENABLE_CLASS: 'enableClass',
     FILE_FILED_NAME: 'userfile[]',
-    FOLDER_INFO: 'folderName'
+    FOLDER_INFO: 'folderName',
+    HIDDEN_FILE_INPUT_CLASS: 'uploader-hidden-file-input',
+    X_DOMAIN_GLOBAL_CALLBACK_NAME: '__uploaderXDomainCallback'
 };
 
 /**

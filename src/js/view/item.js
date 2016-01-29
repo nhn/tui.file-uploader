@@ -18,25 +18,16 @@ var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
      *  @param {string} options.name File name
      *  @param {string} options.type File type
      *  @param {object} options.root List object
-     *  @param {string} options.hiddenFrame The iframe name will be target of form submit.
-     *  @param {string} options.url The url for form action to submet.
      *  @param {string} [options.id] Unique key, what if the key is not exist id will be the file name.
-     *  @param {string} [options.hiddenFieldName] The name of hidden filed. The hidden field is for connecting x-domian.
      *  @param {string} [options.deleteButtonClassName='uploader_btn_delete'] The class name is for delete button.
+     *  @param {string} [options.template] item template
      *  @param {(string|number)} [options.size] File size (but ie low browser, x-domain)
-     *  @param {object} [options.helper] The helper page info.
      */
     init: function(options) {
-
         this._setRoot(options);
         this._setItemInfo(options);
-        this._setConnectInfo(options);
 
         this.render(options.template || consts.HTML.item);
-
-        if (options.helper) {
-            this._makeBridgeInfoElement(options.helper);
-        }
     },
 
     /**
@@ -56,21 +47,11 @@ var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
      */
     _setItemInfo: function(options) {
         this.name = options.name;
+        this.id = options.id || options.name;
         this._type = options.type || this._extractExtension();
-        this._id = options.id || options.name;
         this.size = options.size || '';
-        this._btnClass = options.deleteButtonClassName || 'uploader_btn_delete';
+        this._btnClass = 'uploader_btn_delete';
         this._unit = options.unit || 'KB';
-    },
-
-    /**
-     * Set connect element information.
-     * @param {object} options Same with init options parameter.
-     * @private
-     */
-    _setConnectInfo: function(options) {
-        this._url = options.url;
-        this._hiddenInputName = options.hiddenFieldName || 'filename';
     },
 
     /**
@@ -94,19 +75,6 @@ var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
     },
 
     /**
-     * Make element that has redirect page information used by Server side.
-     * @param {object} helper Redirection helper page information for clear x-domain problem.
-     * @private
-     */
-    _makeBridgeInfoElement: function(helper) {
-        this.$helper = $('<input />');
-        this.$helper.attr({
-            'name' : helper.name,
-            'value': helper.url
-        });
-    },
-
-    /**
      * Get item elemen HTML
      * @param {string} html HTML template
      * @returns {string}
@@ -124,7 +92,7 @@ var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
     },
 
     /**
-     * Destory item
+     * Destroy item
      */
     destroy: function() {
         this._removeEvent();
@@ -158,8 +126,8 @@ var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
      */
     _onClickEvent: function() {
         this.fire('remove', {
-            filename : this.name,
-            id : this._id,
+            name : this.name,
+            id : this.id,
             type: 'remove'
         });
     }

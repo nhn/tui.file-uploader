@@ -4,8 +4,11 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 'use strict';
-var consts = require('../consts');
-var utils = require('../utils');
+var consts = require('../consts'),
+    HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS,
+    utils = require('../utils');
+
+var isSupportFormData = utils.isSupportFormData();
 
 /**
  * This view control input element typed file.
@@ -14,48 +17,43 @@ var utils = require('../utils');
 var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
     /**
      * Initialize input element.
-     * @param {object} [options]
+     * @param {Uploader} uploader - Uploader instance
+     * @param {object} [options] - Options
      */
-    init: function(options, uploader) {
-
+    init: function(uploader, options) {
         this._uploader = uploader;
         this._target = options.formTarget;
         this._url = options.url;
         this._isBatchTransfer = options.isBatchTransfer;
-        this._isMultiple = !!(utils.isSupportFormData() && options.isMultiple);
-        this._useFolder = !!(utils.isSupportFormData() && options.useFolder);
-
         this._html = this._setHTML(options.template);
 
-        this._render();
-        this._renderHiddenElements();
-
-        if (options.helper) {
-            this._makeBridgeInfoElement(options.helper);
+        if (isSupportFormData) {
+            this._isMultiple = options.isMultiple;
+            this._useFolder = options.useFolder;
         }
-
-        this._addEvent();
+        this._render();
     },
 
     /**
      * Render input area
-     * @private
      */
     _render: function() {
-        this.$el = $(this._getHtml());
+        this.$el = $(this._html.form);
         this.$el.attr({
             action: this._url.send,
             method: 'post',
-            enctype: "multipart/form-data",
-            target: (!this._isBatchTransfer ? this._target : '')
+            enctype: 'multipart/form-data',
+            target: isSupportFormData ? '' : this._target
         });
-        this.$input = this._getInputElement();
-        this.$submit = this._getSubmitElement();
-        this.$input.appendTo(this.$el);
-        if (this.$submit) {
+
+        this.$fileInput = this._createFileInput();
+        this.$fileInput.appendTo(this.$el);
+        if (this._isBatchTransfer) {
+            this.$submit = this._createSubmitElement();
             this.$submit.appendTo(this.$el);
         }
         this._uploader.$el.append(this.$el);
+        this._addEvent();
     },
 
     /**
@@ -74,20 +72,12 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
             form: template.form || consts.HTML.form
         }
     },
-    /**
-     * Get html string from template
-     * @return {object}
-     * @private
-     */
-    _getHtml: function() {
-        return this._html.form;
-    },
 
     /**
      * Makes and returns jquery element
-     * @return {object} The jquery object wrapping original input element
+     * @return {jQuery} The jquery object wrapping original input element
      */
-    _getInputElement: function() {
+    _createFileInput: function() {
         var map = {
             multiple: this._isMultiple ? 'multiple' : '',
             fileField: this._uploader.fileField,
@@ -99,24 +89,10 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
 
     /**
      * Makes and returns jquery element
-     * @return {object} The jquery object wrapping sumbit button element
+     * @return {jQuery} The jquery object wrapping sumbit button element
      */
-    _getSubmitElement: function() {
-        if (this._isBatchTransfer) {
-            return $(this._html.submit);
-        } else {
-            return false;
-        }
-    },
-
-    /**
-     * Call methods those make each hidden element.
-     * @private
-     */
-    _renderHiddenElements: function() {
-        this._makeTargetFrame();
-        this._makeResultTypeElement();
-        this._makeCallbackElement();
+    _createSubmitElement: function() {
+        return $(this._html.submit);
     },
 
     /**
@@ -124,17 +100,20 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
      * @private
      */
     _addEvent: function() {
+        var onSubmitHandler;
         if (this._isBatchTransfer) {
-            if (utils.isSupportFormData()) {
-                this.$el.on('submit', tui.util.bind(function (event) {
+            if (isSupportFormData) {
+                onSubmitHandler = tui.util.bind(function(event) {
                     event.preventDefault();
                     this._uploader.submit();
-                }, this));
+                }, this);
             } else {
-                this.$el.on('submit', tui.util.bind(function () {
+                onSubmitHandler = tui.util.bind(function() {
                     this._uploader.submit();
-                }, this));
+                }, this);
             }
+
+            this.$el.on('submit', onSubmitHandler);
         }
         this._addInputEvent();
     },
@@ -144,18 +123,14 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
      * @private
      */
     _addInputEvent: function() {
-        if (this._isBatchTransfer) {
-            this.$input.on('change', tui.util.bind(this.onSave, this));
-        } else {
-            this.$input.on('change', tui.util.bind(this.onChange, this));
-        }
+        this.$fileInput.on('change', tui.util.bind(this.onChange, this));
     },
 
     /**
      * Event-Handle for input element change
      */
     onChange: function() {
-        if (!this.$input[0].value) {
+        if (!this.$fileInput[0].value) {
             return;
         }
         this.fire('change', {
@@ -164,106 +139,23 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
     },
 
     /**
-     * Event-Handle for save input element
-     */
-    onSave: function() {
-        if (!this.$input[0].value) {
-            return;
-        }
-        var saveCallback = !utils.isSupportFormData() ? tui.util.bind(this._resetInputElement, this) : null;
-        this.fire('save', {
-            element: this.$input[0],
-            callback: saveCallback
-        });
-    },
-
-    /**
      * Reset Input element to save whole input=file element.
      */
-    _resetInputElement: function() {
-        this.$input.off();
-        this._clone(this.$input[0]);
-        this.$input = this._getInputElement();
+    resetFileInput: function() {
+        this.$fileInput.remove();
+        this.$fileInput = this._createFileInput();
         if (this.$submit) {
-            this.$submit.before(this.$input);
+            this.$submit.before(this.$fileInput);
         } else {
-            this.$el.append(this.$input);
+            this.$el.append(this.$fileInput);
         }
         this._addInputEvent();
     },
 
-    /**
-     * Makes element to be target of submit form element.
-     * @private
-     */
-    _makeTargetFrame: function() {
-        this._$target = $('<iframe name="' + this._target + '"></iframe>');
-        this._$target.css({
-            visibility: 'hidden',
-            position: 'absolute'
-        });
-        this._uploader.$el.append(this._$target);
-    },
-
-    /**
-     * Make element to be callback function name
-     * @private
-     */
-    _makeCallbackElement: function() {
-        this._$callback = this._makeHiddenElement({
-            'name': consts.CONF.JSONPCALLBACK_NAME,
-            'value': this._uploader.callbackName
-        });
-        this.$el.append(this._$callback);
-    },
-
-    /**
-     * Makes element to know which type request
-     * @private
-     */
-    _makeResultTypeElement: function() {
-        this._$resType = this._makeHiddenElement({
-            'name' : this._uploader.resultTypeElementName || consts.CONF.RESPONSE_TYPE,
-            'value': this._uploader.type
-        });
-        this.$el.append(this._$resType);
-    },
-
-    /**
-     * Make element that has redirect page information used by Server side.
-     * @param {object} helper Redirection information for clear x-domain problem.
-     * @private
-     */
-    _makeBridgeInfoElement: function(helper) {
-        this._$helper = this._makeHiddenElement({
-            'name' : helper.name || consts.CONF.REDIRECT_URL,
-            'value': helper.url
-        });
-        this.$el.append(this._$helper);
-    },
-
-    /**
-     * Make hidden input element with options
-     * @param {object} options The opitons to be attribute of input
-     * @returns {*|jQuery}
-     * @private
-     */
-    _makeHiddenElement: function(options) {
-        tui.util.extend(options, {
-            type: 'hidden'
-        });
-        return $('<input />').attr(options);
-    },
-
-    /**
-     * Ask uploader to save input element to pool
-     * @param {HTMLElement} input A input element[type=file] for store pool
-     */
-    _clone: function(input) {
-        input.file_name = input.value;
-        this._uploader.store(input);
+    clear: function() {
+        this.$el.find('.' + HIDDEN_FILE_INPUT_CLASS).remove();
+        this.resetFileInput();
     }
-
 });
 
 tui.util.CustomEvents.mixin(Input);

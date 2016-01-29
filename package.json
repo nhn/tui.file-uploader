@@ -6,6 +6,7 @@
   "devDependencies": {
     "browserify": "latest",
     "browserify-istanbul": "latest",
+    "express": "^4.13.4",
     "fedoc-template": "git+https://github.nhnent.com/fe/share-fedoc-template.git#develop",
     "gulp": "latest",
     "gulp-concat": "^2.6.0",
@@ -28,6 +29,7 @@
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
     "moment": "^2.10.3",
+    "multer": "^1.1.0",
     "phantomjs": "^1.9.18",
     "underscore": "^1.8.3",
     "vinyl-buffer": "latest",

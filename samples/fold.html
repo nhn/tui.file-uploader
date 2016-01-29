@@ -32,16 +32,13 @@
             remove: "http://127.0.0.1:8008/server/remove.php"
         },
         isBatchTransfer: false,
-        resultTypeElementName: 'RESPONSE_TYPE',
         formTarget: 'hiddenFrame',
-        callbackName: 'responseCallback',
         listInfo: {
             list: $('#files'),
             count: $('#file_count'),
             size: $('#size_count')
         },
         sizeunit: "KB",
-        separator: ';',
         fileField: 'userfile[]',
         useFolder: true
     }, $('#uploader'));
