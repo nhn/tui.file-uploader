@@ -11,20 +11,21 @@ var HIDDEN_FILE_INPUT_CLASS = require('./consts').CONF.HIDDEN_FILE_INPUT_CLASS,
 /**
  * The pool for save files.
  * It's only for input[file] element save at browser that does not support file api.
- * @class View.Pool
+ * @param {HTMLElement} planet - Form element
+ * @class Pool
  */
-var Pool = tui.util.defineClass(/** @lends View.Pool.prototype */{
-    /**
-     * initialize
-     */
+var Pool = tui.util.defineClass(/** @lends Pool.prototype */{
     init: function(planet) {
         /**
          * Submitter for file element to server
+         * Form element
          * @type {HTMLElement}
          */
         this.planet = planet;
+
         /**
-         * File data structure object(key=name : value=iuput[type=file]-Element);
+         * File data structure object
+         *  key=name : value=iuput[type=file](Element)
          * @type {object}
          */
         this.files = {};

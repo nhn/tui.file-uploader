@@ -10,27 +10,32 @@
 var IS_SUPPORT_FILE_SYSTEM = !!(window.File && window.FileReader && window.FileList && window.Blob),
     IS_SUPPORT_FORM_DATA = !!(window.FormData || null);
 
-
+/**
+ * Parse url
+ * @param {string} url - url for parsing
+ * @returns {Object} URL information
+ */
 function parseURL(url) {
     var a = document.createElement('a');
     a.href = url;
+
     return {
-        href:     a.href,
-        host:     a.host || location.host,
-        port:     ('0' === a.port || '' === a.port) ? port(a.protocol) : a.port,
-        hash:     a.hash,
-        hostname: a.hostname || location.hostname,
-        pathname: a.pathname.charAt(0) != '/' ? '/' + a.pathname : a.pathname,
-        protocol: !a.protocol || ':' == a.protocol ? location.protocol : a.protocol,
-        search:   a.search,
-        query:    a.search.slice(1)
+        href: a.href,
+        host: a.host,
+        port: a.port,
+        hash: a.hash,
+        hostname: a.hostname,
+        pathname: a.pathname,
+        protocol: a.protocol,
+        search: a.search,
+        query: a.search.slice(1)
     };
 }
-
 
 /**
  * Extract unit for file size
  * @param {number} bytes A usage of file
+ * @returns {string} Size-string
  * @memberof utils
  */
 function getFileSizeWithUnit(bytes) {
@@ -43,8 +48,9 @@ function getFileSizeWithUnit(bytes) {
 }
 
 /**
- * Whether the browser support FormData or not
+ * Whether the browser supports FormData or not
  * @memberof utils
+ * @returns {boolean} whether the browser supports FormData
  */
 function isSupportFormData() {
     return IS_SUPPORT_FORM_DATA;
@@ -52,8 +58,9 @@ function isSupportFormData() {
 
 /**
  * Get item elements HTML
+ * @param {Object} map - Properties for template
  * @param {string} html HTML template
- * @returns {string}
+ * @returns {string} HTML
  * @memberof utils
  */
 function template(map, html) {
@@ -64,20 +71,27 @@ function template(map, html) {
 }
 
 /**
- * Check whether support file api or not
- * @returns {boolean}
+ * Check whether the browser supports file api.
+ * @returns {boolean} whether the browser supports FileAPI
  * @memberof utils
  */
 function isSupportFileSystem() {
     return IS_SUPPORT_FILE_SYSTEM;
 }
 
+/**
+ * Check whether the url is x-domain
+ * @param {string} url - URL
+ * @returns {boolean} Whether the url is x-domain
+ * @memberof utils
+ */
 function isCrossDomain(url) {
-    var location = parseURL(window.location.href);
-    url = parseURL(url);
-    return url.hostname !== location.hostname
-        || url.port !== location.port
-        || url.protocol !== location.protocol;
+    var here = parseURL(window.location.href),
+        target = parseURL(url);
+
+    return target.hostname !== here.hostname
+        || target.port !== here.port
+        || target.protocol !== here.protocol;
 }
 
 module.exports = {

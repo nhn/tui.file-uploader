@@ -5,57 +5,69 @@ var Pool = require('../pool'),
 
 var TYPE = consts.CONF.REQUESTER_TYPE_OLD;
 
-var Old = tui.util.defineClass({
+/**
+ * Old requester
+ * @param {Uploader} uploader - Uploader
+ * @class
+ */
+var Old = tui.util.defineClass(/** @lends Old.prototype */{
     init: function(uploader) {
-        var $hiddenFrame = uploader.$target;
+        var $hiddenFrame = uploader.$targetFrame,
+            formView = uploader.formView;
 
-        this.pool = new Pool(uploader.formView.$el[0]);
+        /**
+         * Uploader
+         * @type {Uploader}
+         */
         this.uploader = uploader;
-        this.formView = uploader.formView;
-        $hiddenFrame.on('load', $.proxy(this._onUpload, this, $hiddenFrame));
+
+        /**
+         * From view
+         * @type {Form}
+         */
+        this.formView = formView;
+
+        /**
+         * Local pool for file elements
+         * @type {Pool}
+         */
+        this.pool = new Pool(formView.$el[0]);
 
         if (uploader.isBatchTransfer) {
+            /**
+             * Override Upload function for batch transfer
+             * @type {Old._uploadWhenBatch}
+             */
             this.upload = this._uploadWhenBatch;
+
+            /**
+             * Override remove function for batch transfer
+             * @type {Old._removeWhenBatch}
+             */
             this.remove = this._removeWhenBatch;
         }
 
-        if (uploader.isCrossDomain) {
-            this._supportCrossDomain();
-        }
+        $hiddenFrame.on('load', $.proxy(this._onLoadHiddenFrame, this, $hiddenFrame));
     },
 
+    /**
+     * @type {string} Requester type
+     */
     TYPE: TYPE,
 
-    _supportCrossDomain: function() {
-        var $hiddenFrame = this.uploader.$target,
-            self = this;
-
-        if ($hiddenFrame[0].contentWindow.postMessage) {
-            $hiddenFrame.off('load', this._onUpload);
-            this.formView.$el.append(
-                '<input type="hidden" name="messageTarget" value="' + location.protocol + '//' + location.host + '">'
-            );
-            $(window).on('message', function(event) {
-                var data = $.parseJSON(event.originalEvent.data);
-                if (uploader.filterMessage && !uploader.filterMessage(event.originalEvent)) {
-                    return;
-                }
-                self.fire('uploaded', data);
-            });
-        } else if (uploader.redirectURL) {
-            this.formView.$el.append(
-                '<input type="hidden" name="redirectURL" value="' + uploader.redirectURL + '">'
-            );
-        }
-    },
-
-    _onUpload: function($hiddenFrame) {
+    /**
+     * Event handler
+     * "load" of hidden frame.
+     * @param {jQuery} $hiddenFrame - Hidden iframe
+     * @private
+     */
+    _onLoadHiddenFrame: function($hiddenFrame) {
         var frameBody,
             data;
 
         try {
             frameBody = $hiddenFrame[0].contentWindow.document.body;
-            data = frameBody.innerText || frameBody.textContent;
+            data = tui.util.pick(frameBody, 'firstChild', 'data');
             if (data) {
                 this.fire('uploaded', $.parseJSON(data));
             }
@@ -67,6 +79,9 @@ var Old = tui.util.defineClass({
         }
     },
 
+    /**
+     * Store file input element from upload form
+     */
     store: function() {
         var el = this.formView.$fileInput[0],
             id = tui.util.stamp(el);
@@ -81,6 +96,10 @@ var Old = tui.util.defineClass({
         }]);
     },
 
+    /**
+     * Upload.
+     * It is not used for batch transfer.
+     */
     upload: function() {
         this.pool.plant();
         this.formView.$el.submit();
@@ -88,10 +107,20 @@ var Old = tui.util.defineClass({
         this.clear();
     },
 
+    /**
+     * Upload.
+     * It is used for batch transfer.
+     * @private
+     */
     _uploadWhenBatch: function() {
         this.pool.plant();
     },
 
+    /**
+     * Remove file (ajax-jsonp)
+     * It is not used for batch transfer.
+     * @param {Object} params - Parameters to remove file
+     */
     remove: function(params) {
         var uploader = this.uploader;
         $.ajax({
@@ -105,6 +134,12 @@ var Old = tui.util.defineClass({
         });
     },
 
+    /**
+     * Remove file (ajax-jsonp)
+     * It is used for batch transfer.
+     * @param {Object} params - Parameters to remove file
+     * @private
+     */
     _removeWhenBatch: function(params) {
         var result = this.pool.remove(params);
 
@@ -113,6 +148,9 @@ var Old = tui.util.defineClass({
         }, params));
     },
 
+    /**
+     * Clear the pool
+     */
     clear: function() {
         this.pool.empty();
     }

@@ -3,19 +3,20 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 'use strict';
+
+var REMOVE_BUTTON_CLASS = 'removeButton';
+
 /**
  * Uploader config
  */
 module.exports.CONF = {
-    SIZE_UNIT: 'SIZE_UNIT',
-    ERROR: {
-        DEFAULT: 'Unknown error.'
-    },
-    DRAG_DEFAULT_ENABLE_CLASS: 'enableClass',
     FILE_FILED_NAME: 'userfile[]',
-    HIDDEN_FILE_INPUT_CLASS: 'uploader-hidden-file-input',
+    DROP_ENABLED_CLASS: 'dropEnabled',
+    HIDDEN_FILE_INPUT_CLASS: 'hiddenFileInput',
     REQUESTER_TYPE_MODERN: 'modernRequester',
-    REQUESTER_TYPE_OLD: 'oldRequester'
+    REQUESTER_TYPE_OLD: 'oldRequester',
+    FORM_TARGET_NAME: 'hiddenFrame',
+    REMOVE_BUTTON_CLASS: REMOVE_BUTTON_CLASS
 };
 
 /**
@@ -23,16 +24,20 @@ module.exports.CONF = {
  * @type {{input: string, item: string}}
  */
 module.exports.HTML = {
-    form: ['<form enctype="multipart/form-data" id="formData" method="post">',
-        '<input type="hidden" name="MAX_FILE_SIZE" value="3000000" />',
-        '</form>'].join(''),
-    input: ['<input type="file" id="fileAttach" {{webkitdirectory}} name="{{fileField}}" {{multiple}} />'].join(''),
-    submit: ['<button class="batchSubmit" type="submit">SEND</button>'].join(''),
-    item: ['<li class="filetypeDisplayClass">',
-        '<span class="fileicon {{filetype}}">{{filetype}}</span>',
-        '<span class="file_name">{{filename}}</span>',
-        '<span class="file_size">{{filesize}}</span>',
-        '<button type="button" class="{{deleteButtonClassName}}">Delete</button>',
-        '</li>'].join(''),
-    drag: ['<div class="dragzone"></div>'].join('')
+    form: [
+        '<form enctype="multipart/form-data" id="formData" method="post">',
+        '</form>'
+    ].join(''),
+    submit: '<button class="batchSubmit" type="submit">SEND</button>',
+    fileInput: '<input type="file" id="fileAttach" {{directory}} name="{{fileField}}" {{multiple}} />',
+    hiddenInput: '<input type="hidden" name="{{name}}" value="{{value}}">',
+    listItem: [
+        '<li class="filetypeDisplayClass">',
+            '<span class="fileicon {{filetype}}">{{filetype}}</span>',
+            '<span class="file_name">{{filename}}</span>',
+            '<span class="file_size">{{filesize}}</span>',
+            '<button type="button" class="' + REMOVE_BUTTON_CLASS + '">Delete</button>',
+        '</li>'
+    ].join(''),
+    dragAndDrop: '<div class="dropzone"></div>'
 };

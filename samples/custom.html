@@ -21,9 +21,10 @@
 <script type="text/javascript">
     var uploader = new tui.component.Uploader({
         url: {
-            send: 'http://10.77.29.126:3000/upload',
-            remove: 'http://10.77.29.126:3000/remove'
+            send: 'http://localhost:3000/upload',
+            remove: 'http://localhost:3000/remove'
         },
+        redirectURL: 'http://localhost:8080/samples/result.html',
         isBatchTransfer: false,
         formTarget: 'hiddenFrame',
         listInfo: {
@@ -31,16 +32,15 @@
             count: $('#file_count'),
             size: $('#size_count')
         },
-        sizeunit: "KB",
         fileField: 'userfile[]',
         isMultiple: true
     }, $('#uploader'));
 
     uploader.on('success', function(data) {
-        $('#status').html(data.success + 'files added');
+        $('#status').html(data.success + ' files added');
     });
     uploader.on('remove', function(data) {
-        $('#status').html(data.name + 'file removed');
+        $('#status').html(data.name + ' file removed');
     });
 </script>
 </body>

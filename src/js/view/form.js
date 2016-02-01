@@ -12,67 +12,138 @@ var isSupportFormData = utils.isSupportFormData(),
 
 /**
  * This view control input element typed file.
+ * @param {Uploader} uploader - Uploader instance
  * @constructor View.Form
  */
 var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
-    /**
-     * Initialize form element.
-     * @param {Uploader} uploader - Uploader instance
-     * @param {object} [options] - Options
-     */
-    init: function(uploader, options) {
+    init: function(uploader) {
+        /**
+         * File uploader
+         * @type {Uploader}
+         * @private
+         */
         this._uploader = uploader;
-        this._target = options.formTarget;
-        this._url = options.url;
-        this._isBatchTransfer = options.isBatchTransfer;
-        this._html = this._setHTML(options.template);
+
+        /**
+         * Html templates
+         * @type {Object.<string, string>}
+         */
+        this._html = this._setTemplate(uploader.template);
+
+        /**
+         * Form element
+         * @type {jQuery}
+         */
+        this.$el = null;
+
+        /**
+         * File input element
+         * @type {jQuery}
+         */
+        this.$fileInput = null;
+
+        /**
+         * Submit element
+         * @type {jQuery}
+         */
+        this.$submit = null;
 
         if (isSupportFormData) {
-            this._isMultiple = options.isMultiple;
-            this._useFolder = options.useFolder;
+            /**
+             * Whether the file input is multiple
+             * @type {boolean}
+             * @private
+             */
+            this._isMultiple = uploader.isMultiple;
+
+            /**
+             * Whether the file input accepts folder
+             * @type {boolean}
+             * @private
+             */
+            this._useFolder = uploader.useFolder;
         }
-        this._render();
+
+        this._render({
+            action: uploader.url.send,
+            method: 'post',
+            enctype: 'multipart/form-data',
+            target: isSupportFormData ? '' : uploader.formTarget
+        });
     },
 
     /**
-     * Render input area
+     * Render form element
+     * @param {object} attributes - Form attributes
      * @private
      */
-    _render: function() {
-        this.$el = $(this._html.form);
-        this.$el.attr({
-            action: this._url.send,
-            method: 'post',
-            enctype: 'multipart/form-data',
-            target: isSupportFormData ? '' : this._target
-        });
+    _render: function(attributes) {
+        var uploader = this._uploader,
+            $fileInput = this._createFileInput(),
+            $el = $(this._html.form)
+                .append($fileInput)
+                .attr(attributes);
 
-        this.$fileInput = this._createFileInput();
-        this.$fileInput.appendTo(this.$el);
-        if (this._isBatchTransfer) {
-            this.$submit = this._createSubmitElement();
-            this.$submit.appendTo(this.$el);
+        this.$fileInput = $fileInput;
+        this.$el = $el;
+
+        if (uploader.isBatchTransfer) {
+            this._setSubmitElement();
         }
-        this._uploader.$el.append(this.$el);
+
+        if (uploader.isCrossDomain) {
+            this._setHiddenInputForCORS();
+        }
+        uploader.$el.append(this.$el);
+
         this._addEvent();
+    },
+
+    /**
+     * Set submit element
+     * @private
+     */
+    _setSubmitElement: function() {
+        this.$submit = $(this._html.submit);
+        this.$submit.appendTo(this.$el);
+    },
+
+    /**
+     * Set hidden input element for CORS.
+     *  Hidden input of PostMessage or RedirectURL.
+     * @private
+     */
+    _setHiddenInputForCORS: function() {
+        var props, $hiddenInput,
+            uploader = this._uploader,
+            redirectURL = uploader.redirectURL;
+
+        if (uploader.isSupportPostMessage) { // for IE8, 9
+            props = {
+                name: 'messageTarget',
+                value: location.protocol + '//' + location.host
+            };
+        } else if (redirectURL) { // for IE7
+            props = {
+                name: 'redirectURL',
+                value: redirectURL
+            };
+        }
+
+        if (props) {
+            $hiddenInput = $(utils.template(props, this._html.hiddenInput));
+            $hiddenInput.appendTo(this.$el);
+        }
     },
 
     /**
      * Set all of input elements html strings.
      * @private
      * @param {object} [template] The template is set form customer.
-     * @return {object} The html string set for inputView
+     * @return {Object.<string, string>} The html template string set for form.
      */
-    _setHTML: function(template) {
-        if (!template) {
-            template = {};
-        }
-
-        return {
-            input: template.input || consts.HTML.input,
-            submit: template.submit || consts.HTML.submit,
-            form: template.form || consts.HTML.form
-        }
+    _setTemplate: function(template) {
+        return tui.util.extend({}, consts.HTML, template);
     },
 
     /**
@@ -84,19 +155,10 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
         var map = {
             multiple: this._isMultiple ? 'multiple' : '',
             fileField: this._uploader.fileField,
-            webkitdirectory: this._useFolder ? 'directory mozdirectory webkitdirectory' : ''
+            directory: this._useFolder ? 'directory mozdirectory webkitdirectory' : ''
         };
 
-        return $(utils.template(map, this._html.input));
-    },
-
-    /**
-     * Makes and returns jquery element
-     * @private
-     * @return {jQuery} The jquery object wrapping sumbit button element
-     */
-    _createSubmitElement: function() {
-        return $(this._html.submit);
+        return $(utils.template(map, this._html.fileInput));
     },
 
     /**
@@ -104,24 +166,14 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
      * @private
      */
     _addEvent: function() {
-        if (this._isBatchTransfer) {
-            this._addEventWhenBatchTransfer();
+        if (this._uploader.isBatchTransfer) {
+            this.$el.on('submit', $.proxy(this.fire, this, 'submit'));
         }
         this._addInputEvent();
     },
 
     /**
-     * Add submit event
-     * @private
-     */
-    _addEventWhenBatchTransfer: function() {
-        this.$el.on('submit', $.proxy(function(event) {
-            this.fire('submit', event);
-        }, this));
-    },
-
-    /**
-     * Add input element change event by sending type
+     * Add change event to file input
      * @private
      */
     _addInputEvent: function() {
@@ -163,5 +215,4 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
 });
 
 tui.util.CustomEvents.mixin(Form);
-
 module.exports = Form;

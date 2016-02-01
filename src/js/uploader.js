@@ -12,7 +12,8 @@ var DragAndDrop = require('./view/drag');
 var OldRequester = require('./requester/old');
 var ModernRequester = require('./requester/modern');
 
-var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN,
+var snippet = tui.util,
+    REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN,
     isSupportFormData = utils.isSupportFormData();
 
 /**
@@ -45,39 +46,136 @@ var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN,
  * }, $('#uploader'));
  */
 var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
-    /**
-     * initialize
-     */
     init: function(options, $el) {
-        this._setData(options);
+        /**
+         * Uploader element
+         * @type {jQuery}
+         */
         this.$el = $el;
-        this.fileField = this.fileField || consts.CONF.FILE_FILED_NAME;
-        if (this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
-            this.dragView = new DragAndDrop(options, this);
-        }
-        this.formView = new Form(this, options);
-        this.listView = new List(options, this);
-        this._setConnector();
-        this._addEvent();
+
+        /**
+         * Send/Remove url
+         * @type {{send: string, remove: string}}
+         */
+        this.url = options.url;
+
+        /**
+         * Redirect URL for CORS(response, IE7)
+         * @type {string}
+         */
+        this.redirectURL = options.redirectURL;
+
+        /**
+         * Form target name for CORS (IE7, 8, 9)
+         * @type {string}
+         */
+        this.formTarget = options.formTarget || consts.CONF.FORM_TARGET_NAME;
+
+        /**
+         * Target frame for CORS (IE7, 8, 9)
+         * @type {jQuery}
+         */
+        this.$targetFrame = this._createTargetFrame()
+            .appendTo(this.$el);
+
+        /**
+         * Input file - field name
+         * @type {string}
+         */
+        this.fileField = options.fileField || consts.CONF.FILE_FILED_NAME;
+
+
+        /**
+         * Whether the sending/removing urls are x-domain.
+         * @type {boolean}
+         */
         this.isCrossDomain = utils.isCrossDomain(this.url.send);
+
+        /**
+         * Whether the browser supports PostMessage API
+         * @type {boolean}
+         */
+        this.isSupportPostMessage = !!(snippet.pick(this.$targetFrame, '0', 'contentWindow', 'postMessage'));
+
+        /**
+         * Whether the user uses multiple upload
+         * @type {boolean}
+         */
+        this.isMultiple = !!(options.isMultiple);
+
+        /**
+         * Whether the user uses drag&drop upload
+         * @type {boolean}
+         */
+        this.useDrag = !!(options.useDrag);
+
+        /**
+         * Whether the user uses folder upload
+         * @type {boolean}
+         */
+        this.useFolder = !!(options.useFolder);
+
+        if (this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
+            /**
+             * Drag & Drop View
+             * @type {DragAndDrop}
+             */
+            this.dragView = new DragAndDrop(this);
+        }
+
+        /**
+         * From View
+         * @type {Form}
+         */
+        this.formView = new Form(this);
+
+        /**
+         * List View
+         * @type {List}
+         */
+        this.listView = new List(options.listInfo);
+
+        this._setRequester();
+        this._addEvent();
+        if (this.isCrossDomain && this.isSupportPostMessage) {
+            this._setPostMessageEvent();
+        }
     },
 
     /**
      * Set Connector
      * @private
      */
-    _setConnector: function() {
+    _setRequester: function() {
         if (isSupportFormData) {
             this._requester = new ModernRequester(this);
         } else {
-            this.$target = this._createTargetFrame();
-            this.$el.append(this.$target);
             this._requester = new OldRequester(this);
         }
     },
 
     /**
+     * Set post-message event if supported and needed
+     * @private
+     */
+    _setPostMessageEvent: function() {
+        this.$targetFrame.off('load');
+        $(window).on('message', $.proxy(function(event) {
+            var originalEvent = event.originalEvent,
+                data = $.parseJSON(originalEvent.data);
+
+            if (this.url.send.indexOf(originalEvent.origin) === -1) {
+                return;
+            }
+
+            this.clear();
+            this.fire('success', data);
+        }, this));
+    },
+
+    /**
      * Makes element to be target of submit form element.
+     * @returns {jQuery} Target form: jquery-element
      * @private
      */
     _createTargetFrame: function() {
@@ -101,38 +199,6 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
         } else {
             this.listView.updateTotalInfo();
         }
-    },
-
-    /**
-     * Set field data by option values.
-     * @param options
-     * @private
-     */
-    _setData: function(options) {
-        tui.util.extend(this, options);
-    },
-
-    /**
-     * Extract protocol + domain from url to find out whether cross-domain or not.
-     * @returns {boolean}
-     */
-    isCrossDomain: function() {
-        var pageDomain = document.domain;
-        return this.url.send.indexOf(pageDomain) === -1;
-    },
-
-    /**
-     * Callback for error
-     * @param {object} response Error response
-     */
-    errorCallback: function(response) {
-        var message;
-        if (response && response.msg) {
-            message = response.msg;
-        } else {
-            message = consts.CONF.ERROR.DEFAULT;
-        }
-        alert(message);
     },
 
     /**

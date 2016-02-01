@@ -20,18 +20,16 @@
 <script type="text/javascript">
     var uploader = new tui.component.Uploader({
         url: {
-//            send: 'http://127.0.0.1:3000/upload',
-//            remove: 'http://127.0.0.1:3000/remove'
             send: 'http://10.77.29.126:3000/upload',
             remove: 'http://10.77.29.126:3000/remove'
         },
+        redirectURL: 'http://10.77.29.126:8080/samples/result.html',
         formTarget: 'hiddenFrame',
         listInfo: {
             list: $('#files'),
             count: $('#file_count'),
             size: $('#size_count')
         },
-        sizeunit: "KB",
         fileField: 'userfile[]',
         isMultiple: true
     }, $('#uploader'));
