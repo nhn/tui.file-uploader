@@ -38,16 +38,24 @@ app.use('/', express.static('samples'))
 // routes
 app.post('/upload', upload, function(req, res) { // Let us suppose that all the files are uploaded successfully.
         var data = makeResponseData(req.files),
-            callbackName = req.body.callbackName;
+            redirectURL = req.body.redirectURL,
+            messageTarget = req.body.messageTarget,
+            responseData = JSON.stringify(data);
 
-        if (callbackName) { // CORS - IE 7,8,9
+        console.log('\nupload\n', data);
+        if (messageTarget) { // CORS - IE 8, 9
             res.send(
+                responseData +
                 '<script type="text/javascript">' +
-                    'window.parent.' + callbackName + '(' + JSON.stringify(data) + ');' +
+                    'var textNode = document.body.firstChild;' +
+                    'window.parent.postMessage(textNode.data, "' + messageTarget + '");' +
                 '</script>'
             );
+        } else if (redirectURL) { // CORS - IE 7
+            responseData = encodeURI(responseData);
+            res.redirect(redirectURL + '?' + responseData);
         } else {
-            res.send(JSON.stringify(data));
+            res.send(responseData);
         }
     })
     .get('/remove', function(req, res) { // Let us suppose that the file was removed successfully.
@@ -58,6 +66,7 @@ app.post('/upload', upload, function(req, res) { // Let us suppose that all the 
                 name: req.query.name
             });
 
+        console.log('\nremove\n', req.query);
         if (callbackName) { // for x-domain jsonp
             res.send(callbackName + '(' + result + ')');
         } else { // for same domain
@@ -83,7 +92,7 @@ function makeResponseData(files) {
         result.filelist.push({
             message: 'success',
             name: file.originalname,
-            size: file.size / 1000,
+            size: file.size,
             id: file.filename
         });
         result.success += 1;
@@ -91,65 +100,3 @@ function makeResponseData(files) {
 
     return result;
 }
-
-//// response - jsonp type
-//function responseJsonp(req, res) {
-//    var data = makeResponseData(req.files),
-//        redirectURL = req.body.REDIRECT_URL,
-//        callbackName;
-//
-//    if (redirectURL) {
-//        responseToURL(redirectURL, data.filelist, res);
-//    } else {
-//        callbackName = req.body.CALLBACK_NAME;
-//        responseToCallback(callbackName, data, res);
-//    }
-//}
-//
-//
-//// response to hidden frame url
-//function responseToURL(url, filelist, res) {
-//    url += '?' + makeQueryString(filelist);
-//    res.redirect(url);
-//}
-//
-//// response to global callback
-//function responseToCallback(callbackName, data, res) {
-//    //var queryObj = makeQueryObj(filelist);
-//    res.send('<script>window.parent.' + callbackName + '(' + JSON.stringify(data) + ')</script>');
-//}
-//
-//// make query object
-//function makeQueryObj(filelist) {
-//    var queryObj = {
-//        status: [],
-//        names: [],
-//        sizes: [],
-//        ids: []
-//    };
-//
-//    filelist.forEach(function(file) {
-//        queryObj.status.push(file.message);
-//        queryObj.names.push(file.originalname);
-//        queryObj.sizes.push(file.filesize);
-//        queryObj.ids.push(file.fileId);
-//    });
-//
-//    return queryObj;
-//}
-// make query string
-//function makeQueryString(filelist) {
-//    var status = [],
-//        names = [],
-//        sizes = [],
-//        ids = [];
-//
-//    filelist.forEach(function(file) {
-//        status.push(file.message);
-//        names.push(file.name);
-//        sizes.push(file.size);
-//        ids.push(file.fileId);
-//    });
-//
-//    return encodeURI('status=' + status.join(';') + '&names=' + names.join(';') + '&sizes=' + sizes.join(';') + '&ids=' + ids.join(';'));
-//}

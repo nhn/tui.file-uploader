@@ -37,10 +37,10 @@ var DragAndDrop = tui.util.defineClass(/** @lends View.DragAndDrop.prototype */{
      * @private
      */
     _addEvent: function() {
-        this.$el.on('dragenter', tui.util.bind(this.onDragEnter, this));
-        this.$el.on('dragover', tui.util.bind(this.onDragOver, this));
-        this.$el.on('drop', tui.util.bind(this.onDrop, this));
-        this.$el.on('dragleave', tui.util.bind(this.onDragLeave, this));
+        this.$el.on('dragenter', $.proxy(this.onDragEnter, this));
+        this.$el.on('dragover', $.proxy(this.onDragOver, this));
+        this.$el.on('drop', $.proxy(this.onDrop, this));
+        this.$el.on('dragleave', $.proxy(this.onDragLeave, this));
     },
 
     /**
@@ -75,9 +75,7 @@ var DragAndDrop = tui.util.defineClass(/** @lends View.DragAndDrop.prototype */{
     onDrop: function(e) {
         e.preventDefault();
         this._disable();
-        this.fire('drop', {
-            files: e.originalEvent.dataTransfer.files
-        });
+        this.fire('drop', e.originalEvent.dataTransfer.files);
         return false;
     },
 

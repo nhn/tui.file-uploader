@@ -6,11 +6,14 @@
 'use strict';
 var consts = require('./consts');
 var utils = require('./utils');
-var Input = require('./view/input');
+var Form = require('./view/form');
 var List = require('./view/list');
 var DragAndDrop = require('./view/drag');
 var OldRequester = require('./requester/old');
 var ModernRequester = require('./requester/modern');
+
+var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN,
+    isSupportFormData = utils.isSupportFormData();
 
 /**
  * FileUploader act like bridge between connector and view.
@@ -52,7 +55,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
         if (this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
             this.dragView = new DragAndDrop(options, this);
         }
-        this.inputView = new Input(this, options);
+        this.formView = new Form(this, options);
         this.listView = new List(options, this);
         this._setConnector();
         this._addEvent();
@@ -64,7 +67,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
      * @private
      */
     _setConnector: function() {
-        if (utils.isSupportFormData()) {
+        if (isSupportFormData) {
             this._requester = new ModernRequester(this);
         } else {
             this.$target = this._createTargetFrame();
@@ -89,12 +92,15 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
 
     /**
      * Update list view with custom or original data.
-     * @param {object} info The data for update list
-     *  @param {string} info.action The action name to execute method
+     * @param {object} [info] The data for update list
      */
     updateList: function(info) {
         this.listView.update(info);
-        this.listView.updateTotalInfo(info);
+        if (this.isBatchTransfer) {
+            this.listView.updateTotalInfo(info);
+        } else {
+            this.listView.updateTotalInfo();
+        }
     },
 
     /**
@@ -131,10 +137,11 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
 
     /**
      * Callback for custom send event
+     * @param {Event} [event] - Form submit event
      */
-    sendFile: function() {
-        this._requester.store();
-        this._requester.upload();
+    sendFile: function(event) {
+        this.store();
+        this.submit(event);
     },
 
     /**
@@ -147,102 +154,97 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
 
     /**
      * Submit for data submit to server
+     * @param {Event} [event] - Form submit event
      * @api
      */
-    submit: function() {
+    submit: function(event) {
+        if (event && this._requester.TYPE === REQUESTER_TYPE_MODERN) {
+            event.preventDefault();
+        }
         this._requester.upload();
     },
 
     /**
-     * Get file info locally
-     * @param {HtmlElement} element Input element
-     * @private
-     */
-    _getFileInfo: function(element) {
-        var files;
-        if (utils.isSupportFileSystem()) {
-            files = this._getFileList(element.files);
-        } else {
-            files = {
-                name: element.value,
-                id: element.value
-            };
-        }
-        return files;
-    },
-
-    /**
-     * Get file list from FileList object
-     * @param {FileList} files A FileList object
-     * @returns {Array}
-     * @private
-     */
-    _getFileList: function(files) {
-        return tui.util.map(files, function(file) {
-            return {
-                name: file.name,
-                size: file.size,
-                id: file.name
-            };
-        });
-    },
-
-    /**
-     * Add event to listview and inputview
+     * Add events to views and fire uploader events
      * @private
      */
     _addEvent: function() {
-        this._requester.on('removed', function(data) {
-            this.listView.update(data);
-            this.fire('remove', data);
-        }, this);
-
-        this._requester.on('error', function(data) {
-            this.fire('error', data);
-        }, this);
-
         if (this.useDrag && this.dragView) {
-            // @todo top 처리가 따로 필요함, sendFile 사용 안됨
-            this.dragView.on('drop', this._store, this);
+            this.dragView.on('drop', this.store, this);
         }
-
+        this.listView.on('remove', this.removeFile, this);
         if (this.isBatchTransfer) {
-            this.inputView.on('change', this._store, this);
-            this.listView.on('remove', this.removeFile, this);
-            this._requester.on({
-                uploaded: function(data) {
-                    this.clear();
-                    this.fire('success', data);
-                },
-                stored: function(data) {
-                    this.updateList(data);
-                    this.fire('update', data);
-                }
-            }, this);
+            this._addEventWhenBatchTransfer();
         } else {
-            this.inputView.on('change', this.sendFile, this);
-            this.listView.on('remove', this.removeFile, this);
-            this._requester.on({
-                uploaded: function(data) {
-                    this.updateList(data.filelist);
-                    this.fire('success', data);
-                }
-            }, this);
+            this._addEventWhenNormalTransfer();
         }
     },
 
+    /**
+     * Add event when uploader uses batch-transfer
+     * @private
+     */
+    _addEventWhenBatchTransfer: function() {
+        this.formView.on({
+            change: this.store,
+            submit: this.submit
+        }, this);
+
+        this._requester.on({
+            removed: function(data) {
+                this.updateList(data);
+                this.fire('remove', data);
+            },
+            error: function(data) {
+                this.fire('error', data);
+            },
+            uploaded: function(data) {
+                this.clear();
+                this.fire('success', data);
+            },
+            stored: function(data) {
+                this.updateList(data);
+                this.fire('update', data);
+            }
+        }, this);
+    },
+
+    /**
+     * Add event when uploader uses normal-transfer
+     * @private
+     */
+    _addEventWhenNormalTransfer: function() {
+        this.formView.on('change', this.sendFile, this);
+        this._requester.on({
+            removed: function(data) {
+                this.updateList(data);
+                this.fire('remove', data);
+            },
+            error: function(data) {
+                this.fire('error', data);
+            },
+            uploaded: function(data) {
+                this.updateList(data.filelist);
+                this.fire('success', data);
+            }
+        }, this);
+    },
+
+    /**
+     * Clear uploader
+     */
     clear: function() {
         this._requester.clear();
-        this.inputView.clear();
+        this.formView.clear();
         this.listView.clear();
     },
 
     /**
      * Store input element to pool.
-     //* @param {HTMLElement} input A input element[type=file] for store pool
+     * @param {Array.<File> | File} [files] - A file or files
      */
-    _store: function() {
-        this._requester.store();
+    store: function(files) {
+        this._requester.store(files);
     }
 });
 

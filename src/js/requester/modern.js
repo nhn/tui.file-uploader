@@ -1,23 +1,30 @@
 'use strict';
 
+var consts = require('../consts');
+
+var TYPE = consts.CONF.REQUESTER_TYPE_MODERN;
+
 var Modern = tui.util.defineClass({
     init: function(uploader) {
         this.uploader = uploader;
-        this.inputView = uploader.inputView;
+        this.formView = uploader.formView;
         this.pool = [];
         if (uploader.isBatchTransfer) {
             this.remove = this._removeWhenBatch;
         }
     },
 
-    TYPE: 'modern',
+    TYPE: TYPE,
 
-    store: function() {
+    /**
+     * @param {Array.<File> | File} [files] - A file or files
+     */
+    store: function(files) {
         var pool = this.pool,
-            files = tui.util.toArray(this.inputView.$fileInput[0].files),
             stamp = tui.util.stamp,
             data = [];
 
+        files = tui.util.toArray(files || this.formView.$fileInput[0].files),
         tui.util.forEach(files, function(file) {
             var id = stamp(file);
             pool.push(file);
@@ -28,12 +35,12 @@ var Modern = tui.util.defineClass({
             });
         });
 
-        this.inputView.resetFileInput();
+        this.formView.resetFileInput();
         this.fire('stored', data);
     },
 
     upload: function() {
-        var form = this.inputView.$el.clone(),
+        var form = this.formView.$el.clone(),
             field = this.uploader.fileField,
             formData;
 
@@ -47,12 +54,12 @@ var Modern = tui.util.defineClass({
             url: this.uploader.url.send,
             type: 'POST',
             data: formData,
-            success: tui.util.bind(this._uploadSuccess, this),
-            error: tui.util.bind(this._uploadError, this),
+            success: $.proxy(this._uploadSuccess, this),
+            error: $.proxy(this._uploadError, this),
             processData: false,
             contentType: false
         });
-        this.pool.length = 0;
+        this.clear();
     },
 
     clear: function() {
@@ -83,7 +90,7 @@ var Modern = tui.util.defineClass({
             url: uploader.url.remove,
             dataType: 'jsonp',
             data: params,
-            success: tui.util.bind(function(data) {
+            success: $.proxy(function(data) {
                 data.type = 'remove';
                 this.fire('removed', data);
             }, this)

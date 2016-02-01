@@ -1,16 +1,18 @@
 'use strict';
 
 var Pool = require('../pool'),
-    X_DOMAIN_GLOBAL_CALLBACK_NAME = require('../consts').CONF.X_DOMAIN_GLOBAL_CALLBACK_NAME;
+    consts = require('../consts');
+
+var TYPE = consts.CONF.REQUESTER_TYPE_OLD;
 
 var Old = tui.util.defineClass({
     init: function(uploader) {
         var $hiddenFrame = uploader.$target;
 
-        this.pool = new Pool(uploader.inputView.$el[0]);
+        this.pool = new Pool(uploader.formView.$el[0]);
         this.uploader = uploader;
-        this.inputView = uploader.inputView;
-        $hiddenFrame.on('load', tui.util.bind(this._onUpload, this, $hiddenFrame));
+        this.formView = uploader.formView;
+        $hiddenFrame.on('load', $.proxy(this._onUpload, this, $hiddenFrame));
 
         if (uploader.isBatchTransfer) {
             this.upload = this._uploadWhenBatch;
@@ -18,24 +20,59 @@ var Old = tui.util.defineClass({
         }
 
         if (uploader.isCrossDomain) {
-            window[X_DOMAIN_GLOBAL_CALLBACK_NAME] = tui.util.bind(function(data) {
-                this.fire('uploaded', data);
-            }, this);
+            this._supportCrossDomain();
+        }
+    },
 
-            this.inputView.$el.append(
-                '<input type="hidden" name="callbackName" value="' + X_DOMAIN_GLOBAL_CALLBACK_NAME + '">'
+    TYPE: TYPE,
+
+    _supportCrossDomain: function() {
+        var $hiddenFrame = this.uploader.$target,
+            self = this;
+
+        if ($hiddenFrame[0].contentWindow.postMessage) {
+            $hiddenFrame.off('load', this._onUpload);
+            this.formView.$el.append(
+                '<input type="hidden" name="messageTarget" value="' + location.protocol + '//' + location.host + '">'
+            );
+            $(window).on('message', function(event) {
+                var data = $.parseJSON(event.originalEvent.data);
+                if (uploader.filterMessage && !uploader.filterMessage(event.originalEvent)) {
+                    return;
+                }
+                self.fire('uploaded', data);
+            });
+        } else if (uploader.redirectURL) {
+            this.formView.$el.append(
+                '<input type="hidden" name="redirectURL" value="' + uploader.redirectURL + '">'
             );
         }
     },
 
-    TYPE: 'old',
+    _onUpload: function($hiddenFrame) {
+        var frameBody,
+            data;
+
+        try {
+            frameBody = $hiddenFrame[0].contentWindow.document.body;
+            data = frameBody.innerText || frameBody.textContent;
+            if (data) {
+                this.fire('uploaded', $.parseJSON(data));
+            }
+        } catch (e) {
+            this.fire('error', {
+                status: e.name,
+                message: e.message
+            });
+        }
+    },
 
     store: function() {
-        var el = this.inputView.$fileInput[0],
+        var el = this.formView.$fileInput[0],
             id = tui.util.stamp(el);
 
         this.pool.store(el);
-        this.inputView.resetFileInput();
+        this.formView.resetFileInput();
 
         this.fire('stored', [{
             id: id,
@@ -46,8 +83,8 @@ var Old = tui.util.defineClass({
 
     upload: function() {
         this.pool.plant();
-        this.inputView.$el.submit();
-        this.inputView.clear();
+        this.formView.$el.submit();
+        this.formView.clear();
         this.clear();
     },
 
@@ -61,15 +98,11 @@ var Old = tui.util.defineClass({
             url: uploader.url.remove,
             dataType: 'jsonp',
             data: params,
-            success: tui.util.bind(function(data) {
+            success: $.proxy(function(data) {
                 data.type = 'remove';
                 this.fire('removed', data);
             }, this)
         });
-    },
-
-    clear: function() {
-        this.pool.empty();
     },
 
     _removeWhenBatch: function(params) {
@@ -80,21 +113,8 @@ var Old = tui.util.defineClass({
         }, params));
     },
 
-    _onUpload: function($hiddenFrame) {
-        var data;
-
-        this.uploader.clear();
-        try {
-            data = $hiddenFrame[0].contentWindow.document.body.innerHTML;
-            if (data) {
-                this.fire('uploaded', $.parseJSON(data));
-            }
-        } catch (e) {
-            this.fire('error', {
-                status: e.name,
-                message: e.message
-            });
-        }
+    clear: function() {
+        this.pool.empty();
     }
 });
 

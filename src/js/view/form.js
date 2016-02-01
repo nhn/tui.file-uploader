@@ -1,22 +1,22 @@
 /**
- * @fileoverview InputView make input form by template. Add event file upload event.
+ * @fileoverview From-view makes a form by template. Add events for file upload.
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 'use strict';
 var consts = require('../consts'),
-    HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS,
     utils = require('../utils');
 
-var isSupportFormData = utils.isSupportFormData();
+var isSupportFormData = utils.isSupportFormData(),
+    HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS;
 
 /**
  * This view control input element typed file.
- * @constructor View.InputView
+ * @constructor View.Form
  */
-var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
+var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
     /**
-     * Initialize input element.
+     * Initialize form element.
      * @param {Uploader} uploader - Uploader instance
      * @param {object} [options] - Options
      */
@@ -36,6 +36,7 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
 
     /**
      * Render input area
+     * @private
      */
     _render: function() {
         this.$el = $(this._html.form);
@@ -58,6 +59,7 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
 
     /**
      * Set all of input elements html strings.
+     * @private
      * @param {object} [template] The template is set form customer.
      * @return {object} The html string set for inputView
      */
@@ -75,13 +77,14 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
 
     /**
      * Makes and returns jquery element
+     * @private
      * @return {jQuery} The jquery object wrapping original input element
      */
     _createFileInput: function() {
         var map = {
             multiple: this._isMultiple ? 'multiple' : '',
             fileField: this._uploader.fileField,
-            webkitdirectory: this._useFolder ? 'webkitdirectory' : ''
+            webkitdirectory: this._useFolder ? 'directory mozdirectory webkitdirectory' : ''
         };
 
         return $(utils.template(map, this._html.input));
@@ -89,6 +92,7 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
 
     /**
      * Makes and returns jquery element
+     * @private
      * @return {jQuery} The jquery object wrapping sumbit button element
      */
     _createSubmitElement: function() {
@@ -100,22 +104,20 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
      * @private
      */
     _addEvent: function() {
-        var onSubmitHandler;
         if (this._isBatchTransfer) {
-            if (isSupportFormData) {
-                onSubmitHandler = tui.util.bind(function(event) {
-                    event.preventDefault();
-                    this._uploader.submit();
-                }, this);
-            } else {
-                onSubmitHandler = tui.util.bind(function() {
-                    this._uploader.submit();
-                }, this);
-            }
-
-            this.$el.on('submit', onSubmitHandler);
+            this._addEventWhenBatchTransfer();
         }
         this._addInputEvent();
+    },
+
+    /**
+     * Add submit event
+     * @private
+     */
+    _addEventWhenBatchTransfer: function() {
+        this.$el.on('submit', $.proxy(function(event) {
+            this.fire('submit', event);
+        }, this));
     },
 
     /**
@@ -123,7 +125,8 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
      * @private
      */
     _addInputEvent: function() {
-        this.$fileInput.on('change', tui.util.bind(this.onChange, this));
+        this.$fileInput.on('change', $.proxy(this.onChange, this));
+        this.$fileInput.attr('title', ' ');
     },
 
     /**
@@ -133,9 +136,7 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
         if (!this.$fileInput[0].value) {
             return;
         }
-        this.fire('change', {
-            target: this
-        });
+        this.fire('change');
     },
 
     /**
@@ -152,12 +153,15 @@ var Input = tui.util.defineClass(/**@lends View.Input.prototype **/{
         this._addInputEvent();
     },
 
+    /**
+     * Clear file input elements
+     */
     clear: function() {
         this.$el.find('.' + HIDDEN_FILE_INPUT_CLASS).remove();
         this.resetFileInput();
     }
 });
 
-tui.util.CustomEvents.mixin(Input);
+tui.util.CustomEvents.mixin(Form);
 
-module.exports = Input;
+module.exports = Form;

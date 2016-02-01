@@ -106,7 +106,7 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
      * @private
      */
     _addFileItems: function(target) {
-        if (!tui.util.isArray(target)) {
+        if (!tui.util.isArraySafe(target)) {
             target = [target];
         }
         tui.util.forEach(target, function(data) {
@@ -129,7 +129,6 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
                 return false;
             }
         }, this);
-        this.updateTotalInfo();
     },
 
     /**
@@ -151,11 +150,11 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
 
     /**
      * Callback Remove File
-     * @param data
+     * @param item
      * @private
      */
-    _removeFile: function(data) {
-        this.fire('remove', data);
+    _removeFile: function(item) {
+        this.fire('remove', item);
     },
 
     /**

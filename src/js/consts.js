@@ -13,9 +13,9 @@ module.exports.CONF = {
     },
     DRAG_DEFAULT_ENABLE_CLASS: 'enableClass',
     FILE_FILED_NAME: 'userfile[]',
-    FOLDER_INFO: 'folderName',
     HIDDEN_FILE_INPUT_CLASS: 'uploader-hidden-file-input',
-    X_DOMAIN_GLOBAL_CALLBACK_NAME: '__uploaderXDomainCallback'
+    REQUESTER_TYPE_MODERN: 'modernRequester',
+    REQUESTER_TYPE_OLD: 'oldRequester'
 };
 
 /**
@@ -29,7 +29,7 @@ module.exports.HTML = {
     input: ['<input type="file" id="fileAttach" {{webkitdirectory}} name="{{fileField}}" {{multiple}} />'].join(''),
     submit: ['<button class="batchSubmit" type="submit">SEND</button>'].join(''),
     item: ['<li class="filetypeDisplayClass">',
-        '<spna class="fileicon {{filetype}}">{{filetype}}</spna>',
+        '<span class="fileicon {{filetype}}">{{filetype}}</span>',
         '<span class="file_name">{{filename}}</span>',
         '<span class="file_size">{{filesize}}</span>',
         '<button type="button" class="{{deleteButtonClassName}}">Delete</button>',

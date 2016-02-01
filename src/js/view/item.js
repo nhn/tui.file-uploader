@@ -106,7 +106,7 @@ var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
     _addEvent: function() {
         var query = '.' + this._btnClass,
             $delBtn = this._$el.find(query);
-        $delBtn.on('click', tui.util.bind(this._onClickEvent, this));
+        $delBtn.on('click', $.proxy(this._onClickEvent, this));
     },
 
     /**
@@ -116,7 +116,7 @@ var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
     _removeEvent: function() {
         var query = '.' + this._btnClass,
             $delBtn = this._$el.find(query);
-        $delBtn.off('click');
+        $delBtn.off('click', this._onClickEvent);
     },
 
 
