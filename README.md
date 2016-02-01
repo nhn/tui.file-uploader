@@ -12,10 +12,9 @@ The component support to upload files to server.
 * **API** : https://nhnent.github.io/tui.component.file-uploader/latest
 * **Tutorial** : https://github.com/nhnent/tui.component.file-uploader/wiki/File-Uploader-Tutorial
 
-## Sample (Internal Network only)
-* [Sample Page] (http://fe.nhnent.com/etc/sample/component-uploader/samedomain.html)
-* [Batch Transfer] (http://fe.nhnent.com/etc/sample/component-uploader/batch.html)
-* [Custom Event](http://fe.nhnent.com/etc/sample/component-uploader/custom.html)
+## Samples 
+* [Client sample files](samples)
+* [Server sample files - php](server)
 
 ## Dependency
 * tui-code-snippet: ~1.0.4
