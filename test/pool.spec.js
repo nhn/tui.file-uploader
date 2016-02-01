@@ -1,4 +1,4 @@
-var Pool = require('../../src/js/view/pool.js');
+var Pool = require('../src/js/pool.js');
 
 describe('Input elements[type=files] pool behavior test.', function() {
     var inputF1,

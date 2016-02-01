@@ -1,7 +1,7 @@
 var utils = require('../src/js/utils.js');
 
 describe('Util test', function() {
-    it('isSupportDataForm', function () {
+    it('isSupportFormData', function () {
         var FormData = window.FormData || null,
             result = !!FormData;
         expect(utils.isSupportFormData()).toBe(result);

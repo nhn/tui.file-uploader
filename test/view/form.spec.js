@@ -1,4 +1,4 @@
-var Input = require('../../src/js/view/input.js');
+var Input = require('../../src/js/view/form.js');
 
 describe('Input test', function() {
 
