@@ -1,65 +1,58 @@
+'use strict';
+
 var Item = require('../../src/js/view/item.js');
 
 describe('Item test', function() {
 
-    var item,
-        itemH,
+    var root, itemA, itemB;
+
+    beforeEach(function() {
         root = {
             $el : $('<div></div>')
         };
-
-    beforeEach(function() {
-        item = new Item({
+        itemA = new Item({
             name: 'filename1.jpg',
-            type: 'jpg',
-            url: 'http://localhost:8009/filename.jpg',
-            root: root,
-            hiddenFrame: {}
+            id: '1',
+            size: '10',
+            root: root
         });
-        itemH = new Item({
+
+        itemB = new Item({
             name: 'filename2.png',
-            url: 'http://localhost:8009/filename2.png',
-            root: root,
-            hiddenFrame: {},
-            helper: 'http://localhost:8009/helper.html'
+            id: '2',
+            size: '10',
+            root: root
         });
     });
 
-    it('Item is define', function() {
-        expect(item).toBeDefined();
-        expect(itemH).toBeDefined();
+    it('should have type from name', function() {
+        expect(itemA.type).toBe('jpg');
+        expect(itemB.type).toBe('png');
     });
 
-    it('itemH type by _extractExtension', function() {
-        expect(itemH._type).toBe('png');
+    it('should have $removeBtn', function() {
+        expect(itemA.$removeBtn.jquery).toBeTruthy();
     });
 
-    it('destroy', function() {
-        var containBefore,
-            containAfter;
-        containBefore = $.contains(root.$el[0], item._$el[0]);
-        item.destroy();
-        containAfter = $.contains(root.$el[0], item._$el[0]);
-        expect(containBefore).toBe(true);
-        expect(containAfter).toBe(false);
+    it('when destroyed, should not have elements', function() {
+        expect(root.$el.children().length).toBe(2);
 
+        itemA.destroy();
+        expect(root.$el.children().length).toBe(1);
+
+        itemB.destroy();
+        expect(root.$el.children().length).toBe(0);
     });
 
-    it('onclickEvent handler fire remove event', function() {
-        var name,
-            id,
-            type;
+    it('when removeBtn clicked, should fire remove event', function() {
+        spyOn(itemA, 'fire');
 
-        item.on('remove', function(data) {
-            name = data.filename;
-            id = data.id;
-            type = data.type
+        itemA._onClickEvent();
+
+        expect(itemA.fire).toHaveBeenCalledWith('remove', {
+            name: itemA.name,
+            id: itemA.id,
+            type: 'remove'
         });
-
-        item._onClickEvent();
-
-        expect(name).toBe(item.name);
-        expect(id).toBe(item._id);
-        expect(type).toBe('remove');
     });
 });

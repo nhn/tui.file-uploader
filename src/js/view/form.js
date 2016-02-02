@@ -91,7 +91,7 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
             this._setSubmitElement();
         }
 
-        if (uploader.isCrossDomain) {
+        if (uploader.isCrossDomain && !isSupportFormData) {
             this._setHiddenInputForCORS();
         }
         uploader.$el.append(this.$el);

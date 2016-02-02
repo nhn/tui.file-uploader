@@ -12,9 +12,7 @@ var DragAndDrop = require('./view/drag');
 var OldRequester = require('./requester/old');
 var ModernRequester = require('./requester/modern');
 
-var snippet = tui.util,
-    REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN,
-    isSupportFormData = utils.isSupportFormData();
+var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
 
 /**
  * FileUploader act like bridge between connector and view.
@@ -100,7 +98,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          * Whether the browser supports PostMessage API
          * @type {boolean}
          */
-        this.isSupportPostMessage = !!(snippet.pick(this.$targetFrame, '0', 'contentWindow', 'postMessage'));
+        this.isSupportPostMessage = !!(tui.util.pick(this.$targetFrame, '0', 'contentWindow', 'postMessage'));
 
         /**
          * Whether the user uses multiple upload
@@ -152,7 +150,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
      * @private
      */
     _setRequester: function() {
-        if (isSupportFormData) {
+        if (utils.isSupportFormData()) {
             this._requester = new ModernRequester(this);
         } else {
             this._requester = new OldRequester(this);
@@ -196,47 +194,6 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
         });
 
         return $target;
-    },
-
-    /**
-     * Update list view with custom or original data.
-     * @param {object} [info] The data for update list
-     */
-    updateList: function(info) {
-        this.listView.update(info);
-        if (this.isBatchTransfer) {
-            this.listView.updateTotalInfo(info);
-        } else {
-            this.listView.updateTotalInfo();
-        }
-    },
-
-    /**
-     * Callback for custom send event
-     * @param {Event} [event] - Form submit event
-     */
-    sendFile: function(event) {
-        this.store();
-        this.submit(event);
-    },
-
-    /**
-     * Callback for custom remove event
-     * @param {object} data The data for remove file.
-     */
-    removeFile: function(data) {
-        this._requester.remove(data);
-    },
-
-    /**
-     * Submit for data submit to server
-     * @param {Event} [event] - Form submit event
-     */
-    submit: function(event) {
-        if (event && this._requester.TYPE === REQUESTER_TYPE_MODERN) {
-            event.preventDefault();
-        }
-        this._requester.upload();
     },
 
     /**
@@ -303,6 +260,47 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
                 this.fire('success', data);
             }
         }, this);
+    },
+
+    /**
+     * Update list view with custom or original data.
+     * @param {object} [info] The data for update list
+     */
+    updateList: function(info) {
+        this.listView.update(info);
+        if (this.isBatchTransfer) {
+            this.listView.updateTotalInfo(info);
+        } else {
+            this.listView.updateTotalInfo();
+        }
+    },
+
+    /**
+     * Callback for custom send event
+     * @param {Event} [event] - Form submit event
+     */
+    sendFile: function(event) {
+        this.store();
+        this.submit(event);
+    },
+
+    /**
+     * Callback for custom remove event
+     * @param {object} data The data for remove file.
+     */
+    removeFile: function(data) {
+        this._requester.remove(data);
+    },
+
+    /**
+     * Submit for data submit to server
+     * @param {Event} [event] - Form submit event
+     */
+    submit: function(event) {
+        if (event && this._requester.TYPE === REQUESTER_TYPE_MODERN) {
+            event.preventDefault();
+        }
+        this._requester.upload();
     },
 
     /**

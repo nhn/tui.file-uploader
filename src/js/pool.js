@@ -3,7 +3,10 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 'use strict';
-var HIDDEN_FILE_INPUT_CLASS = require('./consts').CONF.HIDDEN_FILE_INPUT_CLASS,
+
+var consts = require('./consts');
+
+var HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS,
     forEach = tui.util.forEach,
     hasStamp = tui.util.hasStamp,
     stamp = tui.util.stamp;

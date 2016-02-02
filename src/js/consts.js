@@ -4,8 +4,6 @@
  */
 'use strict';
 
-var REMOVE_BUTTON_CLASS = 'removeButton';
-
 /**
  * Uploader config
  */
@@ -16,7 +14,7 @@ module.exports.CONF = {
     REQUESTER_TYPE_MODERN: 'modernRequester',
     REQUESTER_TYPE_OLD: 'oldRequester',
     FORM_TARGET_NAME: 'hiddenFrame',
-    REMOVE_BUTTON_CLASS: REMOVE_BUTTON_CLASS
+    REMOVE_BUTTON_CLASS: 'removeButton'
 };
 
 /**
@@ -25,18 +23,18 @@ module.exports.CONF = {
  */
 module.exports.HTML = {
     form: [
-        '<form enctype="multipart/form-data" id="formData" method="post">',
+        '<form enctype="multipart/form-data" id="tui-uploader-form" method="post">',
         '</form>'
     ].join(''),
     submit: '<button class="batchSubmit" type="submit">SEND</button>',
     fileInput: '<input type="file" id="fileAttach" {{directory}} name="{{fileField}}" {{multiple}} />',
     hiddenInput: '<input type="hidden" name="{{name}}" value="{{value}}">',
+    button: '<button type="button">{{text}}</button>',
     listItem: [
         '<li class="filetypeDisplayClass">',
             '<span class="fileicon {{filetype}}">{{filetype}}</span>',
             '<span class="file_name">{{filename}}</span>',
             '<span class="file_size">{{filesize}}</span>',
-            '<button type="button" class="' + REMOVE_BUTTON_CLASS + '">Delete</button>',
         '</li>'
     ].join(''),
     dragAndDrop: '<div class="dropzone"></div>'

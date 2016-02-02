@@ -1,72 +1,71 @@
-var Form = require('../../src/js/view/form.js');
+'use strict';
+
+var Form = require('../../src/js/view/form.js'),
+    consts = require('../../src/js/consts');
+
+var HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS;
 
 describe('Input test', function() {
-
-    var form,
-        inputBatchTransfer,
-        uploader;
+    var uploader, normalForm, batchForm;
 
     beforeEach(function() {
         uploader = {
             $el: $('<div id="uploader"></div>'),
-            fileField: 'userfile[]'
+            fileField: 'userfile[]',
+            url: {
+                send: 'uploadURL',
+                remove: 'removeURL'
+            }
         };
-        form = new Form({
-            sizeunit: 'kb',
-            url: 'http://localhost:8080/uploader.php',
-            formTarget: 'hiddenTarget',
-            template: {
-                form: ['<form enctype="multipart/form-data" id="formData" method="post">',
-                    '<input type="hidden" name="MAX_FILE_SIZE" value="3000000" />',
-                    //'<input type="file" id="fileAttach" name="userfile[]" multiple="true" />',
-                    '</form>'].join('')
-            },
-            helper: 'http://localhost:8080/'
-        }, uploader);
+        normalForm = new Form(uploader);
 
-        inputBatchTransfer = new Form({
-            sizeunit: 'kb',
-            url: 'http://localhost:8080/uploader.php',
-            formTarget: 'hiddenTarget',
-            isBatchTransfer: true,
-            helper: 'http://localhost:8080/'
-        }, uploader);
+        batchForm = new Form(tui.util.extend({
+            isBatchTransfer: true
+        }, uploader));
     });
 
-
-    it('create Input', function() {
-        expect(form).toBeDefined();
+    it('when batchTransfer, should have "submit element(jquery)"', function() {
+        expect(normalForm.$submit).toBe(null);
+        expect(batchForm.$submit.jquery).toBeTruthy();
     });
 
-    it('onChange event fire from onChange event handler', function() {
-        var data;
+    it('when fileInput changed with truthy-value, should fire "change" custom event', function() {
+        spyOn(normalForm, 'fire');
 
-        form.$fileInput[0] = {
-            value: 'changed file'
+        normalForm.$fileInput[0] = {
+            value: ''
         };
+        normalForm.onChange();
+        expect(normalForm.fire).not.toHaveBeenCalledWith('change');
 
-        form.on('change', function(param) {
-            data = param.target;
-        });
-        form.onChange();
-
-        expect(data).toBe(form);
+        normalForm.$fileInput[0] = {
+            value: 'fakeFile'
+        };
+        normalForm.onChange();
+        expect(normalForm.fire).toHaveBeenCalledWith('change');
     });
 
-    it('saveChange event filre form onSave(onChange) event handler', function() {
-        var data;
-        form.on('save', function(param) {
-            data = param.element;
-        });
+    it('when call "resetFileInput", should create new fileInput jquery-element', function() {
+        var $input = normalForm.$fileInput;
 
-        form.onSave();
-        expect(data).not.toBe(form.$el[0]);
+        normalForm.resetFileInput();
+        expect(normalForm.$fileInput.jquery).toBeTruthy();
+        expect(normalForm.$fileInput).not.toBe($input);
     });
 
-    it('_resetInputElement, after onChange event callback called.', function() {
-        var $input = form.$fileInput;
-        form._resetInputElement();
-        expect(form.$fileInput).not.toBe($input);
-    });
+    it('when call "clear",' +
+        ' should remove all hidden file input elements and reset file input', function() {
+        spyOn(normalForm, 'resetFileInput');
 
+        expect(normalForm.$el.find('input').length).toBe(1);
+        normalForm.$fileInput
+            .clone()
+            .addClass(HIDDEN_FILE_INPUT_CLASS)
+            .appendTo(normalForm.$el);
+        expect(normalForm.$el.find('input').length).toBe(2);
+
+        normalForm.clear();
+        expect(normalForm.resetFileInput).toHaveBeenCalled();
+        expect(normalForm.$el.find('input').length).toBe(1);
+    });
 });

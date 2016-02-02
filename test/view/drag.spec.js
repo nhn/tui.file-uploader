@@ -15,10 +15,6 @@ describe('Drag and drop test', function() {
         drag = new DragAndDrop(uploader);
     });
 
-    it('defined', function() {
-        expect(drag).toBeDefined();
-    });
-
     it('enable if onDragEnter', function() {
         drag.onDragEnter(mockEvent);
 

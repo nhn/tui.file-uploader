@@ -7,7 +7,7 @@
 var consts = require('../consts'),
     utils = require('../utils');
 
-var DELETE_BUTTON_CLASS = consts.CONF.REMOVE_BUTTON_CLASS;
+var REMOVE_BUTTON_CLASS = consts.CONF.REMOVE_BUTTON_CLASS;
 
 /**
  * Class of item that is member of file list.
@@ -24,11 +24,17 @@ var DELETE_BUTTON_CLASS = consts.CONF.REMOVE_BUTTON_CLASS;
 var Item = tui.util.defineClass(/** @lends Item.prototype **/ {
     init: function(options) {
         /**
-         * jQuery-element
+         * Item: LI element
          * @type {jQuery}
          * @private
          */
         this.$el = null;
+
+        /**
+         * Item: remove button
+         * @type {jQuery}
+         */
+        this.$removeBtn = null;
 
         /**
          * Item name
@@ -63,10 +69,19 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/ {
      * @param {jQuery} $target - Target List element
      */
     render: function($target) {
-        var html = this._getHtml();
+        var html = this._getHtml(),
+            removeButtonHTML = utils.template({
+                text: 'Remove'
+            }, consts.HTML.button),
+            $removeBtn = $(removeButtonHTML);
+
+        this.$removeBtn = $removeBtn
+            .addClass(REMOVE_BUTTON_CLASS);
 
         this.$el = $(html)
+            .append($removeBtn)
             .appendTo($target);
+
         this._addEvent();
     },
 
@@ -99,21 +114,8 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/ {
      * @private
      */
     _addEvent: function() {
-        var query = '.' + DELETE_BUTTON_CLASS,
-            $delBtn = this.$el.find(query);
-        $delBtn.on('click', $.proxy(this._onClickEvent, this));
+        this.$removeBtn.on('click', $.proxy(this._onClickEvent, this));
     },
-
-    /**
-     * Remove event handler from delete button.
-     * @private
-     */
-    _removeEvent: function() {
-        var query = '.' + DELETE_BUTTON_CLASS,
-            $delBtn = this.$el.find(query);
-        $delBtn.off('click', this._onClickEvent);
-    },
-
 
     /**
      * Event-handle for delete button clicked.
@@ -131,7 +133,6 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/ {
      * Destroy item
      */
     destroy: function() {
-        this._removeEvent();
         this.$el.remove();
     }
 });

@@ -126,7 +126,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
      * @private
      */
     _addFileItems: function(target) {
-        if (!tui.util.isArraySafe(target)) {
+        if (!tui.util.isArraySafe(target)) { // for target from iframe, use "isArraySafe"
             target = [target];
         }
         tui.util.forEach(target, function(data) {

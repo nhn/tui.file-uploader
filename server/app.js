@@ -33,7 +33,7 @@ var PORT = 3000,
 function log(api, data) {
     api = '\n' + api + '\n';
     data = data || '';
-    console.log.call(console, api, data);
+    console.log(api, data);
 }
 
 /**
