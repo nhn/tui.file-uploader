@@ -70,6 +70,7 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{
             data = tui.util.pick(frameBody, 'firstChild', 'data');
             if (data) {
                 this.fire('uploaded', $.parseJSON(data));
+                frameBody.innerHTML = '';
             }
         } catch (e) {
             this.fire('error', {

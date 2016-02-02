@@ -1,20 +1,17 @@
-var Input = require('../../src/js/view/form.js');
+var Form = require('../../src/js/view/form.js');
 
 describe('Input test', function() {
 
-    var input,
+    var form,
         inputBatchTransfer,
         uploader;
 
     beforeEach(function() {
         uploader = {
             $el: $('<div id="uploader"></div>'),
-            fileField: 'userfile[]',
-            store: function() {
-                // uploader store mock
-            }
+            fileField: 'userfile[]'
         };
-        input = new Input({
+        form = new Form({
             sizeunit: 'kb',
             url: 'http://localhost:8080/uploader.php',
             formTarget: 'hiddenTarget',
@@ -27,7 +24,7 @@ describe('Input test', function() {
             helper: 'http://localhost:8080/'
         }, uploader);
 
-        inputBatchTransfer = new Input({
+        inputBatchTransfer = new Form({
             sizeunit: 'kb',
             url: 'http://localhost:8080/uploader.php',
             formTarget: 'hiddenTarget',
@@ -38,38 +35,38 @@ describe('Input test', function() {
 
 
     it('create Input', function() {
-        expect(input).toBeDefined();
+        expect(form).toBeDefined();
     });
 
     it('onChange event fire from onChange event handler', function() {
         var data;
 
-        input.$input[0] = {
+        form.$fileInput[0] = {
             value: 'changed file'
         };
 
-        input.on('change', function(param) {
+        form.on('change', function(param) {
             data = param.target;
         });
-        input.onChange();
+        form.onChange();
 
-        expect(data).toBe(input);
+        expect(data).toBe(form);
     });
 
     it('saveChange event filre form onSave(onChange) event handler', function() {
         var data;
-        input.on('save', function(param) {
+        form.on('save', function(param) {
             data = param.element;
         });
 
-        input.onSave();
-        expect(data).not.toBe(input.$el[0]);
+        form.onSave();
+        expect(data).not.toBe(form.$el[0]);
     });
 
     it('_resetInputElement, after onChange event callback called.', function() {
-        var $input = input.$input;
-        input._resetInputElement();
-        expect(input.$input).not.toBe($input);
+        var $input = form.$fileInput;
+        form._resetInputElement();
+        expect(form.$fileInput).not.toBe($input);
     });
 
 });

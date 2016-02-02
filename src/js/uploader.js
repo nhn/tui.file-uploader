@@ -84,6 +84,11 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          */
         this.fileField = options.fileField || consts.CONF.FILE_FILED_NAME;
 
+        /**
+         * Whether the uploader uses batch-transfer
+         * @type {boolean}
+         */
+        this.isBatchTransfer = options.isBatchTransfer;
 
         /**
          * Whether the sending/removing urls are x-domain.
@@ -162,13 +167,18 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
         this.$targetFrame.off('load');
         $(window).on('message', $.proxy(function(event) {
             var originalEvent = event.originalEvent,
-                data = $.parseJSON(originalEvent.data);
+                data;
 
             if (this.url.send.indexOf(originalEvent.origin) === -1) {
                 return;
             }
+            data = $.parseJSON(originalEvent.data);
 
-            this.clear();
+            if (this.isBatchTransfer) {
+                this.clear();
+            } else {
+                this.updateList(data.filelist);
+            }
             this.fire('success', data);
         }, this));
     },
@@ -221,7 +231,6 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
     /**
      * Submit for data submit to server
      * @param {Event} [event] - Form submit event
-     * @api
      */
     submit: function(event) {
         if (event && this._requester.TYPE === REQUESTER_TYPE_MODERN) {

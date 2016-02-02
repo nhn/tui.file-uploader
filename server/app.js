@@ -27,59 +27,20 @@ var PORT = 3000,
         }
     }).array('userfile[]');
 
-// setting
-app.use('/', express.static('samples'))
-    .use(function(req, res, next) { // CORS
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-        next();
-    });
+/**
+ * Log
+ */
+function log(api, data) {
+    api = '\n' + api + '\n';
+    data = data || '';
+    console.log.call(console, api, data);
+}
 
-// routes
-app.post('/upload', upload, function(req, res) { // Let us suppose that all the files are uploaded successfully.
-        var data = makeResponseData(req.files),
-            redirectURL = req.body.redirectURL,
-            messageTarget = req.body.messageTarget,
-            responseData = JSON.stringify(data);
-
-        console.log('\nupload\n', data);
-        if (messageTarget) { // CORS - IE 8, 9
-            res.send(
-                responseData +
-                '<script type="text/javascript">' +
-                    'var textNode = document.body.firstChild;' +
-                    'window.parent.postMessage(textNode.data, "' + messageTarget + '");' +
-                '</script>'
-            );
-        } else if (redirectURL) { // CORS - IE 7
-            responseData = encodeURI(responseData);
-            res.redirect(redirectURL + '?' + responseData);
-        } else {
-            res.send(responseData);
-        }
-    })
-    .get('/remove', function(req, res) { // Let us suppose that the file was removed successfully.
-        var callbackName = req.query.callback,
-            result = JSON.stringify({
-                message: 'success',
-                id: req.query.id,
-                name: req.query.name
-            });
-
-        console.log('\nremove\n', req.query);
-        if (callbackName) { // for x-domain jsonp
-            res.send(callbackName + '(' + result + ')');
-        } else { // for same domain
-            res.send(result);
-        }
-    });
-
-// start
-app.listen(PORT, function() {
-    console.log('Listening on port: ' + PORT);
-});
-
-// make result of uplaod
+/**
+ * Make response data from files
+ * @param {Array.<File>} files - Files
+ * @returns {object} Result data
+ */
 function makeResponseData(files) {
     var result = {
         filelist: [],
@@ -100,3 +61,79 @@ function makeResponseData(files) {
 
     return result;
 }
+
+/**
+ * Set static files
+ */
+app.use('/', express.static('samples'));
+
+/**
+ * Set CORS for modern browsers
+ *  - XMLHttpRequest - level 2
+ */
+ app.use(function(req, res, next) { // CORS
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
+
+/**
+ * API - post
+ *  /upload
+ *      req.files
+ *      req.body.redirectURL (for IE7)
+ *      req.body.messageTarget (for IE8, 9)
+ */
+app.post('/upload', upload, function(req, res) { // Let us suppose that all the files are uploaded successfully.
+    var data = makeResponseData(req.files),
+        redirectURL = req.body.redirectURL,
+        messageTarget = req.body.messageTarget,
+        responseData = JSON.stringify(data);
+    log('upload', data);
+
+    if (messageTarget) { // CORS - IE 8, 9
+        res.send(
+            responseData +
+            '<script type="text/javascript">' +
+                'var data = document.body.firstChild.data;\n' +
+                'window.parent.postMessage(data, "' + messageTarget + '");\n' +
+                'document.body.innerHTML = "";' +
+            '</script>'
+        );
+    } else if (redirectURL) { // CORS - IE 7
+        responseData = encodeURI(responseData);
+        res.redirect(redirectURL + '?' + responseData);
+    } else {
+        res.send(responseData);
+    }
+});
+
+/**
+ * API - get
+ *  /remove
+ *      req.query.callback - Callback name for jsonp
+ *      req.query.id - File id
+ *      req.query.name - File name
+ */
+app.get('/remove', function(req, res) { // Suppose that the file was removed successfully.
+    var callbackName = req.query.callback,
+        result = JSON.stringify({
+            message: 'success',
+            id: req.query.id,
+            name: req.query.name
+        });
+    log('remove', req.query);
+
+    if (callbackName) { // for x-domain jsonp
+        res.send(callbackName + '(' + result + ')');
+    } else { // for same domain
+        res.send(result);
+    }
+});
+
+/**
+ * Start server
+ */
+app.listen(PORT, function() {
+    log('Listening on port: ' + PORT);
+});
