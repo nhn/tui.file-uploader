@@ -182,8 +182,8 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
     },
 
     /**
-     * Makes element to be target of submit form element.
-     * @returns {jQuery} Target form: jquery-element
+     * Make target frame to be target of form element.
+     * @returns {jQuery} Target frame: jquery-element
      * @private
      */
     _createTargetFrame: function() {
