@@ -7,8 +7,8 @@ var consts = require('../consts');
 
 /**
  * Makes drag and drop area, the dropped file is added via event drop event.
- * @param {Uploader} uploader - Uploader
  * @class DragAndDrop
+ * @param {Uploader} uploader - Uploader
  */
 var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{
     init: function(uploader) {
@@ -47,10 +47,12 @@ var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{
      * @private
      */
     _addEvent: function() {
-        this.$el.on('dragenter', $.proxy(this.onDragEnter, this));
-        this.$el.on('dragover', $.proxy(this.onDragOver, this));
-        this.$el.on('drop', $.proxy(this.onDrop, this));
-        this.$el.on('dragleave', $.proxy(this.onDragLeave, this));
+        this.$el.on({
+            dragenter: $.proxy(this.onDragEnter, this),
+            dragover: $.proxy(this.onDragOver, this),
+            drop: $.proxy(this.onDrop, this),
+            dragleave: $.proxy(this.onDragLeave, this)
+        });
     },
 
     /**

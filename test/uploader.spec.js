@@ -2,67 +2,62 @@ var Uploader = require('../src/js/uploader.js');
 
 describe('Uploader test', function() {
     var uploader,
-        uploaderBatch,
+        batchUploader,
         options;
+
     beforeEach(function() {
         options = {
             url: {
-                send: 'http://localhost:8080/uploader.php',
-                remove: 'http://localhost:8080/remove.php'
+                send: 'fakeURL-send',
+                remove: 'fakeURL-remove'
             },
-            helper : {
-                url: 'http://localhost:8080/helper.html',
-                name: 'REDIRECT_URL'
-            },
-            resultTypeElementName: 'RESPONSE_TYPE',
             formTarget: 'hiddenFrame',
-            callbackName: 'responseCallback',
             listInfo: {
                 list: $('<div class="list"></div>'),
                 count: $('<div class="count"></div>'),
                 size: $('<div class="size"></div>')
-            },
-            sizeunit: 'KB',
-            separator: ';'
+            }
         };
         uploader = new Uploader(options, $('<div class="uploader"></div>'));
+
         // uploader, batch
         options.isBatchTransfer = true;
-        uploaderBatch = new Uploader(options, $('<div class="uploader"></div>'));
+        batchUploader = new Uploader(options, $('<div class="uploader"></div>'));
     });
 
-    it('defined', function() {
-        expect(uploader).toBeDefined();
+    it('should have formView, listView', function() {
+        expect(uploader.formView).toBeDefined();
         expect(uploader.listView).toBeDefined();
-        expect(uploader.inputView).toBeDefined();
     });
 
+    it('when fired change event from formView, normalUploader should store and submit file(s)', function() {
+        spyOn(uploader._requester, 'store');
+        spyOn(uploader._requester, 'upload');
 
-    it('send by change', function() {
-        var result;
-        // mock connector
-        uploader._connector.addRequest = function(data) {
-            result = data;
-        };
-
-        uploader.inputView.fire('change');
-
-        expect(result.type).toBe('add');
+        uploader.formView.fire('change');
+        expect(uploader._requester.store).toHaveBeenCalled();
+        expect(uploader._requester.upload).toHaveBeenCalled();
     });
 
-    it('remove filre from ', function() {
-        var result,
-            name = 'remove.js';
-        // mock connector
-        uploader._connector.removeRequest = function(data) {
-            result = data;
+    it('when fired change event from formView, batchUploader should store and not submit file(s)', function() {
+        spyOn(batchUploader._requester, 'store');
+        spyOn(batchUploader._requester, 'upload');
+
+        batchUploader.formView.fire('change');
+        expect(batchUploader._requester.store).toHaveBeenCalled();
+        expect(batchUploader._requester.upload).not.toHaveBeenCalled();
+    });
+
+    it('when fired remove event from listView, should remove file', function() {
+        var removeItemData = {
+            name: 'file1',
+            size: '10',
+            id: '3'
         };
 
-        uploader.listView.fire('remove', {
-            name: name
-        });
+        spyOn(uploader._requester, 'remove');
+        uploader.listView.fire('remove', removeItemData);
 
-        expect(result.type).toBe('remove');
-        expect(result.data.name).toBe(name);
+        expect(uploader._requester.remove).toHaveBeenCalledWith(removeItemData);
     });
 });
