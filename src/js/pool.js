@@ -40,13 +40,14 @@ var Pool = tui.util.defineClass(/** @lends Pool.prototype */{
      */
     store: function(inputFileEl) {
         var id = hasStamp(inputFileEl) && stamp(inputFileEl),
-            filename;
+            filename, key;
 
         if (!id) {
             return;
         }
         filename = inputFileEl.value;
-        this.files[id + filename] = inputFileEl;
+        key = id + filename;
+        this.files[key] = inputFileEl;
     },
 
     /**

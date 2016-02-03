@@ -86,7 +86,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          * Whether the uploader uses batch-transfer
          * @type {boolean}
          */
-        this.isBatchTransfer = options.isBatchTransfer;
+        this.isBatchTransfer = !!(options.isBatchTransfer);
 
         /**
          * Whether the sending/removing urls are x-domain.

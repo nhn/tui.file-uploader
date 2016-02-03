@@ -42,15 +42,16 @@ function log(api, data) {
  * @returns {object} Result data
  */
 function makeResponseData(files) {
-    var result = {
-        filelist: [],
-        success: 0,
-        faild: 0,
-        count: files.length
-    };
+    var filelist = [],
+        result = {
+            filelist: filelist,
+            success: 0,
+            faild: 0,
+            count: files.length
+        };
 
     files.forEach(function(file) {
-        result.filelist.push({
+        filelist.push({
             message: 'success',
             name: file.originalname,
             size: file.size,
