@@ -9,5 +9,22 @@ describe('Util test', function() {
         expect(utils.getFileSizeWithUnit(size1)).toBe('1.00KB');
         expect(utils.getFileSizeWithUnit(size2)).toBe('120.00MB');
     });
+
+    it('template', function() {
+        var source = '<div>{{text}}</div><div>{{anotherText}}</div>',
+            prop = {
+                text: 'hello world',
+                anotherText: 'new world'
+            };
+
+        expect(utils.template(prop, source)).toEqual(
+            '<div>hello world</div><div>new world</div>'
+        );
+    });
+
+    it('isCrossDomain', function() {
+        var url = 'http://fakeURL';
+        expect(utils.isCrossDomain(url)).toBe(true);
+    })
 });
 
