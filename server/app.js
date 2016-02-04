@@ -9,6 +9,8 @@
 var express = require('express'),
     multer = require('multer');
 
+var LIMIT_FILE_SIZE = 10 * 1024;
+
 // config
 var PORT = 3000,
     app = express(),
@@ -23,7 +25,7 @@ var PORT = 3000,
     upload = multer({
         storage: storage,
         limit: {
-            fileSize: 10 * 1024 * 1024
+            fileSize: LIMIT_FILE_SIZE
         }
     }).array('userfile[]');
 
@@ -42,23 +44,20 @@ function log(api, data) {
  * @returns {object} Result data
  */
 function makeResponseData(files) {
-    var filelist = [],
+    var filelist = files.map(function(file) {
+            return {
+                message: 'success',
+                name: file.originalname,
+                size: file.size,
+                id: file.filename
+            }
+        }),
         result = {
             filelist: filelist,
-            success: 0,
+            success: filelist.length,
             faild: 0,
-            count: files.length
+            count: filelist.length
         };
-
-    files.forEach(function(file) {
-        filelist.push({
-            message: 'success',
-            name: file.originalname,
-            size: file.size,
-            id: file.filename
-        });
-        result.success += 1;
-    });
 
     return result;
 }

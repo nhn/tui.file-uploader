@@ -2,14 +2,9 @@ var istanbul = require('browserify-istanbul');
 var hbsfy = require('hbsfy');
 
 module.exports = function(config) {
-    var webdriverConfig = {
-        hostname: 'fe.nhnent.com',
-        port: 4444,
-        remoteHost: true
-    };
-
     config.set({
-        basePath: './',
+        basePath: '',
+
 
         frameworks: [
             'browserify',
@@ -52,19 +47,14 @@ module.exports = function(config) {
         },
 
         coverageReporter: {
-            dir: 'report/',
-            reporters: [{
-                type: 'cobertura',
-                subdir: 'cobertura',
-                file: 'cobertura.xml'
-            }]
+            type: 'html',
+            dir: 'report/'
         },
 
         junitReporter: {
-            outputDir: 'report/junit',
+            outputDir: 'report/',
             suite: ''
         },
-
 
         port: 9876,
 
@@ -72,61 +62,14 @@ module.exports = function(config) {
 
         logLevel: config.LOG_INFO,
 
-        autoWatch: false,
+        autoWatch: true,
 
         browsers: [
-            'IE7',
-            'IE8',
-            'IE9',
-            'IE10',
-            'IE11',
-            'Chrome-WebDriver',
-            'Firefox-WebDriver'
+            'PhantomJS'
         ],
 
-        customLaunchers: {
-            'IE7': {
-                base: 'WebDriver', 
-                config: webdriverConfig,
-                browserName: 'internet explorer',
-                version: 7
-            },
-            'IE8': {
-                base: 'WebDriver', 
-                config: webdriverConfig,
-                browserName: 'internet explorer',
-                version: 8
-            },
-            'IE9': {
-                base: 'WebDriver', 
-                config: webdriverConfig,
-                browserName: 'internet explorer',
-                version: 9
-            },
-            'IE10': {
-                base: 'WebDriver', 
-                config: webdriverConfig,
-                browserName: 'internet explorer',
-                version: 10
-            },
-            'IE11': {
-                base: 'WebDriver', 
-                config: webdriverConfig,
-                browserName: 'internet explorer',
-                version: 11
-            },
-            'Chrome-WebDriver': {
-                base: 'WebDriver', 
-                config: webdriverConfig, 
-                browserName: 'chrome' 
-            },
-            'Firefox-WebDriver': {
-                base: 'WebDriver', 
-                config: webdriverConfig, 
-                browserName: 'firefox' 
-            }
-        },
+        singleRun: false,
 
-        singleRun: true
+        browserNoActivityTimeout: 30000
     });
 };
