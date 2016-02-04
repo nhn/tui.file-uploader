@@ -1,3 +1,5 @@
+'use strict';
+
 var utils = require('../../src/js/utils.js');
 var List = require('../../src/js/view/list.js');
 

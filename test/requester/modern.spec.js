@@ -1,11 +1,11 @@
 'use strict';
 
-var ModernRequester = require('../../src/js/requester/modern');
-
+var ModernRequester;
 if (!window.FormData) {
     return;
 }
 
+ModernRequester = require('../../src/js/requester/modern');
 require('jasmine-ajax');
 describe('Modern Requester', function() {
     var formView = jasmine.createSpyObj('formView', ['resetFileInput']),
