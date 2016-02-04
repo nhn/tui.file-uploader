@@ -16,6 +16,7 @@
     "gulp-util": "^3.0.6",
     "handlebars": "^3.0.3",
     "hbsfy": "^2.2.1",
+    "jasmine-ajax": "^3.2.0",
     "jasmine-core": "latest",
     "jasmine-jquery": "^2.1.0",
     "karma": "^0.12.37",

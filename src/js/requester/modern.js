@@ -75,8 +75,8 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
         var pool = this.pool,
             stamp = tui.util.stamp,
             data = [];
-        files = tui.util.toArray(files || this.formView.$fileInput[0].files);
 
+        files = tui.util.toArray(files || this.formView.$fileInput[0].files);
         forEach(files, function(file) {
             var id = stamp(file);
             pool.push(file);
@@ -95,12 +95,12 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
      * Upload ajax
      */
     upload: function() {
-        var form = this.formView.$el.clone(),
-            field = this.uploader.fileField,
+        var field = this.uploader.fileField,
+            $form = this.formView.$el.clone(),
             formData;
 
-        form.find('input[type="file"]').remove();
-        formData = new FormData(form);
+        $form.find('input[type="file"]').remove();
+        formData = new FormData($form[0]);
 
         forEach(this.pool, function(file) {
             formData.append(field, file);

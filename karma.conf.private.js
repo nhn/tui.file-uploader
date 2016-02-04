@@ -3,7 +3,7 @@ var hbsfy = require('hbsfy');
 
 module.exports = function(config) {
     var webdriverConfig = {
-        hostname: '10.77.32.96',
+        hostname: 'fe.nhnent.com',
         port: 4444,
         remoteHost: true
     };
