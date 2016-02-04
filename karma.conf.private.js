@@ -80,6 +80,7 @@ module.exports = function(config) {
             'IE9',
             'IE10',
             'IE11',
+            'Edge',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
         ],
@@ -114,6 +115,11 @@ module.exports = function(config) {
                 config: webdriverConfig,
                 browserName: 'internet explorer',
                 version: 11
+            },
+            'Edge': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'MicrosoftEdge'
             },
             'Chrome-WebDriver': {
                 base: 'WebDriver', 
