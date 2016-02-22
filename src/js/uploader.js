@@ -200,9 +200,6 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
      * @private
      */
     _addEvent: function() {
-        if (this.useDrag && this.dragView) {
-            this.dragView.on('drop', this.store, this);
-        }
         this.listView.on('remove', this.removeFile, this);
         if (this.isBatchTransfer) {
             this._addEventWhenBatchTransfer();
@@ -238,6 +235,10 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
                 this.fire('update', data);
             }
         }, this);
+
+        if (this.useDrag && this.dragView) {
+            this.dragView.on('drop', this.store, this);
+        }
     },
 
     /**
@@ -246,6 +247,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
      */
     _addEventWhenNormalTransfer: function() {
         this.formView.on('change', this.sendFile, this);
+
         this._requester.on({
             removed: function(data) {
                 this.updateList(data);
@@ -254,14 +256,18 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
             error: function(data) {
                 this.fire('error', data);
             },
-            stored: function() {
-                this.submit();
-            },
             uploaded: function(data) {
                 this.updateList(data.filelist);
                 this.fire('success', data);
             }
         }, this);
+
+        if (this.useDrag && this.dragView) {
+            this.dragView.on('drop', function(files) {
+                this.store(files);
+                this.submit();
+            }, this);
+        }
     },
 
     /**

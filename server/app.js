@@ -101,6 +101,7 @@ app.post('/upload', upload, function(req, res) { // Let us suppose that all the 
             '</script>'
         );
     } else if (redirectURL) { // CORS - IE 7
+        console.log('??');
         responseData = encodeURIComponent(responseData);
         res.redirect(redirectURL + '?' + responseData);
     } else {
