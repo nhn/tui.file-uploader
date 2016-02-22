@@ -13,7 +13,7 @@ module.exports.CONF = {
     HIDDEN_FILE_INPUT_CLASS: 'hiddenFileInput',
     REQUESTER_TYPE_MODERN: 'modernRequester',
     REQUESTER_TYPE_OLD: 'oldRequester',
-    FORM_TARGET_NAME: 'hiddenFrame',
+    FORM_TARGET_NAME: 'tuiUploaderHiddenFrame',
     REMOVE_BUTTON_CLASS: 'removeButton'
 };
 

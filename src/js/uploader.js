@@ -35,7 +35,6 @@ var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
  *         send: "http://fe.nhnent.com/etc/etc/uploader/uploader.php",
  *         remove: "http://fe.nhnent.com/etc/etc/uploader/remove.php"
  *     },
- *     formTarget: 'hiddenFrame',
  *     listInfo: {
  *         list: $('#files'),
  *         count: $('#file_count'),
@@ -67,7 +66,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          * Form target name for CORS (IE7, 8, 9)
          * @type {string}
          */
-        this.formTarget = options.formTarget || consts.CONF.FORM_TARGET_NAME;
+        this.formTarget = consts.CONF.FORM_TARGET_NAME;
 
         /**
          * Target frame for CORS (IE7, 8, 9)
