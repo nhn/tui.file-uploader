@@ -12,7 +12,6 @@ module.exports = function(config) {
         ],
 
         files: [
-            'lib/json2/json2.js',
             'lib/jquery/jquery.js',
             'lib/tui-code-snippet/code-snippet.js',
             'src/**/uploader.js',
