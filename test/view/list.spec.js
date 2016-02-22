@@ -1,3 +1,5 @@
+'use strict';
+
 var utils = require('../../src/js/utils.js');
 var List = require('../../src/js/view/list.js');
 
@@ -6,15 +8,9 @@ describe('List test', function() {
         listEl,
         counterEl,
         sizeEl,
-        uploader,
         itemInfo;
 
     beforeEach(function() {
-        uploader = {
-            remove: function() {
-
-            }
-        };
         listEl = $('<div class="list"></div>');
         counterEl = $('<div class="counter"></div>');
         sizeEl = $('<div class="size"></div>');
@@ -22,31 +18,15 @@ describe('List test', function() {
         itemInfo = {
             name: 'filename1.jpg',
             type: 'jpg',
-            url: 'http://localhost:8009/filename.jpg',
-            hiddenFrame: {},
+            id: '1',
             size: 10
         };
 
         list = new List({
-            listInfo: {
-                list: listEl,
-                count: counterEl,
-                size: sizeEl
-            },
-            sizeunit: 'kb',
-            template: {
-                item: ['<li class="filetypeDisplayClass">',
-                '<spna class="fileicon {{filetype}}">{{filetype}}</spna>',
-                '<span class="file_name">{{filename}}</span>',
-                '<span class="file_size">{{filesize}}</span>',
-                '<button type="button" class="{{deleteButtonClassName}}">Delete</button>',
-                '</li>'].join('')
-            }
-        }, uploader);
-    });
-
-    it('List is define', function() {
-        expect(list).toBeDefined();
+            list: listEl,
+            count: counterEl,
+            size: sizeEl
+        });
     });
 
     it('_createItem', function() {
@@ -114,33 +94,28 @@ describe('List test', function() {
     });
 
     it('update add file', function() {
-        var info = {
-            items: itemInfo
-        };
+        var info = [itemInfo];
         list.update(info);
         expect(list.items.length).toBe(1);
     });
 
     it('remove file via _removeFileItem', function() {
         list._addFileItems(itemInfo);
-
         expect(list.items.length).toBe(1);
 
-        list._removeFileItem(itemInfo.name);
+        list._removeFileItem(itemInfo.id);
         expect(list.items.length).toBe(0);
     });
 
     it('remove file via update', function() {
+        var info = {
+            id : itemInfo.id,
+            type: 'remove'
+        };
         list._addFileItems(itemInfo);
-
         expect(list.items.length).toBe(1);
 
-        var info = {
-            name : itemInfo.name,
-            action: 'remove'
-        };
         list.update(info);
-
         expect(list.items.length).toBe(0);
     });
 
@@ -150,8 +125,8 @@ describe('List test', function() {
         expect(list.items.length).toBe(1);
 
         var info = {
-            name : 'wrongname.jpg',
-            action: 'remove'
+            id: 'foobarfoobar',
+            type: 'remove'
         };
         list.update(info);
 

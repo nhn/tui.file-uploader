@@ -6,11 +6,13 @@
 'use strict';
 var consts = require('./consts');
 var utils = require('./utils');
-var conn = require('./connector/connector');
-var Input = require('./view/input');
+var Form = require('./view/form');
 var List = require('./view/list');
-var Pool = require('./view/pool');
 var DragAndDrop = require('./view/drag');
+var OldRequester = require('./requester/old');
+var ModernRequester = require('./requester/modern');
+
+var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
 
 /**
  * FileUploader act like bridge between connector and view.
@@ -21,15 +23,9 @@ var DragAndDrop = require('./view/drag');
  *  @param {object} options.url The url is file server.
  *      @param {string} options.url.send The url is for file attach.
  *      @param {string} options.url.remove The url is for file detach.
- *  @param {object} options.helper The helper object info is for x-domain.
- *      @param {string} options.helper.url The url is helper page url.
- *      @param {string} options.helper.name The name of hidden element for sending server helper page information.
- *  @param {string} options.resultTypeElementName The type of hidden element for sending server response type information.
  *  @param {string} options.formTarget The target for x-domain jsonp case.
- *  @param {string} options.callbackName The name of jsonp callback function.
  *  @param {object} options.listInfo The element info to display file list information.
- *  @param {string} options.separator The separator for jsonp helper response.
- *  @param {string} [options.fileField=userFile] The field name of input file element.
+ *  @param {string} [options.fileField='userFile[]'] The field name of input file element.
  *  @param {boolean} options.useFolder Whether select unit is folder of not. If this is ture, multiple will be ignored.
  *  @param {boolean} options.isMultiple Whether enable multiple select or not.
  * @param {jQuery} $el Root Element of Uploader
@@ -39,127 +35,261 @@ var DragAndDrop = require('./view/drag');
  *         send: "http://fe.nhnent.com/etc/etc/uploader/uploader.php",
  *         remove: "http://fe.nhnent.com/etc/etc/uploader/remove.php"
  *     },
- *     helper: {
- *         url: 'http://10.77.34.126:8009/samples/response.html',
- *         name: 'REDIRECT_URL'
- *     },
- *     resultTypeElementName: 'RESPONSE_TYPE',
- *     formTarget: 'hiddenFrame',
- *     callbackName: 'responseCallback',
  *     listInfo: {
  *         list: $('#files'),
  *         count: $('#file_count'),
  *         size: $('#size_count')
- *     },
- *     separator: ';'
+ *     }
  * }, $('#uploader'));
  */
 var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
-    /**
-     * initialize
-     */
     init: function(options, $el) {
-        this._setData(options);
-        this._setConnector();
-
+        /**
+         * Uploader element
+         * @type {jQuery}
+         */
         this.$el = $el;
 
-        if(this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
-            this.dragView = new DragAndDrop(options, this);
+        /**
+         * Send/Remove url
+         * @type {{send: string, remove: string}}
+         */
+        this.url = options.url;
+
+        /**
+         * Redirect URL for CORS(response, IE7)
+         * @type {string}
+         */
+        this.redirectURL = options.redirectURL;
+
+        /**
+         * Form target name for CORS (IE7, 8, 9)
+         * @type {string}
+         */
+        this.formTarget = consts.CONF.FORM_TARGET_NAME;
+
+        /**
+         * Target frame for CORS (IE7, 8, 9)
+         * @type {jQuery}
+         */
+        this.$targetFrame = this._createTargetFrame()
+            .appendTo(this.$el);
+
+        /**
+         * Input file - field name
+         * @type {string}
+         */
+        this.fileField = options.fileField || consts.CONF.FILE_FILED_NAME;
+
+        /**
+         * Whether the uploader uses batch-transfer
+         * @type {boolean}
+         */
+        this.isBatchTransfer = !!(options.isBatchTransfer);
+
+        /**
+         * Whether the sending/removing urls are x-domain.
+         * @type {boolean}
+         */
+        this.isCrossDomain = utils.isCrossDomain(this.url.send);
+
+        /**
+         * Whether the browser supports PostMessage API
+         * @type {boolean}
+         */
+        this.isSupportPostMessage = !!(tui.util.pick(this.$targetFrame, '0', 'contentWindow', 'postMessage'));
+
+        /**
+         * Whether the user uses multiple upload
+         * @type {boolean}
+         */
+        this.isMultiple = !!(options.isMultiple);
+
+        /**
+         * Whether the user uses drag&drop upload
+         * @type {boolean}
+         */
+        this.useDrag = !!(options.useDrag);
+
+        /**
+         * Whether the user uses folder upload
+         * @type {boolean}
+         */
+        this.useFolder = !!(options.useFolder);
+
+        if (this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
+            /**
+             * Drag & Drop View
+             * @type {DragAndDrop}
+             */
+            this.dragView = new DragAndDrop(this);
         }
 
-        this.inputView = new Input(options, this);
-        this.listView = new List(options, this);
+        /**
+         * From View
+         * @type {Form}
+         */
+        this.formView = new Form(this);
 
-        this.fileField = this.fileField || consts.CONF.FILE_FILED_NAME;
-        this._pool = new Pool(this.inputView.$el[0]);
+        /**
+         * List View
+         * @type {List}
+         */
+        this.listView = new List(options.listInfo);
+
+        this._setRequester();
         this._addEvent();
+        if (this.isCrossDomain && this.isSupportPostMessage) {
+            this._setPostMessageEvent();
+        }
     },
 
     /**
      * Set Connector
      * @private
      */
-    _setConnector: function() {
-        if (this.isBatchTransfer) {
-            this.type = 'local';
-        } else if (this.isCrossDomain()) {
-            if (this.helper) {
-                this.type = 'jsonp';
-            } else {
-                alert(consts.CONF.ERROR.NOT_SURPPORT);
-                this.type = 'local';
-            }
+    _setRequester: function() {
+        if (utils.isSupportFormData()) {
+            this._requester = new ModernRequester(this);
         } else {
-            if (this.useJsonp || !utils.isSupportFormData()) {
-                this.type = 'jsonp';
-            } else {
-                this.type = 'ajax';
-            }
+            this._requester = new OldRequester(this);
         }
-        this._connector = conn.getConnector(this);
+    },
+
+    /**
+     * Set post-message event if supported and needed
+     * @private
+     */
+    _setPostMessageEvent: function() {
+        this.$targetFrame.off('load');
+        $(window).on('message', $.proxy(function(event) {
+            var originalEvent = event.originalEvent,
+                data;
+
+            if (this.url.send.indexOf(originalEvent.origin) === -1) {
+                return;
+            }
+            data = $.parseJSON(originalEvent.data);
+
+            if (this.isBatchTransfer) {
+                this.clear();
+            } else {
+                this.updateList(data.filelist);
+            }
+            this.fire('success', data);
+        }, this));
+    },
+
+    /**
+     * Make target frame to be target of form element.
+     * @returns {jQuery} Target frame: jquery-element
+     * @private
+     */
+    _createTargetFrame: function() {
+        var $target = $('<iframe name="' + this.formTarget + '"></iframe>');
+        $target.css({
+            visibility: 'hidden',
+            position: 'absolute'
+        });
+
+        return $target;
+    },
+
+    /**
+     * Add events to views and fire uploader events
+     * @private
+     */
+    _addEvent: function() {
+        this.listView.on('remove', this.removeFile, this);
+        if (this.isBatchTransfer) {
+            this._addEventWhenBatchTransfer();
+        } else {
+            this._addEventWhenNormalTransfer();
+        }
+    },
+
+    /**
+     * Add event when uploader uses batch-transfer
+     * @private
+     */
+    _addEventWhenBatchTransfer: function() {
+        this.formView.on({
+            change: this.store,
+            submit: this.submit
+        }, this);
+
+        this._requester.on({
+            removed: function(data) {
+                this.updateList(data);
+                this.fire('remove', data);
+            },
+            error: function(data) {
+                this.fire('error', data);
+            },
+            uploaded: function(data) {
+                this.clear();
+                this.fire('success', data);
+            },
+            stored: function(data) {
+                this.updateList(data);
+                this.fire('update', data);
+            }
+        }, this);
+
+        if (this.useDrag && this.dragView) {
+            this.dragView.on('drop', this.store, this);
+        }
+    },
+
+    /**
+     * Add event when uploader uses normal-transfer
+     * @private
+     */
+    _addEventWhenNormalTransfer: function() {
+        this.formView.on('change', this.sendFile, this);
+
+        this._requester.on({
+            removed: function(data) {
+                this.updateList(data);
+                this.fire('remove', data);
+            },
+            error: function(data) {
+                this.fire('error', data);
+            },
+            uploaded: function(data) {
+                this.updateList(data.filelist);
+                this.fire('success', data);
+            }
+        }, this);
+
+        if (this.useDrag && this.dragView) {
+            this.dragView.on('drop', function(files) {
+                this.store(files);
+                this.submit();
+            }, this);
+        }
     },
 
     /**
      * Update list view with custom or original data.
-     * @param {object} info The data for update list
-     *  @param {string} info.action The action name to execute method
+     * @param {object} [info] The data for update list
      */
-    notify: function(info) {
+    updateList: function(info) {
         this.listView.update(info);
-        this.listView.updateTotalInfo(info);
-    },
-
-    /**
-     * Set field data by option values.
-     * @param options
-     * @private
-     */
-    _setData: function(options) {
-        tui.util.extend(this, options);
-    },
-
-    /**
-     * Extract protocol + domain from url to find out whether cross-domain or not.
-     * @returns {boolean}
-     */
-    isCrossDomain: function() {
-        var pageDomain = document.domain;
-        return this.url.send.indexOf(pageDomain) === -1;
-    },
-
-    /**
-     * Callback for error
-     * @param {object} response Error response
-     */
-    errorCallback: function(response) {
-        var message;
-        if (response && response.msg) {
-            message = response.msg;
+        if (this.isBatchTransfer) {
+            this.listView.updateTotalInfo(info);
         } else {
-            message = consts.CONF.ERROR.DEFAULT;
+            this.listView.updateTotalInfo();
         }
-        alert(message);
     },
 
     /**
      * Callback for custom send event
-     * @param {object} [data] The data include callback function for file clone
+     * @param {Event} [event] - Form submit event
      */
-    sendFile: function(data) {
-        var callback = tui.util.bind(this.notify, this),
-            files = data && data.files;
-
-        this._connector.addRequest({
-            type: 'add',
-            success: function(result) {
-                if (data && data.callback) {
-                    data.callback(result);
-                }
-                callback(result);
-            },
-            error: this.errorCallback
-        }, files);
+    sendFile: function(event) {
+        this.store();
+        this.submit(event);
     },
 
     /**
@@ -167,125 +297,35 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
      * @param {object} data The data for remove file.
      */
     removeFile: function(data) {
-        var callback = tui.util.bind(this.notify, this);
-        this._connector.removeRequest({
-            type: 'remove',
-            data: data,
-            success: callback
-        });
+        this._requester.remove(data);
     },
 
     /**
      * Submit for data submit to server
-     * @api
+     * @param {Event} [event] - Form submit event
      */
-    submit: function() {
-        if (this._connector.submit) {
-            if (utils.isSupportFormData()) {
-                this._connector.submit(tui.util.bind(function() {
-                    /**
-                     * @api
-                     * @event Uploader#batchSuccess
-                     * @param {Uploader} uploader - uploader instance
-                     */
-                    this.fire('batchSuccess', this);
-                }, this));
-            } else {
-                this._pool.plant();
-            }
+    submit: function(event) {
+        if (event && this._requester.TYPE === REQUESTER_TYPE_MODERN) {
+            event.preventDefault();
         }
+        this._requester.upload();
     },
 
     /**
-     * Get file info locally
-     * @param {HtmlElement} element Input element
-     * @private
+     * Clear uploader
      */
-    _getFileInfo: function(element) {
-        var files;
-        if (utils.isSupportFileSystem()) {
-            files = this._getFileList(element.files);
-        } else {
-            files = {
-                name: element.value,
-                id: element.value
-            };
-        }
-        return files;
-    },
-
-    /**
-     * Get file list from FileList object
-     * @param {FileList} files A FileList object
-     * @returns {Array}
-     * @private
-     */
-    _getFileList: function(files) {
-        return tui.util.map(files, function(file) {
-            return {
-                name: file.name,
-                size: file.size,
-                id: file.name
-            };
-        });
-    },
-
-    /**
-     * Add event to listview and inputview
-     * @private
-     */
-    _addEvent: function() {
-        var self = this;
-
-        if(this.useDrag && this.dragView) {
-            // @todo top 처리가 따로 필요함, sendFile 사용 안됨
-            this.dragView.on('drop', this.sendFile, this);
-        }
-        if (this.isBatchTransfer) {
-            this.inputView.on('save', this.sendFile, this);
-            this.listView.on('remove', this.removeFile, this);
-        } else {
-            this.inputView.on('change', this.sendFile, this);
-            this.listView.on('remove', this.removeFile, this);
-        }
-
-        /**
-         * Custom Events
-         * @api
-         * @event Uploader#fileAdded
-         * @param {object} target - Target item information
-         */
-        this.listView.on('fileAdded', function(target) {
-            self.fire('fileAdded', target);
-        });
-
-        /**
-         * Custom Events
-         * @api
-         * @event Uploader#fileRemoved
-         * @param {object} name - The file name to remove
-         */
-        this.listView.on('fileRemoved', function(name) {
-            self.fire('fileRemoved', name);
-        });
+    clear: function() {
+        this._requester.clear();
+        this.formView.clear();
+        this.listView.clear();
     },
 
     /**
      * Store input element to pool.
-     * @param {HTMLElement} input A input element[type=file] for store pool
+     * @param {Array.<File> | File} [files] - A file or files
      */
-    store: function(input) {
-        this._pool.store(input);
-    },
-
-    /**
-     * Remove input element form pool.
-     * @param {string} name The file name to remove
-     */
-    remove: function(name) {
-        if (!utils.isSupportFormData()) {
-            this._pool.remove(name);
-        }
+    store: function(files) {
+        this._requester.store(files);
     }
 });
 

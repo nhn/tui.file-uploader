@@ -7,7 +7,7 @@
         "jquery": true
     },
     "globals": {
-        "ne": true,
+        "tui": true,
         "loadFixtures": true,
         "ActiveXObject": true
     },
@@ -47,6 +47,7 @@
         //Stylistic Issues
         "brace-style": [2, "1tbs", {"allowSingleLine": true}],
         "comma-spacing": [2, {"before": false, "after": true}],
+        "keyword-spacing": 2,
         "comma-style": [2, "last"],
         "eol-last": 1,
         "new-cap": 2,
@@ -58,7 +59,6 @@
         "quotes": [1, "single"],
         "one-var": 0,
         "padded-blocks": [2, "never"],
-        "space-after-keywords": 2,
         "space-before-blocks": 2,
         "object-curly-spacing": [2, "never"],
         "space-in-parens": 2,

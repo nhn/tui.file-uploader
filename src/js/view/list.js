@@ -1,5 +1,5 @@
 /**
- * @fileoverview FileListView manage and display files state(like size, count) and list.
+ * @fileoverview FileListView listing files and display states(like size, count).
  * @dependency ne-code-snippet 1.0.3, jquery1.8.3
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
@@ -9,44 +9,68 @@ var Item = require('./item');
 
 /**
  * List has items. It can add and remove item, and get total usage.
- * @class View.List
+ * @param {Uploader} uploader - Uploader
+ * @param {Object.<string, jQuery>} listInfo
+ *  @param {jQuery} listInfo.list - List jquery-element
+ *  @param {jQuery} listInfo.count - Count jquery-element
+ *  @param {jQuery} listInfo.size - Size jquery-element
+ * @class List
  */
-var List = tui.util.defineClass(/** @lends View.List.prototype */{
-    init : function(options, uploader) {
-        var listInfo = options.listInfo;
+var List = tui.util.defineClass(/** @lends List.prototype */{
+    init : function(listInfo) {
+        /**
+         * Items
+         * @type {Array.<Item>}
+         */
         this.items = [];
-        this.$el = listInfo.list;
-        this.$counter = listInfo.count;
-        this.$size = listInfo.size;
-        this._uploader = uploader;
 
-        tui.util.extend(this, options);
+        /**
+         * jQuery-element of List
+         * @type {jQuery}
+         */
+        this.$el = listInfo.list;
+
+        /**
+         * jQuery-element of count
+         * @type {jQuery}
+         */
+        this.$counter = listInfo.count;
+
+        /**
+         * jQuery-element of total size
+         * @type {jQuery}
+         */
+        this.$size = listInfo.size;
     },
 
     /**
      * Update item list
-     * @param {object} info A information to update list.
-     *  @param {array} info.items The list of file information.
-     *  @param {string} [info.action] The action to do.
+     * @param {object} data - File information(s) with type
+     * @param {object} [data.type] - 'remove' or not.
      */
-    update: function(info) {
-        if (info.action === 'remove') {
-            this._removeFileItem(info.name);
+    update: function(data) {
+        if (data.type === 'remove') {
+            this._removeFileItem(data.id);
         } else {
-            this._addFileItems(info.items);
+            this._addFileItems(data);
         }
     },
 
     /**
      * Update items total count, total size information.
-     * @param {object} info A information to update list.
+     * @param {object} [info] A information to update list.
      *  @param {array} info.items The list of file information.
      *  @param {string} info.size The total size.
      *  @param {string} info.count The count of files.
      */
     updateTotalInfo: function(info) {
-        this._updateTotalCount(info.count);
-        this._updateTotalUsage(info.size);
+        if (info) {
+            this._updateTotalCount(info.count);
+            this._updateTotalUsage(info.size);
+        } else {
+            this._updateTotalCount();
+            this._updateTotalUsage();
+        }
     },
 
     /**
@@ -55,7 +79,6 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
      * @private
      */
     _updateTotalCount: function(count) {
-
         if (!tui.util.isExisty(count)) {
             count = this.items.length;
         }
@@ -65,11 +88,10 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
 
     /**
      * Update items total size and refresh element
-     * @param {(number|string)} size Total files sizes
+     * @param {(number|string)} [size] Total files sizes
      * @private
      */
     _updateTotalUsage: function(size) {
-
         if (!tui.util.isExisty(size)) {
             size = this._getSumAllItemUsage();
         }
@@ -84,7 +106,7 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
 
     /**
      * Sum sizes of all items.
-     * @returns {*}
+     * @returns {number} totalSize
      * @private
      */
     _getSumAllItemUsage: function() {
@@ -104,32 +126,23 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
      * @private
      */
     _addFileItems: function(target) {
-        if (!tui.util.isArray(target)) {
+        if (!tui.util.isArraySafe(target)) { // for target from iframe, use "isArraySafe"
             target = [target];
         }
         tui.util.forEach(target, function(data) {
             this.items.push(this._createItem(data));
         }, this);
-
-        this.fire('fileAdded', {
-            target: target
-        });
     },
 
     /**
      * Remove file item
-     * @param {string} name The file name to remove
+     * @param {string} id - The item id to remove
      * @private
      */
-    _removeFileItem: function(name) {
-        name = decodeURIComponent(name);
+    _removeFileItem: function(id) {
         tui.util.forEach(this.items, function(item, index) {
-            if (name === decodeURIComponent(item.name)) {
+            if (id === item.id) {
                 item.destroy();
-                this._uploader.remove(name);
-                this.fire('fileRemoved', {
-                    name: name
-                });
                 this.items.splice(index, 1);
                 return false;
             }
@@ -138,8 +151,8 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
 
     /**
      * Create item By Data
-     * @param {object} data
-     * @returns {Item}
+     * @param {object} data - Data for list items
+     * @returns {Item} Item
      * @private
      */
     _createItem: function(data) {
@@ -147,11 +160,7 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
             root: this,
             name: data.name,
             size: data.size,
-            deleteButtonClassName: this.deleteButtonClassName,
-            url: this.url,
-            hiddenFrame: this.formTarget,
-            hiddenFieldName: this.hiddenFieldName,
-            template: this.template && this.template.item
+            id: data.id
         });
         item.on('remove', this._removeFile, this);
         return item;
@@ -159,11 +168,22 @@ var List = tui.util.defineClass(/** @lends View.List.prototype */{
 
     /**
      * Callback Remove File
-     * @param data
+     * @param {Item} item - Item
      * @private
      */
-    _removeFile: function(data) {
-        this.fire('remove', data);
+    _removeFile: function(item) {
+        this.fire('remove', item);
+    },
+
+    /**
+     * Clear list
+     */
+    clear: function() {
+        tui.util.forEach(this.items, function(item) {
+            item.destroy();
+        });
+        this.items.length = 0;
+        this.updateTotalInfo();
     }
 });
 

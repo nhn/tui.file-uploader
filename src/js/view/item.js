@@ -4,89 +4,90 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 'use strict';
-var consts = require('../consts');
-var utils = require('../utils');
+var consts = require('../consts'),
+    utils = require('../utils');
+
+var REMOVE_BUTTON_CLASS = consts.CONF.REMOVE_BUTTON_CLASS;
 
 /**
  * Class of item that is member of file list.
- * @class View.Item
+ * @class Item
+ * @param {object} options
+ *  @param {string} options.name File name
+ *  @param {string} options.type File type
+ *  @param {object} options.root List instance
+ *  @param {string} [options.id] Unique key, what if the key is not exist id will be the file name.
+ *  @param {string} [options.deleteButtonClassName='uploader_btn_delete'] The class name is for delete button.
+ *  @param {string} [options.template] item template
+ *  @param {(string|number)} [options.size] File size (but ie low browser, x-domain)
  */
-var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
-    /**
-     * Initialize item
-     * @param {object} options
-     *  @param {string} options.name File name
-     *  @param {string} options.type File type
-     *  @param {object} options.root List object
-     *  @param {string} options.hiddenFrame The iframe name will be target of form submit.
-     *  @param {string} options.url The url for form action to submet.
-     *  @param {string} [options.id] Unique key, what if the key is not exist id will be the file name.
-     *  @param {string} [options.hiddenFieldName] The name of hidden filed. The hidden field is for connecting x-domian.
-     *  @param {string} [options.deleteButtonClassName='uploader_btn_delete'] The class name is for delete button.
-     *  @param {(string|number)} [options.size] File size (but ie low browser, x-domain)
-     *  @param {object} [options.helper] The helper page info.
-     */
+var Item = tui.util.defineClass(/** @lends Item.prototype **/ {
     init: function(options) {
+        /**
+         * Item: LI element
+         * @type {jQuery}
+         * @private
+         */
+        this.$el = null;
 
-        this._setRoot(options);
-        this._setItemInfo(options);
-        this._setConnectInfo(options);
+        /**
+         * Item: remove button
+         * @type {jQuery}
+         */
+        this.$removeBtn = null;
 
-        this.render(options.template || consts.HTML.item);
-
-        if (options.helper) {
-            this._makeBridgeInfoElement(options.helper);
-        }
-    },
-
-    /**
-     * Set root(List object) information.
-     * @param {object} options Same with init options parameter.
-     * @private
-     */
-    _setRoot: function(options) {
-        this._root = options.root;
-        this._$root = options.root.$el;
-    },
-
-    /**
-     * Set file information.
-     * @param {object} options Same with init options parameter.
-     * @private
-     */
-    _setItemInfo: function(options) {
+        /**
+         * Item name
+         * @type {string}
+         */
         this.name = options.name;
-        this._type = options.type || this._extractExtension();
-        this._id = options.id || options.name;
-        this.size = options.size || '';
-        this._btnClass = options.deleteButtonClassName || 'uploader_btn_delete';
-        this._unit = options.unit || 'KB';
-    },
 
-    /**
-     * Set connect element information.
-     * @param {object} options Same with init options parameter.
-     * @private
-     */
-    _setConnectInfo: function(options) {
-        this._url = options.url;
-        this._hiddenInputName = options.hiddenFieldName || 'filename';
+        /**
+         * Item id
+         * @type {string}
+         */
+        this.id = options.id || options.name;
+
+        /**
+         * Item size
+         * @type {number|string}
+         */
+        this.size = options.size || '';
+
+        /**
+         * Item type
+         * @type {string}
+         * @private
+         */
+        this.type = this._extractExtension();
+
+        this.render(options.root.$el);
     },
 
     /**
      * Render making form padding with deletable item
-     * @param template
+     * @param {jQuery} $target - Target List element
      */
-    render: function(template) {
-        var html = this._getHtml(template);
-        this._$el = $(html);
-        this._$root.append(this._$el);
+    render: function($target) {
+        var html = this._getHtml(),
+            removeButtonHTML = utils.template({
+                text: 'Remove'
+            }, consts.HTML.button),
+            $removeBtn = $(removeButtonHTML);
+
+        this.$removeBtn = $removeBtn
+            .addClass(REMOVE_BUTTON_CLASS);
+
+        this.$el = $(html)
+            .append($removeBtn)
+            .appendTo($target);
+
         this._addEvent();
     },
 
     /**
      * Extract file extension by name
-     * @returns {string}
+     * @returns {string} File extension
      * @private
      */
     _extractExtension: function() {
@@ -94,41 +95,18 @@ var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
     },
 
     /**
-     * Make element that has redirect page information used by Server side.
-     * @param {object} helper Redirection helper page information for clear x-domain problem.
+     * Get listItem element HTML
+     * @returns {string} HTML
      * @private
      */
-    _makeBridgeInfoElement: function(helper) {
-        this.$helper = $('<input />');
-        this.$helper.attr({
-            'name' : helper.name,
-            'value': helper.url
-        });
-    },
-
-    /**
-     * Get item elemen HTML
-     * @param {string} html HTML template
-     * @returns {string}
-     * @private
-     */
-    _getHtml: function(html) {
+    _getHtml: function() {
         var map = {
-            filetype: this._type,
+            filetype: this.type,
             filename: this.name,
-            filesize: this.size ? utils.getFileSizeWithUnit(this.size) : '',
-            deleteButtonClassName: this._btnClass
+            filesize: this.size ? utils.getFileSizeWithUnit(this.size) : ''
         };
 
-        return utils.template(map, html);
-    },
-
-    /**
-     * Destory item
-     */
-    destroy: function() {
-        this._removeEvent();
-        this._$el.remove();
+        return utils.template(map, consts.HTML.listItem);
     },
 
     /**
@@ -136,21 +114,8 @@ var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
      * @private
      */
     _addEvent: function() {
-        var query = '.' + this._btnClass,
-            $delBtn = this._$el.find(query);
-        $delBtn.on('click', tui.util.bind(this._onClickEvent, this));
+        this.$removeBtn.on('click', $.proxy(this._onClickEvent, this));
     },
-
-    /**
-     * Remove event handler from delete button.
-     * @private
-     */
-    _removeEvent: function() {
-        var query = '.' + this._btnClass,
-            $delBtn = this._$el.find(query);
-        $delBtn.off('click');
-    },
-
 
     /**
      * Event-handle for delete button clicked.
@@ -158,13 +123,19 @@ var Item = tui.util.defineClass(/** @lends View.Item.prototype **/ {
      */
     _onClickEvent: function() {
         this.fire('remove', {
-            filename : this.name,
-            id : this._id,
+            name : this.name,
+            id : this.id,
             type: 'remove'
         });
+    },
+
+    /**
+     * Destroy item
+     */
+    destroy: function() {
+        this.$el.remove();
     }
 });
 
 tui.util.CustomEvents.mixin(Item);
-
 module.exports = Item;

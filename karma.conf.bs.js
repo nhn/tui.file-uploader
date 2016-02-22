@@ -10,7 +10,6 @@ module.exports = function(config) {
         ],
 
         files: [
-            'lib/json2/json2.js',
             'lib/jquery/jquery.js',
             'lib/tui-code-snippet/code-snippet.js',
             'src/**/uploader.js',
@@ -28,7 +27,8 @@ module.exports = function(config) {
         },
 
         reporters: [
-            'mocha',
+            //'mocha',
+            'dots',
             'coverage',
             'junit'
         ],
@@ -133,7 +133,7 @@ module.exports = function(config) {
         },
 
         browsers: [
-            //'bs_ie7', Timeout no activity
+            'bs_ie7',
             'bs_ie8',
             'bs_ie9',
             'bs_ie10',

@@ -3,17 +3,11 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">
     <script type="text/javascript" src="lib/jquery/jquery.js"></script>
     <script type="text/javascript" src="lib/tui-code-snippet/code-snippet.js"></script>
     <script type="text/javascript" src="js/file-uploader.js"></script>
-    <!--<script type="text/javascript" src="../src/js/statics.js"></script>-->
-    <!--<script type="text/javascript" src="../src/js/uploader.js"></script>-->
-    <!--<script type="text/javascript" src="../src/js/connector/connector.js"></script>-->
-    <!--<script type="text/javascript" src="../src/js/connector/ajax.js"></script>-->
-    <!--<script type="text/javascript" src="../src/js/connector/jsonp.js"></script>-->
-    <!--<script type="text/javascript" src="../src/js/view/input.js"></script>-->
-    <!--<script type="text/javascript" src="../src/js/view/list.js"></script>-->
-    <!--<script type="text/javascript" src="../src/js/view/item.js"></script>-->
     <link href="css/sample.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -29,32 +23,26 @@
 <script type="text/javascript">
     var uploader = new tui.component.Uploader({
         url: {
-            send: "http://127.0.0.1:8008/server/uploader.php",
-            remove: "http://127.0.0.1:8008/server/remove.php"
+            send: 'http://127.0.0.1:3000/upload',
+            remove: 'http://127.0.0.1:3000/remove'
         },
+        redirectURL: 'http://127.0.0.1:8080/samples/result.html',
         isBatchTransfer: false,
-        resultTypeElementName: 'RESPONSE_TYPE',
-        formTarget: 'hiddenFrame',
-        callbackName: 'responseCallback',
         listInfo: {
             list: $('#files'),
             count: $('#file_count'),
             size: $('#size_count')
         },
-        sizeunit: "KB",
-        separator: ';',
         fileField: 'userfile[]',
         isMultiple: true
     }, $('#uploader'));
 
-		uploader.on('fileAdded', function(data) {
-			$('#status').html(data.target.length + 'files added');
-		});
-		uploader.on('fileRemoved', function(data) {
-			$('#status').html(data.name + 'file removed');
-		});
+    uploader.on('success', function(data) {
+        $('#status').html(data.success + ' files added');
+    });
+    uploader.on('remove', function(data) {
+        $('#status').html(data.name + ' file removed');
+    });
 </script>
-
-
 </body>
 </html>

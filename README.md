@@ -5,17 +5,13 @@ The component support to upload files to server.
 
 ## Feature
 * X-domain support
+* Multiple upload
 * Listing uploaded files
 * Add files, Remove files
 
 ## Documentation
 * **API** : https://nhnent.github.io/tui.component.file-uploader/latest
 * **Tutorial** : https://github.com/nhnent/tui.component.file-uploader/wiki/File-Uploader-Tutorial
-
-## Sample (Internal Network only)
-* [Sample Page] (http://fe.nhnent.com/etc/sample/component-uploader/samedomain.html)
-* [Batch Transfer] (http://fe.nhnent.com/etc/sample/component-uploader/batch.html)
-* [Custom Event](http://fe.nhnent.com/etc/sample/component-uploader/custom.html)
 
 ## Dependency
 * tui-code-snippet: ~1.0.4
@@ -36,10 +32,11 @@ The component support to upload files to server.
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
+| [1.1.0](http://nhnent.github.io/tui.component.file-uploader/1.1.0/) | [Refactoring](https://github.com/nhnent/tui.component.file-uploader/releases/tag/1.1.0) | 2016.02 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> | 
 | 1.0.2 | fix bugs - batch transfer, file remove | 2016.01 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> |
 | 1.0.1 | Namespace changed | 2015.10 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> |
 | 1.0.1 | Drag and Drop, folder select, batch transfer | 2015.08 | NHN Ent. FE dev team <dl_javascript@nhnent.com> |
-| <a href="http://nhnent.github.io/tui.component.file-uploader/1.0.0/">1.0.0</a> | Release | 2015.07 | NHN Ent. FE dev team <dl_javascript@nhnent.com> |
+| [1.0.0](http://nhnent.github.io/tui.component.file-uploader/1.0.0/) | Release | 2015.07 | NHN Ent. FE dev team <dl_javascript@nhnent.com> |
 
 ## LICENSE
 [MIT LICENSE](LICENSE)

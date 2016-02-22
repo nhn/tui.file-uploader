@@ -3,23 +3,18 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  */
 'use strict';
+
 /**
- * Configuration of connection with server.
- * @type {{RESPONSE_TYPE: string, REDIRECT_URL: string}}
+ * Uploader config
  */
 module.exports.CONF = {
-    RESPONSE_TYPE: 'RESPONSE_TYPE',
-    REDIRECT_URL: 'REDIRECT_URL',
-    JSONPCALLBACK_NAME: 'CALLBACK_NAME',
-    SIZE_UNIT: 'SIZE_UNIT',
-    REMOVE_CALLBACK : 'responseRemoveCallback',
-    ERROR: {
-        DEFAULT: 'Unknown error.',
-        NOT_SURPPORT: 'This is x-domain connection, you have to make helper page.'
-    },
-    DRAG_DEFAULT_ENABLE_CLASS: 'enableClass',
     FILE_FILED_NAME: 'userfile[]',
-    FOLDER_INFO: 'folderName'
+    DROP_ENABLED_CLASS: 'dropEnabled',
+    HIDDEN_FILE_INPUT_CLASS: 'hiddenFileInput',
+    REQUESTER_TYPE_MODERN: 'modernRequester',
+    REQUESTER_TYPE_OLD: 'oldRequester',
+    FORM_TARGET_NAME: 'tuiUploaderHiddenFrame',
+    REMOVE_BUTTON_CLASS: 'removeButton'
 };
 
 /**
@@ -27,16 +22,20 @@ module.exports.CONF = {
  * @type {{input: string, item: string}}
  */
 module.exports.HTML = {
-    form: ['<form enctype="multipart/form-data" id="formData" method="post">',
-        '<input type="hidden" name="MAX_FILE_SIZE" value="3000000" />',
-        '</form>'].join(''),
-    input: ['<input type="file" id="fileAttach" {{webkitdirectory}} name="{{fileField}}" {{multiple}} />'].join(''),
-    submit: ['<button class="batchSubmit" type="submit">SEND</button>'].join(''),
-    item: ['<li class="filetypeDisplayClass">',
-        '<spna class="fileicon {{filetype}}">{{filetype}}</spna>',
-        '<span class="file_name">{{filename}}</span>',
-        '<span class="file_size">{{filesize}}</span>',
-        '<button type="button" class="{{deleteButtonClassName}}">Delete</button>',
-        '</li>'].join(''),
-    drag: ['<div class="dragzone"></div>'].join('')
+    form: [
+        '<form enctype="multipart/form-data" id="tui-uploader-form" method="post">',
+        '</form>'
+    ].join(''),
+    submit: '<button class="batchSubmit" type="submit">SEND</button>',
+    fileInput: '<input type="file" id="fileAttach" {{directory}} name="{{fileField}}" {{multiple}} />',
+    hiddenInput: '<input type="hidden" name="{{name}}" value="{{value}}">',
+    button: '<button type="button">{{text}}</button>',
+    listItem: [
+        '<li class="filetypeDisplayClass">',
+            '<span class="fileicon {{filetype}}">{{filetype}}</span>',
+            '<span class="file_name">{{filename}}</span>',
+            '<span class="file_size">{{filesize}}</span>',
+        '</li>'
+    ].join(''),
+    dragAndDrop: '<div class="dropzone"></div>'
 };
