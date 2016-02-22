@@ -13,7 +13,6 @@ var OldRequester = require('./requester/old');
 var ModernRequester = require('./requester/modern');
 
 var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
-
 /**
  * FileUploader act like bridge between connector and view.
  * It makes connector and view with option and environment.
@@ -42,8 +41,8 @@ var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
  *     }
  * }, $('#uploader'));
  */
-var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
-    init: function(options, $el) {
+var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-disable*/
+    init: function(options, $el) {/*eslint-enable*/
         /**
          * Uploader element
          * @type {jQuery}
@@ -176,6 +175,17 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
             } else {
                 this.updateList(data.filelist);
             }
+            /**
+             * Success event
+             *  in IE8, 9 - using PostMessageAPI for CORS
+             * @api
+             * @event Uploader#success
+             * @param {object} data - Server response data
+             *  @param {Array} data.filelist - Uploaded file list
+             *  @param {number} [data.success] - Uploaded file count
+             *  @param {number} [data.failed] - Failed file count
+             *  @param {number} [data.count] - Total count
+             */
             this.fire('success', data);
         }, this));
     },
@@ -221,17 +231,55 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
         this._requester.on({
             removed: function(data) {
                 this.updateList(data);
+                /**
+                 * Remove event
+                 *  in batchTransfer
+                 * @api
+                 * @event Uploader#remove
+                 * @param {object} data - Remove data from this component
+                 *  @param {string} data.message - 'success' or 'fail'
+                 *  @param {string} data.name - file name
+                 *  @param {string} data.id - file id
+                 */
                 this.fire('remove', data);
             },
             error: function(data) {
+                /**
+                 * Error event
+                 *  in batchTransfer
+                 * @api
+                 * @event Uploader#error
+                 * @param {Error} data - Error data
+                 *  @param {string} data.status - Error status
+                 *  @param {string} data.message - Error message
+                 */
                 this.fire('error', data);
             },
             uploaded: function(data) {
                 this.clear();
+                /**
+                 * Success event
+                 *  in batchTransfer
+                 * @api
+                 * @event Uploader#success
+                 * @param {object} data - Server response data
+                 *  @param {Array} data.filelist - Uploaded file list
+                 *  @param {number} [data.success] - Uploaded file count
+                 *  @param {number} [data.failed] - Failed file count
+                 *  @param {number} [data.count] - Total count
+                 */
                 this.fire('success', data);
             },
             stored: function(data) {
                 this.updateList(data);
+                /**
+                 * Update event
+                 *  in batchTransfer
+                 * @api
+                 * @event Uploader#update
+                 * @param {Array.<object>} data - File list data
+                 * Array having objects<br>{id: string, name: string, size: number}
+                 */
                 this.fire('update', data);
             }
         }, this);
@@ -251,13 +299,43 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
         this._requester.on({
             removed: function(data) {
                 this.updateList(data);
+                /**
+                 * Remove event
+                 *  in normalTransfer
+                 * @api
+                 * @event Uploader#remove
+                 * @param {object} data - Remove data from server response
+                 *  @param {string} data.message - 'success' or 'fail'
+                 *  @param {string} data.name - file name
+                 *  @param {string} data.id - file id
+                 */
                 this.fire('remove', data);
             },
             error: function(data) {
+                /**
+                 * Error event
+                 *  in normalTransfer
+                 * @api
+                 * @event Uploader#error
+                 * @param {Error} data - Error data
+                 *  @param {string} data.status - Error status
+                 *  @param {string} data.message - Error message
+                 */
                 this.fire('error', data);
             },
             uploaded: function(data) {
                 this.updateList(data.filelist);
+                /**
+                 * Success event
+                 *  in normalTransfer
+                 * @api
+                 * @event Uploader#success
+                 * @param {object} data - Server response data
+                 *  @param {Array} data.filelist - Uploaded file list
+                 *  @param {number} [data.success] - Uploaded file count
+                 *  @param {number} [data.failed] - Failed file count
+                 *  @param {number} [data.count] - Total count
+                 */
                 this.fire('success', data);
             }
         }, this);

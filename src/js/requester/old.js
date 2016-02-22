@@ -10,8 +10,8 @@ var TYPE = consts.CONF.REQUESTER_TYPE_OLD;
  * @param {Uploader} uploader - Uploader
  * @class
  */
-var Old = tui.util.defineClass(/** @lends Old.prototype */{
-    init: function(uploader) {
+var Old = tui.util.defineClass(/** @lends Old.prototype */{/*eslint-disable*/
+    init: function(uploader) {/*eslint-enable*/
         var $hiddenFrame = uploader.$targetFrame,
             formView = uploader.formView;
 
@@ -51,7 +51,8 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{
     },
 
     /**
-     * @type {string} Requester type
+     * Requester type
+     * @type {string}
      */
     TYPE: TYPE,
 

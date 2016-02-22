@@ -10,8 +10,8 @@ var TYPE = consts.CONF.REQUESTER_TYPE_MODERN,
  * @param {Uploader} uploader - Uploader
  * @class
  */
-var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
-    init: function(uploader) {
+var Modern = tui.util.defineClass(/** @lends Modern.prototype */{/*eslint-disable*/
+    init: function(uploader) {/*eslint-enable*/
         /**
          * Uploader
          * @type {Uploader}
@@ -40,7 +40,8 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
     },
 
     /**
-     * @type {string} Requester type
+     * Requester type
+     * @type {string}
      */
     TYPE: TYPE,
 

@@ -17,8 +17,8 @@ var HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS,
  * @param {HTMLElement} planet - Form element
  * @class Pool
  */
-var Pool = tui.util.defineClass(/** @lends Pool.prototype */{
-    init: function(planet) {
+var Pool = tui.util.defineClass(/** @lends Pool.prototype */{/*eslint-disable*/
+    init: function(planet) {/*eslint-enable*/
         /**
          * Submitter for file element to server
          * Form element

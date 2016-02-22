@@ -21,8 +21,8 @@ var REMOVE_BUTTON_CLASS = consts.CONF.REMOVE_BUTTON_CLASS;
  *  @param {string} [options.template] item template
  *  @param {(string|number)} [options.size] File size (but ie low browser, x-domain)
  */
-var Item = tui.util.defineClass(/** @lends Item.prototype **/ {
-    init: function(options) {
+var Item = tui.util.defineClass(/** @lends Item.prototype **/{/*eslint-disable*/
+    init: function(options) {/*eslint-enable*/
         /**
          * Item: LI element
          * @type {jQuery}

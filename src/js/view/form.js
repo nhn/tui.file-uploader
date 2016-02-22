@@ -15,8 +15,8 @@ var isSupportFormData = utils.isSupportFormData(),
  * @param {Uploader} uploader - Uploader instance
  * @constructor View.Form
  */
-var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
-    init: function(uploader) {
+var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{/*eslint-disable*/
+    init: function(uploader) {/*eslint-enable*/
         /**
          * File uploader
          * @type {Uploader}

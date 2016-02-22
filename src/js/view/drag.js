@@ -10,8 +10,8 @@ var consts = require('../consts');
  * @class DragAndDrop
  * @param {Uploader} uploader - Uploader
  */
-var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{
-    init: function(uploader) {
+var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{/*eslint-disable*/
+    init: function(uploader) {/*eslint-enable*/
         var html = consts.HTML.dragAndDrop;
 
         /**

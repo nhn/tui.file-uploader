@@ -16,8 +16,8 @@ var Item = require('./item');
  *  @param {jQuery} listInfo.size - Size jquery-element
  * @class List
  */
-var List = tui.util.defineClass(/** @lends List.prototype */{
-    init : function(listInfo) {
+var List = tui.util.defineClass(/** @lends List.prototype */{/*eslint-disable*/
+    init : function(listInfo) {/*eslint-enable*/
         /**
          * Items
          * @type {Array.<Item>}
