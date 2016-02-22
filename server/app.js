@@ -55,7 +55,7 @@ function makeResponseData(files) {
         result = {
             filelist: filelist,
             success: filelist.length,
-            faild: 0,
+            failed: 0,
             count: filelist.length
         };
 
