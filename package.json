@@ -39,5 +39,5 @@
   "scripts": {
     "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json -t node_modules/fedoc-template"
   },
-  "author": "NHNEnt FE Development Team <e0242@nhnent.com>"
+  "author": "NHNEnt FE Development Team <dl_javascript@nhnent.com>"
 }
