@@ -134,7 +134,7 @@ module.exports = function(config) {
         },
 
         browsers: [
-            //'bs_ie7', Timeout no activity
+            'bs_ie7',
             'bs_ie8',
             'bs_ie9',
             'bs_ie10',

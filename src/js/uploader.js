@@ -255,6 +255,9 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
             error: function(data) {
                 this.fire('error', data);
             },
+            stored: function() {
+                this.submit();
+            },
             uploaded: function(data) {
                 this.updateList(data.filelist);
                 this.fire('success', data);
