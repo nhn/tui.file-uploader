@@ -34,8 +34,8 @@
     "hardwrap": true
   },
   "opts": {
-    "recurse": true,
     "destination": "doc",
+    "tutorials": "samples",
     "name": "File Uploader"
   }
 }
