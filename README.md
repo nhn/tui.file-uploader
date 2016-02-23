@@ -32,7 +32,7 @@ The component support to upload files to server.
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
-| [1.1.0](http://nhnent.github.io/tui.component.file-uploader/1.1.0/) | [Refactoring](https://github.com/nhnent/tui.component.file-uploader/releases/tag/1.1.0) | 2016.02 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> | 
+| [1.1.0](http://nhnent.github.io/tui.component.file-uploader/1.1.0/) | [Remove unnecessary init-options](https://github.com/nhnent/tui.component.file-uploader/releases/tag/1.1.0) | 2016.02 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> | 
 | 1.0.2 | fix bugs - batch transfer, file remove | 2016.01 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> |
 | 1.0.1 | Namespace changed | 2015.10 | NHN Ent. FE Dev team <dl_javascript@nhnent.com> |
 | 1.0.1 | Drag and Drop, folder select, batch transfer | 2015.08 | NHN Ent. FE dev team <dl_javascript@nhnent.com> |
