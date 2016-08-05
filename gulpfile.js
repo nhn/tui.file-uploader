@@ -37,8 +37,7 @@ gulp.task('connect', function() {
 
 gulp.task('liveBuild', function() {
     var b = browserify({
-        entries: 'index.js',
-        debug: true
+        entries: 'index.js'
     });
 
     return b.transform(hbsfy)
