@@ -1,5 +1,4 @@
 var istanbul = require('browserify-istanbul');
-var hbsfy = require('hbsfy');
 
 module.exports = function(config) {
     var webdriverConfig = {
@@ -17,8 +16,8 @@ module.exports = function(config) {
         ],
 
         files: [
-            'lib/jquery/jquery.js',
-            'lib/tui-code-snippet/code-snippet.js',
+            'bower_components/jquery/jquery.js',
+            'bower_components/tui-code-snippet/code-snippet.js',
             'src/**/uploader.js',
             'src/**/*.js',
             'test/**/*.spec.js'
@@ -34,7 +33,6 @@ module.exports = function(config) {
         },
 
         reporters: [
-            //'mocha',
             'dots',
             'coverage',
             'junit'
@@ -43,7 +41,7 @@ module.exports = function(config) {
         browserify: {
             debug: true,
             bundleDelay: 1000,
-            transform:[hbsfy, istanbul({
+            transform:[istanbul({
                 ignore: [
                     'index.js'
                 ]
@@ -74,7 +72,6 @@ module.exports = function(config) {
         autoWatch: false,
 
         browsers: [
-            'IE7',
             'IE8',
             'IE9',
             'IE10',
@@ -85,12 +82,6 @@ module.exports = function(config) {
         ],
 
         customLaunchers: {
-            'IE7': {
-                base: 'WebDriver', 
-                config: webdriverConfig,
-                browserName: 'internet explorer',
-                version: 7
-            },
             'IE8': {
                 base: 'WebDriver', 
                 config: webdriverConfig,

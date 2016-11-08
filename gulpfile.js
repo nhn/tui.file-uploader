@@ -1,4 +1,4 @@
-"use strict";
+
 /*eslint-disable*/
 var path = require('path');
 var gulp = require('gulp');
@@ -6,86 +6,65 @@ var connect = require('gulp-connect');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
-var karma = require('karma').server;
-var hbsfy = require('hbsfy');
+var Karma = require('karma').Server;
 var uglify = require('gulp-uglify');
-var concat = require('gulp-concat');
-var filename = require('./package.json').name.replace('component-', '');
+var rename = require('gulp-rename');
 var eslint = require('gulp-eslint');
+var header = require('gulp-header');
+
+var pkg = require('./package.json');
+
+var NAME = pkg.name.replace('tui-component-', '');
+var VERSION = pkg.version;
+
+var banner = ['/**',
+    ' * <%= pkg.name %>',
+    ' * @author <%= pkg.author %>',
+    ' * @version v<%= pkg.version %>',
+    ' * @license <%= pkg.license %>',
+    ' */',
+    ''].join('\n');
+
+var BUNDLE_PATH = './dist';
 
 gulp.task('eslint', function() {
     return gulp.src(['./src/**/*.js'])
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failAfterError());
-})
+});
 
-gulp.task('karma', ['eslint'], function(done) {
-    karma.start({
+gulp.task('test', ['eslint'], function(done) {
+    new Karma({
         configFile: path.join(__dirname, 'karma.conf.private.js'),
         singleRun: true,
         logLevel: 'error'
-    }, done);
+    }, done).start();
 });
 
 gulp.task('connect', function() {
-    connect.server({
-        livereload: true
-    });
-    gulp.watch(['./src/**/*.js', './index.js'], ['liveBuild']);
+    connect.server();
 });
 
-gulp.task('liveBuild', function() {
+gulp.task('bundle', function() {
     var b = browserify({
         entries: 'index.js',
         debug: true
     });
 
-    return b.transform(hbsfy)
-        .bundle()
+    return b.bundle()
         .on('error', function(err) {
             console.log(err.message);
             this.emit('end');
         })
-        .pipe(source(filename + '.js'))
+        .pipe(source(NAME + '.js'))
         .pipe(buffer())
-        .pipe(gulp.dest('./'))
-        .pipe(concat(filename + '.js'))
-        .pipe(gulp.dest('./samples/js/'))
+        .pipe(header(banner, { pkg : pkg } ))
+        .pipe(gulp.dest(BUNDLE_PATH))
         .pipe(uglify())
-        .pipe(concat(filename + '.min.js'))
-        .pipe(gulp.dest('./'));
+        .pipe(rename(NAME + '.min.js'))
+        .pipe(header(banner, { pkg : pkg } ))
+        .pipe(gulp.dest(BUNDLE_PATH));
 });
 
-gulp.task('bundle', ['karma'], function() {
-    var b = browserify({
-        entries: 'index.js',
-        debug: true
-    });
-
-    return b.transform(hbsfy)
-        .bundle()
-        .on('error', function(err) {
-            console.log(err.message);
-            this.emit('end');
-        })
-        .pipe(source(filename + '.js'))
-        .pipe(buffer())
-        .pipe(gulp.dest('./'));
-});
-
-gulp.task('compress', ['bundle'], function() {
-    gulp.src(filename + '.js')
-        .pipe(uglify())
-        .pipe(concat(filename + '.min.js'))
-        .pipe(gulp.dest('./'));
-
-});
-
-gulp.task('concat', ['compress'], function() {
-    gulp.src(filename + '.js')
-        .pipe(concat(filename + '.js'))
-        .pipe(gulp.dest('./samples/js/'));
-});
-
-gulp.task('default', ['eslint', 'karma', 'bundle', 'compress', 'concat']);
+gulp.task('default', ['eslint', 'test', 'bundle']);

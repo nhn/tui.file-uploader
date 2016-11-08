@@ -16,6 +16,7 @@ var HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS,
  * It's only for input[file] element save at browser that does not support file api.
  * @param {HTMLElement} planet - Form element
  * @class Pool
+ * @ignore
  */
 var Pool = tui.util.defineClass(/** @lends Pool.prototype */{/*eslint-disable*/
     init: function(planet) {/*eslint-enable*/

@@ -1,2 +1,5 @@
-tui.util.defineNamespace('tui.component.Uploader', require('./src/js/uploader.js'));
+'use strict';
+tui.util.defineNamespace('tui.component', {
+    Uploader: require('./src/js/uploader.js')
+});
 
