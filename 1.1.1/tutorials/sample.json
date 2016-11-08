@@ -1,0 +1,17 @@
+{
+  "samedomain": {
+    "title": "Basic example"
+  },
+  "batch": {
+    "title": "Batch transfer example"
+  },
+  "fold": {
+    "title": "Folder transfer example"
+  },
+  "custom": {
+    "title": "Custom event example"
+  },
+  "result": {
+    "title": "For IE7, Redirect page"
+  }
+}

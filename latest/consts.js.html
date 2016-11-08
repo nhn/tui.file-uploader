@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,109 +44,61 @@
 <div class="main" id="main">
     
 
-<section>
-    <header>
-        
 
-        <h2>xdomain</h2>
-    </header>
 
-    <ul id="example-nav" class="nav nav-tabs">
-        <li role="presentation" id="example-result-btn" class="active" onclick="showResult()">
-            <a href="#">Result</a>
-        </li>
-        <li role="presentation" id="example-js-btn" class="" onclick="showJs()">
-            <a href="#">JS</a>
-        </li>
-        <li role="presentation" id="example-html-btn" class="" onclick="showHtml()">
-            <a href="#">HTML</a>
-        </li>
-    </ul>
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Configuration or default values.
+ * @author NHN Ent. FE Development Team &lt;dl_javascript@nhnent.com>
+ */
+'use strict';
 
-    <article>
-        
-        <iframe id="example-result" width="100%" height="800" frameborder="0" src=tutorials/xdomain.html></iframe>
-        <div id="example-js" class="hidden"><pre class="prettyprint source">
-    var uploader = new tui.component.Uploader({
-        url: {
-            send: 'http://localhost:3000/upload',
-            remove: 'http://localhost:3000/remove'
-        },
-        redirectURL: 'http://localhost:8080/samples/result.html',
-        listInfo: {
-            list: $('#files'),
-            count: $('#file_count'),
-            size: $('#size_count')
-        },
-        fileField: 'userfile[]',
-        isMultiple: true
-    }, $('#uploader'));
-</pre></div>
-        <div id="example-html" class="hidden"><pre class="prettyprint source">
-    &lt;div id="uploader">&lt;/div>
-    &lt;div id="list">
-        &lt;div class="count">count : &lt;strong id="file_count">&lt;/strong>&lt;/div>
-        &lt;div class="size">size : &lt;strong id="size_count">&lt;/strong>&lt;/div>
-        &lt;ul id="files">&lt;/ul>
-    &lt;/div>
-</pre></div>
-    </article>
-</section>
+/**
+ * Uploader config
+ * @type {object}
+ * @ignore
+ */
+module.exports.CONF = {
+    FILE_FILED_NAME: 'userfile[]',
+    DROP_ENABLED_CLASS: 'dropEnabled',
+    HIDDEN_FILE_INPUT_CLASS: 'hiddenFileInput',
+    REQUESTER_TYPE_MODERN: 'modernRequester',
+    REQUESTER_TYPE_OLD: 'oldRequester',
+    FORM_TARGET_NAME: 'tuiUploaderHiddenFrame',
+    REMOVE_BUTTON_CLASS: 'removeButton'
+};
 
-<script>
-    var exampleResult = document.getElementById('example-result');
-    var exampleJs = document.getElementById('example-js');
-    var exampleHtml = document.getElementById('example-html');
-    var exampleResultBtn = document.getElementById('example-result-btn');
-    var exampleJsBtn = document.getElementById('example-js-btn');
-    var exampleHtmlBtn = document.getElementById('example-html-btn');
+/**
+ * Default Htmls
+ * @type {{input: string, item: string}}
+ * @ignore
+ */
+module.exports.HTML = {
+    form: [
+        '&lt;form enctype="multipart/form-data" id="tui-uploader-form" method="post">',
+        '&lt;/form>'
+    ].join(''),
+    submit: '&lt;button class="batchSubmit" type="submit">SEND&lt;/button>',
+    fileInput: '&lt;input type="file" id="fileAttach" {{directory}} name="{{fileField}}" {{multiple}} />',
+    hiddenInput: '&lt;input type="hidden" name="{{name}}" value="{{value}}">',
+    button: '&lt;button type="button">{{text}}&lt;/button>',
+    listItem: [
+        '&lt;li class="filetypeDisplayClass">',
+            '&lt;span class="fileicon {{filetype}}">{{filetype}}&lt;/span>',
+            '&lt;span class="file_name">{{filename}}&lt;/span>',
+            '&lt;span class="file_size">{{filesize}}&lt;/span>',
+        '&lt;/li>'
+    ].join(''),
+    dragAndDrop: '&lt;div class="dropzone">&lt;/div>'
+};
+</code></pre>
+        </article>
+    </section>
 
-    function setActive(el) {
-        el.className += ' active';
-    }
 
-    function setInactive(el) {
-        el.className = el.className.replace(/\s*active\s*/g, '');
-    }
 
-    function show(el) {
-        el.className = el.className.replace(/\s*hidden\s*/g, '');
-    }
-
-    function hide(el) {
-        el.className += ' hidden';
-    }
-
-    function showJs() {
-        hide(exampleHtml);
-        hide(exampleResult);
-        setInactive(exampleHtmlBtn);
-        setInactive(exampleResultBtn);
-
-        show(exampleJs);
-        setActive(exampleJsBtn);
-    }
-
-    function showHtml() {
-        hide(exampleJs);
-        hide(exampleResult);
-        setInactive(exampleJsBtn);
-        setInactive(exampleResultBtn);
-
-        show(exampleHtml);
-        setActive(exampleHtmlBtn);
-    }
-
-    function showResult() {
-        hide(exampleJs);
-        hide(exampleHtml);
-        setInactive(exampleJsBtn);
-        setInactive(exampleHtmlBtn);
-
-        show(exampleResult);
-        setActive(exampleResultBtn);
-    }
-</script>
 
 </div>
 
@@ -158,7 +112,11 @@
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        showLnbExamples();
+        var id = '_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
     </script>
 
 </body>

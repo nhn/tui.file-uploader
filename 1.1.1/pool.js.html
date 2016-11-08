@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,109 +44,109 @@
 <div class="main" id="main">
     
 
-<section>
-    <header>
-        
 
-        <h2>xdomain</h2>
-    </header>
 
-    <ul id="example-nav" class="nav nav-tabs">
-        <li role="presentation" id="example-result-btn" class="active" onclick="showResult()">
-            <a href="#">Result</a>
-        </li>
-        <li role="presentation" id="example-js-btn" class="" onclick="showJs()">
-            <a href="#">JS</a>
-        </li>
-        <li role="presentation" id="example-html-btn" class="" onclick="showHtml()">
-            <a href="#">HTML</a>
-        </li>
-    </ul>
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview This is manager of input elements that act like file pool.
+ * @author NHN Ent. FE Development Team &lt;dl_javascript@nhnent.com>
+ */
+'use strict';
 
-    <article>
-        
-        <iframe id="example-result" width="100%" height="800" frameborder="0" src=tutorials/xdomain.html></iframe>
-        <div id="example-js" class="hidden"><pre class="prettyprint source">
-    var uploader = new tui.component.Uploader({
-        url: {
-            send: 'http://localhost:3000/upload',
-            remove: 'http://localhost:3000/remove'
-        },
-        redirectURL: 'http://localhost:8080/samples/result.html',
-        listInfo: {
-            list: $('#files'),
-            count: $('#file_count'),
-            size: $('#size_count')
-        },
-        fileField: 'userfile[]',
-        isMultiple: true
-    }, $('#uploader'));
-</pre></div>
-        <div id="example-html" class="hidden"><pre class="prettyprint source">
-    &lt;div id="uploader">&lt;/div>
-    &lt;div id="list">
-        &lt;div class="count">count : &lt;strong id="file_count">&lt;/strong>&lt;/div>
-        &lt;div class="size">size : &lt;strong id="size_count">&lt;/strong>&lt;/div>
-        &lt;ul id="files">&lt;/ul>
-    &lt;/div>
-</pre></div>
-    </article>
-</section>
+var consts = require('./consts');
 
-<script>
-    var exampleResult = document.getElementById('example-result');
-    var exampleJs = document.getElementById('example-js');
-    var exampleHtml = document.getElementById('example-html');
-    var exampleResultBtn = document.getElementById('example-result-btn');
-    var exampleJsBtn = document.getElementById('example-js-btn');
-    var exampleHtmlBtn = document.getElementById('example-html-btn');
+var HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS,
+    forEach = tui.util.forEach,
+    hasStamp = tui.util.hasStamp,
+    stamp = tui.util.stamp;
 
-    function setActive(el) {
-        el.className += ' active';
+/**
+ * The pool for save files.
+ * It's only for input[file] element save at browser that does not support file api.
+ * @param {HTMLElement} planet - Form element
+ * @class Pool
+ * @ignore
+ */
+var Pool = tui.util.defineClass(/** @lends Pool.prototype */{/*eslint-disable*/
+    init: function(planet) {/*eslint-enable*/
+        /**
+         * Submitter for file element to server
+         * Form element
+         * @type {HTMLElement}
+         */
+        this.planet = planet;
+
+        /**
+         * File data structure object
+         *  key=name : value=iuput[type=file](Element)
+         * @type {object}
+         */
+        this.files = {};
+    },
+
+    /**
+     * Save a input element[type=file], as value of file name.
+     * @param {HTMLInputElement} inputFileEl A input element that have to be saved
+     */
+    store: function(inputFileEl) {
+        var id = hasStamp(inputFileEl) &amp;&amp; stamp(inputFileEl),
+            filename, key;
+
+        if (!id) {
+            return;
+        }
+        filename = inputFileEl.value;
+        key = id + filename;
+        this.files[key] = inputFileEl;
+    },
+
+    /**
+     * Remove a input element[type=file] from pool.
+     * @param {object} params - A file name that have to be removed.
+     * @return {boolean} result
+     */
+    remove: function(params) {
+        var key = params.id + params.name,
+            element = this.files[key];
+
+        if (!element) {
+            return false;
+        }
+
+        delete this.files[key];
+        return true;
+    },
+
+    /**
+     * Empty pool
+     */
+    empty: function() {
+        this.files = {};
+    },
+
+    /**
+     * Plant files on pool to form input
+     */
+    plant: function() {
+        var planet = this.planet;
+        forEach(this.files, function(element, key) {
+            element.className = HIDDEN_FILE_INPUT_CLASS;
+            element.style.display = 'none';
+            planet.appendChild(element);
+            delete this.files[key];
+        }, this);
     }
+});
 
-    function setInactive(el) {
-        el.className = el.className.replace(/\s*active\s*/g, '');
-    }
+module.exports = Pool;
+</code></pre>
+        </article>
+    </section>
 
-    function show(el) {
-        el.className = el.className.replace(/\s*hidden\s*/g, '');
-    }
 
-    function hide(el) {
-        el.className += ' hidden';
-    }
 
-    function showJs() {
-        hide(exampleHtml);
-        hide(exampleResult);
-        setInactive(exampleHtmlBtn);
-        setInactive(exampleResultBtn);
-
-        show(exampleJs);
-        setActive(exampleJsBtn);
-    }
-
-    function showHtml() {
-        hide(exampleJs);
-        hide(exampleResult);
-        setInactive(exampleJsBtn);
-        setInactive(exampleResultBtn);
-
-        show(exampleHtml);
-        setActive(exampleHtmlBtn);
-    }
-
-    function showResult() {
-        hide(exampleJs);
-        hide(exampleHtml);
-        setInactive(exampleJsBtn);
-        setInactive(exampleHtmlBtn);
-
-        show(exampleResult);
-        setActive(exampleResultBtn);
-    }
-</script>
 
 </div>
 
@@ -158,7 +160,11 @@
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        showLnbExamples();
+        var id = '_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
     </script>
 
 </body>

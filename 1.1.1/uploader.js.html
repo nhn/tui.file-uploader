@@ -1,0 +1,470 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>File Uploader</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px">
+        <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">File Uploader</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    <ol class="lnb-tab">
+        <li id="api-tab">
+            <a href="#"><h4>API</h4></a>
+        </li>
+        <li id="examples-tab">
+            <a href="#"><h4>Examples</h4></a>
+        </li>
+    </ol>
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-batch.html">Batch transfer example</a><div class="hidden" id="batch_sub"></div></li><li><a href="tutorial-custom.html">Custom event example</a><div class="hidden" id="custom_sub"></div></li><li><a href="tutorial-fold.html">Folder transfer example</a><div class="hidden" id="fold_sub"></div></li><li><a href="tutorial-result.html">For IE7, Redirect page</a><div class="hidden" id="result_sub"></div></li><li><a href="tutorial-samedomain.html">Basic example</a><div class="hidden" id="samedomain_sub"></div></li><li><a href="tutorial-xdomain.html">xdomain</a><div class="hidden" id="xdomain_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Uploader.html">Uploader</a><div class="hidden" id="Uploader_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Uploader.html#clear">clear</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="Uploader.html#event:error">error</a></li><li><a href="Uploader.html#event:remove">remove</a></li><li><a href="Uploader.html#event:success">success</a></li><li><a href="Uploader.html#event:update">update</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview FileUploader is core of file uploader component.&lt;br>FileManager manage connector to connect server and update FileListView.
+ * @dependency ne-code-snippet 1.0.3, jquery1.8.3
+ * @author NHN Ent. FE Development Team &lt;dl_javascript@nhnent.com>
+ */
+'use strict';
+var consts = require('./consts');
+var utils = require('./utils');
+var Form = require('./view/form');
+var List = require('./view/list');
+var DragAndDrop = require('./view/drag');
+var OldRequester = require('./requester/old');
+var ModernRequester = require('./requester/modern');
+
+var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
+/**
+ * @constructor
+ * @param {object} options To set up uploader modules.
+ *  @param {object} options.url File server urls.
+ *      @param {string} options.url.send Send url.
+ *      @param {string} options.url.remove Delete url.
+ *  @param {string} [options.formTarget='tuiUploaderHiddenFrame'] The target name(iframe) for CORS.
+ *  @param {object} options.listInfo To display files information.
+ *  @param {string} [options.fileField='userFile[]'] The field name of input file element.
+ *  @param {boolean} options.useFolder Use directory upload. If ture, 'isMultiple' option will be ignored.
+ *  @param {boolean} options.isMultiple Use multiple files upload.
+ * @param {jQuery} $el Root Element of Uploader
+ * @example
+ * // HTML
+ * //  &lt;div id="uploader">&lt;/div>
+ * //  &lt;div id="list">
+ * //    &lt;div class="count">count : &lt;strong id="file_count">&lt;/strong>&lt;/div>
+ * //    &lt;div class="size">size : &lt;strong id="size_count">&lt;/strong>&lt;/div>
+ * //    &lt;ul id="files">&lt;/ul>
+ * //  &lt;/div>
+ *
+ * var uploader = new tui.component.Uploader({
+ *     url: {
+ *         send: "http://fe.nhnent.com/etc/etc/uploader/uploader.php",
+ *         remove: "http://fe.nhnent.com/etc/etc/uploader/remove.php"
+ *     },
+ *     listInfo: {
+ *         list: $('#files'),
+ *         count: $('#file_count'),
+ *         size: $('#size_count')
+ *     }
+ * }, $('#uploader'));
+ */
+var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-disable*/
+    init: function(options, $el) {/*eslint-enable*/
+        /**
+         * Uploader element
+         * @type {jQuery}
+         * @private
+         */
+        this.$el = $el;
+
+        /**
+         * Send/Remove url
+         * @type {{send: string, remove: string}}
+         * @private
+         */
+        this.url = options.url;
+
+        /**
+         * Redirect URL for CORS(response, IE7)
+         * @private
+         * @type {string}
+         */
+        this.redirectURL = options.redirectURL;
+
+        /**
+         * Form target name for CORS (IE7, 8, 9)
+         * @private
+         * @type {string}
+         */
+        this.formTarget = consts.CONF.FORM_TARGET_NAME;
+
+        /**
+         * Target frame for CORS (IE7, 8, 9)
+         * @private
+         * @type {jQuery}
+         */
+        this.$targetFrame = this._createTargetFrame()
+            .appendTo(this.$el);
+
+        /**
+         * Input file - field name
+         * @private
+         * @type {string}
+         */
+        this.fileField = options.fileField || consts.CONF.FILE_FILED_NAME;
+
+        /**
+         * Whether the uploader uses batch-transfer
+         * @private
+         * @type {boolean}
+         */
+        this.isBatchTransfer = !!(options.isBatchTransfer);
+
+        /**
+         * Whether the sending/removing urls are x-domain.
+         * @private
+         * @type {boolean}
+         */
+        this.isCrossDomain = utils.isCrossDomain(this.url.send);
+
+        /**
+         * Whether the browser supports PostMessage API
+         * @private
+         * @type {boolean}
+         */
+        this.isSupportPostMessage = !!(tui.util.pick(this.$targetFrame, '0', 'contentWindow', 'postMessage'));
+
+        /**
+         * Whether the user uses multiple upload
+         * @private
+         * @type {boolean}
+         */
+        this.isMultiple = !!(options.isMultiple);
+
+        /**
+         * Whether the user uses drag&amp;drop upload
+         * @private
+         * @type {boolean}
+         */
+        this.useDrag = !!(options.useDrag);
+
+        /**
+         * Whether the user uses folder upload
+         * @private
+         * @type {boolean}
+         */
+        this.useFolder = !!(options.useFolder);
+
+        if (this.useDrag &amp;&amp; !this.useFolder &amp;&amp; utils.isSupportFileSystem()) {
+            /**
+             * Drag &amp; Drop View
+             * @private
+             * @type {DragAndDrop}
+             */
+            this.dragView = new DragAndDrop(this);
+        }
+
+        /**
+         * From View
+         * @private
+         * @type {Form}
+         */
+        this.formView = new Form(this);
+
+        /**
+         * List View
+         * @private
+         * @type {List}
+         */
+        this.listView = new List(options.listInfo);
+
+        this._setRequester();
+        this._addEvent();
+        if (this.isCrossDomain &amp;&amp; this.isSupportPostMessage) {
+            this._setPostMessageEvent();
+        }
+    },
+
+    /**
+     * Set Connector
+     * @private
+     */
+    _setRequester: function() {
+        if (utils.isSupportFormData()) {
+            this._requester = new ModernRequester(this);
+        } else {
+            this._requester = new OldRequester(this);
+        }
+    },
+
+    /**
+     * Set post-message event if supported and needed
+     * @private
+     */
+    _setPostMessageEvent: function() {
+        this.$targetFrame.off('load');
+        $(window).on('message', $.proxy(function(event) {
+            var originalEvent = event.originalEvent,
+                data;
+
+            if (this.url.send.indexOf(originalEvent.origin) === -1) {
+                return;
+            }
+            data = $.parseJSON(originalEvent.data);
+
+            if (this.isBatchTransfer) {
+                this.clear();
+            } else {
+                this.updateList(data.filelist);
+            }
+            this.fire('success', data);
+        }, this));
+    },
+
+    /**
+     * Make target frame to be target of form element.
+     * @returns {jQuery} Target frame: jquery-element
+     * @private
+     */
+    _createTargetFrame: function() {
+        var $target = $('&lt;iframe name="' + this.formTarget + '">&lt;/iframe>');
+        $target.css({
+            visibility: 'hidden',
+            position: 'absolute'
+        });
+
+        return $target;
+    },
+
+    /**
+     * Add events to views and fire uploader events
+     * @private
+     */
+    _addEvent: function() {
+        this.listView.on('remove', this.removeFile, this);
+        if (this.isBatchTransfer) {
+            this._addEventWhenBatchTransfer();
+        } else {
+            this._addEventWhenNormalTransfer();
+        }
+    },
+
+    /**
+     * Add event when uploader uses batch-transfer
+     * @private
+     */
+    _addEventWhenBatchTransfer: function() {
+        this.formView.on({
+            change: this.store,
+            submit: this.submit
+        }, this);
+
+        this._requester.on({
+            removed: function(data) {
+                this.updateList(data);
+                this.fire('remove', data);
+            },
+            error: function(data) {
+                this.fire('error', data);
+            },
+            uploaded: function(data) {
+                this.clear();
+                this.fire('success', data);
+            },
+            stored: function(data) {
+                this.updateList(data);
+                this.fire('update', data);
+            }
+        }, this);
+
+        if (this.useDrag &amp;&amp; this.dragView) {
+            this.dragView.on('drop', this.store, this);
+        }
+    },
+
+    /**
+     * Add event when uploader uses normal-transfer
+     * @private
+     */
+    _addEventWhenNormalTransfer: function() {
+        this.formView.on('change', this.sendFile, this);
+
+        this._requester.on({
+            removed: function(data) {
+                this.updateList(data);
+                this.fire('remove', data);
+            },
+            error: function(data) {
+                this.fire('error', data);
+            },
+            uploaded: function(data) {
+                this.updateList(data.filelist);
+                this.fire('success', data);
+            }
+        }, this);
+
+        if (this.useDrag &amp;&amp; this.dragView) {
+            this.dragView.on('drop', function(files) {
+                this.store(files);
+                this.submit();
+            }, this);
+        }
+    },
+
+    /**
+     * Update list view with custom or original data.
+     * @param {object} [info] The data for update list
+     * @private
+     */
+    updateList: function(info) {
+        this.listView.update(info);
+        if (this.isBatchTransfer) {
+            this.listView.updateTotalInfo(info);
+        } else {
+            this.listView.updateTotalInfo();
+        }
+    },
+
+    /**
+     * Callback for custom send event
+     * @param {Event} [event] - Form submit event
+     * @private
+     */
+    sendFile: function(event) {
+        this.store();
+        this.submit(event);
+    },
+
+    /**
+     * Callback for custom remove event
+     * @param {object} data The data for remove file.
+     * @private
+     */
+    removeFile: function(data) {
+        this._requester.remove(data);
+    },
+
+    /**
+     * Submit for data submit to server
+     * @param {Event} [event] - Form submit event
+     * @private
+     */
+    submit: function(event) {
+        if (event &amp;&amp; this._requester.TYPE === REQUESTER_TYPE_MODERN) {
+            event.preventDefault();
+        }
+        this._requester.upload();
+    },
+
+    /**
+     * Clear uploader
+     */
+    clear: function() {
+        this._requester.clear();
+        this.formView.clear();
+        this.listView.clear();
+    },
+
+    /**
+     * Store input element to pool.
+     * @param {Array.&lt;File> | File} [files] - A file or files
+     * @private
+     */
+    store: function(files) {
+        this._requester.store(files);
+    }
+});
+
+tui.util.CustomEvents.mixin(Uploader);
+module.exports = Uploader;
+
+/**
+ * Remove event
+ * @event Uploader#remove
+ * @param {object} data - Remove data from this component
+ *  @param {string} data.message - 'success' or 'fail'
+ *  @param {string} data.name - file name
+ *  @param {string} data.id - file id
+ */
+
+/**
+ * Error event
+ * @event Uploader#error
+ * @param {Error} data - Error data
+ *  @param {string} data.status - Error status
+ *  @param {string} data.message - Error message
+ */
+
+/**
+ * Success event
+ * @event Uploader#success
+ * @param {object} data - Server response data
+ *  @param {Array} data.filelist - Uploaded file list
+ *  @param {number} [data.success] - Uploaded file count
+ *  @param {number} [data.failed] - Failed file count
+ *  @param {number} [data.count] - Total count
+ */
+
+/**
+ * Update event
+ * @event Uploader#update
+ * @param {Array.&lt;object>} data - File list data
+ * Array having objects&lt;br>{id: string, name: string, size: number}
+ */
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
