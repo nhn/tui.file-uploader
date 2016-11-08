@@ -3,7 +3,7 @@
   "authors": [
     "NHNEnt FE Development Team <dl_javascript@nhnent.com>"
   ],
-  "description": "",
+  "description": "MIT",
   "license": "MIT",
   "ignore": [
     "**/.*",
