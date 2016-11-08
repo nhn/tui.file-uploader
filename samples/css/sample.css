@@ -2,7 +2,7 @@ body { font: normal normal normal 11px/normal '.HelveticaNeueDeskInterface-Regul
 font-family: '나눔고딕',NanumGothic,'맑은 고딕',malgungothic,'굴림',Gulim,AppleGothic,sans-serif; }
 * {margin:0; padding:0}
 ul, ol { list-style:none; }
-
+h1 {margin-left: 30px;}
 #uploader { width:300px; margin: 30px 0 0 30px; }
 #uploader .dropzone {width:100%; height:50px; outline: 5px dashed #eee;margin-bottom: 30px; background-color: transparent;  }
 #uploader .dropzone.dropEnabled { background-color: yellow; }
@@ -26,3 +26,4 @@ ul, ol { list-style:none; }
 #list #files li .file_name { width: 300px; display:inline-block; vertical-align: middle; overflow:hidden; white-space: nowrap;  text-overflow: ellipsis;}
 #list #files li .file_size { font-size:9px; color:#000066; }
 #status { margin:20px 30px; width:300px; padding:10px; border:1px solid #eee; }
+.batchSubmit {height:19px;font-size:1em;}

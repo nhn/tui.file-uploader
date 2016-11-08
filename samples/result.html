@@ -7,8 +7,12 @@
     <title>Upload Result</title>
 </head>
 <body>
-    <script type="text/javascript">
-        document.body.innerHTML = decodeURIComponent(window.location.search.slice(1));
+    <script type="text/javascript" class="code-js">
+        var queries = window.location.search.slice(1);
+        document.body.innerHTML = decodeURIComponent(queries);
+    </script>
+    <script>
+        document.body.innerHTML = 'See the JS tab';
     </script>
 </body>
 </html>

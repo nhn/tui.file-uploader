@@ -1,5 +1,5 @@
 var istanbul = require('browserify-istanbul');
-var hbsfy = require('hbsfy');
+
 module.exports = function(config) {
     config.set({
         basePath: './',
@@ -10,8 +10,8 @@ module.exports = function(config) {
         ],
 
         files: [
-            'lib/jquery/jquery.js',
-            'lib/tui-code-snippet/code-snippet.js',
+            'bower_components/jquery/jquery.js',
+            'bower_components/tui-code-snippet/code-snippet.js',
             'src/**/uploader.js',
             'src/**/*.js',
             'test/**/*.spec.js'
@@ -27,7 +27,6 @@ module.exports = function(config) {
         },
 
         reporters: [
-            //'mocha',
             'dots',
             'coverage',
             'junit'
@@ -36,7 +35,7 @@ module.exports = function(config) {
         browserify: {
             debug: true,
             bundleDelay: 1000,
-            transform:[hbsfy, istanbul({
+            transform:[istanbul({
                 ignore: [
                     'index.js'
                 ]
@@ -69,18 +68,11 @@ module.exports = function(config) {
         browserStack: {
             username: process.env.BROWSER_STACK_USERNAME,
             accessKey: process.env.BROWSER_STACK_ACCESS_KEY,
-            project: 'tui-component-uploader'
+            project: 'tui-component-file-uploader'
         },
 
         // define browsers
         customLaunchers: {
-            bs_ie7: {
-                base: 'BrowserStack',
-                os: 'Windows',
-                os_version: 'XP',
-                browser_version: '7.0',
-                browser: 'ie'
-            },
             bs_ie8: {
                 base: 'BrowserStack',
                 os: 'Windows',
@@ -119,21 +111,20 @@ module.exports = function(config) {
             bs_chrome_mac: {
                 base: 'BrowserStack',
                 os: 'OS X',
-                os_version: 'El Capitan',
+                os_version: 'sierra',
                 browser: 'chrome',
-                browser_version: '47.0'
+                browser_version: 'latest'
             },
             bs_firefox_mac: {
                 base: 'BrowserStack',
                 os: 'OS X',
-                os_version: 'El Capitan',
+                os_version: 'sierra',
                 browser: 'firefox',
-                browser_version: '43.0'
+                browser_version: 'latest'
             }
         },
 
         browsers: [
-            'bs_ie7',
             'bs_ie8',
             'bs_ie9',
             'bs_ie10',

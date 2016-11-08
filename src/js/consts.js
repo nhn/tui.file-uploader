@@ -6,6 +6,8 @@
 
 /**
  * Uploader config
+ * @type {object}
+ * @ignore
  */
 module.exports.CONF = {
     FILE_FILED_NAME: 'userfile[]',
@@ -20,6 +22,7 @@ module.exports.CONF = {
 /**
  * Default Htmls
  * @type {{input: string, item: string}}
+ * @ignore
  */
 module.exports.HTML = {
     form: [

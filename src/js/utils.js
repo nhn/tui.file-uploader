@@ -6,6 +6,7 @@
 'use strict';
 /**
  * @namespace utils
+ * @ignore
  */
 var IS_SUPPORT_FILE_SYSTEM = !!(window.File && window.FileReader && window.FileList && window.Blob),
     IS_SUPPORT_FORM_DATA = !!(window.FormData || null);
@@ -14,6 +15,7 @@ var IS_SUPPORT_FILE_SYSTEM = !!(window.File && window.FileReader && window.FileL
  * Parse url
  * @param {string} url - url for parsing
  * @returns {Object} URL information
+ * @ignore
  */
 function parseURL(url) {
     var a = document.createElement('a');
