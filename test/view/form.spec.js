@@ -1,16 +1,20 @@
 'use strict';
 
-var Form = require('../../src/js/view/form.js'),
-    consts = require('../../src/js/consts');
+var Form = require('../../src/js/view/form.js');
+var consts = require('../../src/js/consts');
 
-var HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS;
+var HIDDEN_FILE_INPUT_CLASS = consts.CLASSNAME.HIDDEN_FILE_INPUT;
 
 describe('Input test', function() {
-    var uploader, normalForm, batchForm;
+    var uploader, normalForm, batchForm, html;
 
     beforeEach(function() {
+        html = '<div id="uploader">' +
+                    '<input type="file" name="userfile[]" />' +
+                    '<button type="submit">submit</button>' +
+                '</div>';
         uploader = {
-            $el: $('<div id="uploader"></div>'),
+            $el: $(html),
             fileField: 'userfile[]',
             url: {
                 send: 'uploadURL',

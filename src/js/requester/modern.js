@@ -2,16 +2,16 @@
 
 var consts = require('../consts');
 
-var TYPE = consts.CONF.REQUESTER_TYPE_MODERN,
-    forEach = tui.util.forEach;
+var TYPE = consts.CONF.REQUESTER_TYPE_MODERN;
+var forEach = tui.util.forEach;
 
 /**
  * Modern requester
  * @param {Uploader} uploader - Uploader
  * @class
  */
-var Modern = tui.util.defineClass(/** @lends Modern.prototype */{/*eslint-disable*/
-    init: function(uploader) {/*eslint-enable*/
+var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
+    init: function(uploader) {
         /**
          * Uploader
          * @type {Uploader}
@@ -73,9 +73,9 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{/*eslint-disabl
      * @param {Array.<File> | File} [files] - A file or files
      */
     store: function(files) {
-        var pool = this.pool,
-            stamp = tui.util.stamp,
-            data = [];
+        var pool = this.pool;
+        var stamp = tui.util.stamp;
+        var data = [];
 
         files = tui.util.toArray(files || this.formView.$fileInput[0].files);
         forEach(files, function(file) {
@@ -96,9 +96,9 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{/*eslint-disabl
      * Upload ajax
      */
     upload: function() {
-        var field = this.uploader.fileField,
-            $form = this.formView.$el.clone(),
-            formData;
+        var field = this.formView.$fileInput.attr('name');
+        var $form = this.formView.$el.clone();
+        var formData;
 
         $form.find('input[type="file"]').remove();
         formData = new FormData($form[0]);
@@ -126,11 +126,10 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{/*eslint-disabl
      */
     remove: function(params) {
         $.ajax({
-            url: uploader.url.remove,
+            url: this.uploader.url.remove,
             dataType: 'jsonp',
             data: params,
             success: $.proxy(function(data) {
-                data.type = 'remove';
                 this.fire('removed', data);
             }, this)
         });
@@ -143,23 +142,43 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{/*eslint-disabl
      * @private
      */
     _removeWhenBatch: function(params) {
-        var pool = this.pool,
-            hasStamp = tui.util.hasStamp,
-            stamp = tui.util.stamp,
-            result = false;
+        var result = false;
 
-        forEach(pool, function(file, index) {
-            if (hasStamp(file) && (stamp(file) === params.id)) {
-                pool.splice(index, 1);
-                result = true;
-                return false;
-            }
-        });
+        forEach(params.filelist, function(file) {
+            result = this._removeFileInPool(file);
+            file.state = result;
+        }, this);
 
         this.fire('removed', tui.util.extend({
             message: result ? 'success' : 'fail'
         }, params));
     },
+
+    /**
+     * Remove file in pool
+     * @param {object} data - File data
+     * @returns {boolean} Removed state
+     * @private
+     */
+    /*eslint-disable consistent-return*/
+    _removeFileInPool: function(data) {
+        var pool = this.pool;
+        var hasStamp = tui.util.hasStamp;
+        var stamp = tui.util.stamp;
+        var result = false;
+
+        forEach(pool, function(file, index) {
+            if (hasStamp(file) && (stamp(file) === data.id)) {
+                pool.splice(index, 1);
+                result = true;
+
+                return false;
+            }
+        });
+
+        return result;
+    },
+    /*eslint-enable consistent-return*/
 
     /**
      * Clear the pool

@@ -1,44 +1,106 @@
-/**
- * @fileoverview Configuration or default values.
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- */
 'use strict';
 
+/*eslint-disable*/
 /**
  * Uploader config
  * @type {object}
  * @ignore
  */
 module.exports.CONF = {
-    FILE_FILED_NAME: 'userfile[]',
-    DROP_ENABLED_CLASS: 'dropEnabled',
-    HIDDEN_FILE_INPUT_CLASS: 'hiddenFileInput',
     REQUESTER_TYPE_MODERN: 'modernRequester',
     REQUESTER_TYPE_OLD: 'oldRequester',
-    FORM_TARGET_NAME: 'tuiUploaderHiddenFrame',
-    REMOVE_BUTTON_CLASS: 'removeButton'
+    FORM_TARGET_NAME: 'tuiUploaderHiddenFrame'
+};
+
+/**
+ * Class names
+ * @type {object}
+ * @ignore
+ */
+module.exports.CLASSNAME = {
+    HIDDEN_FILE_INPUT: 'tui-js-hidden-file-input',
+    LIST_CONTAINER: 'tui-js-file-uploader-list',
+    LIST_ITEMS_CONTAINER: 'tui-js-file-uploader-list-items',
+    DROPZONE: 'tui-js-file-uploader-dropzone',
+    DROPZONE_ENABLED: 'tui-dropzone-enabled',
+    HAS_ITEMS: 'tui-has-items',
+    IS_CHECKED: 'tui-is-checked',
+    THEAD_STYLE: 'tui-col-name'
 };
 
 /**
  * Default Htmls
- * @type {{input: string, item: string}}
+ * @type {object}
  * @ignore
  */
 module.exports.HTML = {
-    form: [
-        '<form enctype="multipart/form-data" id="tui-uploader-form" method="post">',
-        '</form>'
+    FORM: '<form enctype="multipart/form-data" id="tui-uploader-form" method="post"></form>',
+    HIDDEN_INPUT: '<input type="hidden" name="{{name}}" value="{{value}}">',
+    CHECKBOX: [
+        '<label class="tui-checkbox">',
+            '<span class="tui-ico-check"><input type="checkbox"></span>',
+        '</label>',
     ].join(''),
-    submit: '<button class="batchSubmit" type="submit">SEND</button>',
-    fileInput: '<input type="file" id="fileAttach" {{directory}} name="{{fileField}}" {{multiple}} />',
-    hiddenInput: '<input type="hidden" name="{{name}}" value="{{value}}">',
-    button: '<button type="button">{{text}}</button>',
-    listItem: [
-        '<li class="filetypeDisplayClass">',
-            '<span class="fileicon {{filetype}}">{{filetype}}</span>',
-            '<span class="file_name">{{filename}}</span>',
-            '<span class="file_size">{{filesize}}</span>',
+    REMOVE_BUTTON: '<button type="button" class="tui-btn-delete">Remove</button>'
+};
+
+/**
+ * Simple list template
+ * @type {object}
+ * @ignore
+ */
+module.exports.LIST_TEMPLATE = {
+    CONTAINER: '<ul class="tui-upload-lst {{listItemsClassName}}"></ul>',
+    LIST_ITEM: [
+        '<li class="tui-upload-item">',
+            '<span class="tui-filename-area">',
+                '<span class="tui-file-name">{{filename}} ({{filesize}})</span>',
+            '</span>',
+            '<button type="button" class="tui-btn-delete">remove</button>',
         '</li>'
+    ].join('')
+};
+
+/**
+ * Table list template
+ * @type {object}
+ * @ignore
+ */
+module.exports.TABLE_TEMPLATE = {
+    CONTAINER: [
+        '<table class="tui-file-uploader-tbl">',
+            '<caption><span>File Uploader List</span></caption>',
+            '<colgroup>',
+                '<col width="32">',
+                '<col width="156">',
+                '<col width="362">',
+                '<col width="">',
+            '</colgroup>',
+            '<thead class="tui-form-header">',
+                '<tr>',
+                    '<th scope="col">',
+                        '<label class="tui-checkbox">',
+                            '<span class="tui-ico-check"><input type="checkbox"></span>',
+                        '</label>',
+                    '</th>',
+                    '<th scope="col">File Type</th>',
+                    '<th scope="col">File Name</th>',
+                    '<th scope="col">File Size</th>',
+                '</tr>',
+            '</thead>',
+            '<tbody class="tui-form-body {{listItemsClassName}}"></tbody>',
+        '</table>'
     ].join(''),
-    dragAndDrop: '<div class="dropzone"></div>'
+    LIST_ITEM: [
+        '<tr>',
+            '<td>',
+                '<label class="tui-checkbox">',
+                    '<span class="tui-ico-check"><input type="checkbox"></span>',
+                '</label>',
+            '</td>',
+            '<td>{{filetype}}</td>',
+            '<td>{{filename}}</td>',
+            '<td>{{filesize}}</td>',
+        '</tr>'
+    ].join('')
 };

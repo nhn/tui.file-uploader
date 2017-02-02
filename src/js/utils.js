@@ -1,15 +1,11 @@
-/**
- * @fileoverview This file contain utility methods for uploader.
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- */
-
 'use strict';
+
 /**
  * @namespace utils
  * @ignore
  */
-var IS_SUPPORT_FILE_SYSTEM = !!(window.File && window.FileReader && window.FileList && window.Blob),
-    IS_SUPPORT_FORM_DATA = !!(window.FormData || null);
+var IS_SUPPORT_FILE_SYSTEM = !!(window.File && window.FileReader && window.FileList && window.Blob);
+var IS_SUPPORT_FORM_DATA = !!(window.FormData || null);
 
 /**
  * Parse url
@@ -41,12 +37,14 @@ function parseURL(url) {
  * @memberof utils
  */
 function getFileSizeWithUnit(bytes) {
-    var units = ['B', 'KB', 'MB', 'GB', 'TB'],
-        bytes = parseInt(bytes, 10),
-        exp = Math.log(bytes) / Math.log(1024) | 0,
-        result = (bytes / Math.pow(1024, exp)).toFixed(2);
+    var units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    var exp, result;
 
-    return result + units[exp];
+    bytes = parseInt(bytes, 10);
+    exp = Math.log(bytes) / Math.log(1024) | 0;
+    result = (bytes / Math.pow(1024, exp)).toFixed(2);
+
+    return result + ' ' + units[exp];
 }
 
 /**
@@ -66,9 +64,10 @@ function isSupportFormData() {
  * @memberof utils
  */
 function template(map, html) {
-    html = html.replace(/\{\{([^\}]+)\}\}/g, function (mstr, name) {
+    html = html.replace(/\{\{([^\}]+)\}\}/g, function(mstr, name) {
         return map[name];
     });
+
     return html;
 }
 
@@ -96,10 +95,44 @@ function isCrossDomain(url) {
         || target.protocol !== here.protocol;
 }
 
+/**
+ * Remove first specified item from array, if it exists
+ * @param {*} item Item to look for
+ * @param {Array} arr Array to query
+ */
+function removeItemFromArray(item, arr) {
+    var index = arr.length - 1;
+
+    while (index > -1) {
+        if (item === arr[index]) {
+            arr.splice(index, 1);
+        }
+        index -= 1;
+    }
+}
+
+/**
+ * Get label element
+ * @param {jQuery} $target - Target element
+ * @returns {jQuery|null} Label element
+ */
+function getLabelElement($target) {
+    var $labels = $target.parents('label');
+    var hasLabel = $labels.length;
+
+    if (hasLabel) {
+        return $labels.eq(0);
+    }
+
+    return null;
+}
+
 module.exports = {
     getFileSizeWithUnit: getFileSizeWithUnit,
     isSupportFileSystem: isSupportFileSystem,
     isSupportFormData: isSupportFormData,
     template: template,
-    isCrossDomain: isCrossDomain
+    isCrossDomain: isCrossDomain,
+    removeItemFromArray: removeItemFromArray,
+    getLabelElement: getLabelElement
 };

@@ -6,8 +6,8 @@ describe('Util test', function() {
     it('getFileSizeWithUnit', function() {
         var size1 = 1024,
             size2 = 1024 * 1024 * 120;
-        expect(utils.getFileSizeWithUnit(size1)).toBe('1.00KB');
-        expect(utils.getFileSizeWithUnit(size2)).toBe('120.00MB');
+        expect(utils.getFileSizeWithUnit(size1)).toBe('1.00 KB');
+        expect(utils.getFileSizeWithUnit(size2)).toBe('120.00 MB');
     });
 
     it('template', function() {
@@ -27,4 +27,3 @@ describe('Util test', function() {
         expect(utils.isCrossDomain(url)).toBe(true);
     })
 });
-

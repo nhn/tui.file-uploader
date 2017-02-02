@@ -3,17 +3,15 @@
 var DragAndDrop = require('../../src/js/view/drag.js');
 
 describe('Drag and drop test', function() {
-    var drag, uploader,
-        mockEvent = {
-            preventDefault: function() {},
-            stopPropagation: function() {}
-        };
+    var drag, $el;
+    var mockEvent = {
+        preventDefault: function() {},
+        stopPropagation: function() {}
+    };
 
     beforeEach(function() {
-        uploader = {
-            $el : $('<div></div>')
-        };
-        drag = new DragAndDrop(uploader);
+        $el = $('<div></div>');
+        drag = new DragAndDrop($el);
     });
 
     it('enable if onDragEnter', function() {

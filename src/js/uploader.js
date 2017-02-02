@@ -1,9 +1,5 @@
-/**
- * @fileoverview FileUploader is core of file uploader component.<br>FileManager manage connector to connect server and update FileListView.
- * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- */
 'use strict';
+
 var consts = require('./consts');
 var utils = require('./utils');
 var Form = require('./view/form');
@@ -13,6 +9,8 @@ var OldRequester = require('./requester/old');
 var ModernRequester = require('./requester/modern');
 
 var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
+var classNames = consts.CLASSNAME;
+
 /**
  * @constructor
  * @param {object} options To set up uploader modules.
@@ -21,7 +19,6 @@ var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
  *      @param {string} options.url.remove Delete url.
  *  @param {string} [options.formTarget='tuiUploaderHiddenFrame'] The target name(iframe) for CORS.
  *  @param {object} options.listInfo To display files information.
- *  @param {string} [options.fileField='userFile[]'] The field name of input file element.
  *  @param {boolean} options.useFolder Use directory upload. If ture, 'isMultiple' option will be ignored.
  *  @param {boolean} options.isMultiple Use multiple files upload.
  * @param {jQuery} $el Root Element of Uploader
@@ -46,8 +43,8 @@ var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
  *     }
  * }, $('#uploader'));
  */
-var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-disable*/
-    init: function(options, $el) {/*eslint-enable*/
+var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
+    init: function($el, options) {
         /**
          * Uploader element
          * @type {jQuery}
@@ -83,13 +80,6 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
          */
         this.$targetFrame = this._createTargetFrame()
             .appendTo(this.$el);
-
-        /**
-         * Input file - field name
-         * @private
-         * @type {string}
-         */
-        this.fileField = options.fileField || consts.CONF.FILE_FILED_NAME;
 
         /**
          * Whether the uploader uses batch-transfer
@@ -133,15 +123,6 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
          */
         this.useFolder = !!(options.useFolder);
 
-        if (this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
-            /**
-             * Drag & Drop View
-             * @private
-             * @type {DragAndDrop}
-             */
-            this.dragView = new DragAndDrop(this);
-        }
-
         /**
          * From View
          * @private
@@ -154,10 +135,20 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
          * @private
          * @type {List}
          */
-        this.listView = new List(options.listInfo);
+        this.listView = new List(options.listUI, this.$el.find('.' + classNames.LIST_CONTAINER));
+
+        if (this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
+            /**
+             * Drag & Drop View
+             * @private
+             * @type {DragAndDrop}
+             */
+            this.dragView = new DragAndDrop(this.$el.find('.' + classNames.DROPZONE));
+        }
 
         this._setRequester();
         this._addEvent();
+
         if (this.isCrossDomain && this.isSupportPostMessage) {
             this._setPostMessageEvent();
         }
@@ -220,6 +211,18 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
      */
     _addEvent: function() {
         this.listView.on('remove', this.removeFile, this);
+        this.listView.on('check', function(data) {
+            /**
+             * Check event
+             * @event Uploader#check
+             * @param {object} evt - Event object
+             *  @param {string} evt.id - File id
+             *  @param {string} evt.name - File name
+             *  @param {string} evt.size - File size
+             *  @param {boolean} evt.isChecked - Checked state
+             */
+            this.fire('check', data);
+        }, this);
         if (this.isBatchTransfer) {
             this._addEventWhenBatchTransfer();
         } else {
@@ -239,7 +242,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
 
         this._requester.on({
             removed: function(data) {
-                this.updateList(data);
+                this.updateList(data.filelist, 'remove');
                 this.fire('remove', data);
             },
             error: function(data) {
@@ -269,7 +272,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
 
         this._requester.on({
             removed: function(data) {
-                this.updateList(data);
+                this.updateList(data.filelist, 'remove');
                 this.fire('remove', data);
             },
             error: function(data) {
@@ -291,16 +294,12 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
 
     /**
      * Update list view with custom or original data.
-     * @param {object} [info] The data for update list
+     * @param {object} info - The data for update list
+     * @param {*} type - Update type
      * @private
      */
-    updateList: function(info) {
-        this.listView.update(info);
-        if (this.isBatchTransfer) {
-            this.listView.updateTotalInfo(info);
-        } else {
-            this.listView.updateTotalInfo();
-        }
+    updateList: function(info, type) {
+        this.listView.update(info, type);
     },
 
     /**
@@ -325,7 +324,6 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
     /**
      * Submit for data submit to server
      * @param {Event} [event] - Form submit event
-     * @private
      */
     submit: function(event) {
         if (event && this._requester.TYPE === REQUESTER_TYPE_MODERN) {
@@ -350,6 +348,80 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
      */
     store: function(files) {
         this._requester.store(files);
+    },
+
+    /**
+     * Remove checked file list
+     * @param {Array.<number>} indexList - Index list
+     */
+    removeCheckedList: function(indexList) {
+        var listView = this.listView;
+        var chekcedIndexList = indexList || listView.checkedIndexList;
+        var files = listView.items;
+        var checkedFiles = [];
+        var file;
+
+        tui.util.forEach(chekcedIndexList, function(index) {
+            file = files[index];
+
+            checkedFiles.push({
+                id: file.id,
+                name: file.name
+            });
+        }, this);
+
+        if (checkedFiles.length) {
+            this.removeFile({filelist: checkedFiles});
+        }
+    },
+
+    /**
+     * Get uploaded file's total count
+     * @returns {number} Total count
+     */
+    getUploadedTotalCount: function() {
+        return this.listView.items.length;
+    },
+
+    /**
+     * Get uploaded file's total size
+     * @returns {string} Total size with unit
+     */
+    getUploadedTotalSize: function() {
+        var items = this.listView.items;
+        var totalSize = 0;
+
+        tui.util.forEach(items, function(item) {
+            totalSize += parseFloat(item.size);
+        });
+
+        return utils.getFileSizeWithUnit(totalSize);
+    },
+
+    /**
+     * Get checked file's total count
+     * @returns {number} Total count
+     */
+    getCheckedTotalCount: function() {
+        return this.listView.checkedIndexList.length;
+    },
+
+    /**
+     * Get checked file's total size
+     * @returns {string} Total size with unit
+     */
+    getCheckedTotalSize: function() {
+        var listView = this.listView;
+        var checkedItemsIndex = listView.checkedIndexList;
+        var totalSize = 0;
+        var item;
+
+        tui.util.forEach(checkedItemsIndex, function(index) {
+            item = listView.items[index];
+            totalSize += parseFloat(item.size);
+        });
+
+        return utils.getFileSizeWithUnit(totalSize);
     }
 });
 

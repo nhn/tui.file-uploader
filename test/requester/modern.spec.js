@@ -21,7 +21,7 @@ describe('Modern Requester', function() {
 
     beforeEach(function() {
         formView.$el = $('<form></form>');
-        formView.$fileInput = $('<input type="file">');
+        formView.$fileInput = $('<input type="file" name="userfile[]">');
         requester = new ModernRequester(uploader);
 
         formView.$el.on('submit', function(event) {

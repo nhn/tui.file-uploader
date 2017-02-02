@@ -14,17 +14,15 @@ describe('Uploader test', function() {
                 remove: 'fakeURL-remove'
             },
             formTarget: 'hiddenFrame',
-            listInfo: {
-                list: $('<div class="list"></div>'),
-                count: $('<div class="count"></div>'),
-                size: $('<div class="size"></div>')
+            listUI: {
+                type: 'list'
             }
         };
-        uploader = new Uploader(options, $('<div class="uploader"></div>'));
+        uploader = new Uploader($('<div class="uploader"></div>'), options);
 
         // uploader, batch
         options.isBatchTransfer = true;
-        batchUploader = new Uploader(options, $('<div class="uploader"></div>'));
+        batchUploader = new Uploader($('<div class="uploader"></div>'), options);
     });
 
     it('should have formView, listView', function() {

@@ -1,58 +1,91 @@
 'use strict';
 
 var Item = require('../../src/js/view/item.js');
+var consts = require('../../src/js/consts.js');
+var utils = require('../../src/js/utils.js');
 
-describe('Item test', function() {
-
-    var root, itemA, itemB;
+describe('Item test -', function() {
+    var $root, template, itemA, itemB;
 
     beforeEach(function() {
-        root = {
-            $el : $('<div></div>')
-        };
+        $root = $('<ul></ul>');
+        template = '<li>{{checkbox}} {{removeButton}}</li>';
+
         itemA = new Item({
             name: 'filename1.jpg',
             id: '1',
-            size: '10',
-            root: root
-        });
+            size: '10'
+        }, $root, template);
 
         itemB = new Item({
             name: 'filename2.png',
             id: '2',
-            size: '10',
-            root: root
-        });
+            size: '10'
+        }, $root, template);
     });
 
-    it('should have type from name', function() {
+    it('each item should have type from name', function() {
         expect(itemA.type).toBe('jpg');
         expect(itemB.type).toBe('png');
     });
 
-    it('should have $removeBtn', function() {
-        expect(itemA.$removeBtn.jquery).toBeTruthy();
-    });
-
-    it('when destroyed, should not have elements', function() {
-        expect(root.$el.children().length).toBe(2);
+    it('when destroyed, item should not have elements', function() {
+        expect($root.children().length).toBe(2);
 
         itemA.destroy();
-        expect(root.$el.children().length).toBe(1);
+        expect($root.children().length).toBe(1);
 
         itemB.destroy();
-        expect(root.$el.children().length).toBe(0);
+        expect($root.children().length).toBe(0);
     });
 
-    it('when removeBtn clicked, should fire remove event', function() {
+    describe('template', function() {
+        it('has "checkbox" property, create a checkbox in item.', function() {
+            expect(itemA.$checkbox.length).toBe(1);
+        });
+
+        it('has "removeButton" property, create a remove button in item.', function() {
+            expect(itemA.$removeButton.length).toBe(1);
+        });
+    });
+
+    it('when remove button is clicked, should fire remove event', function() {
         spyOn(itemA, 'fire');
 
         itemA._onClickEvent();
 
         expect(itemA.fire).toHaveBeenCalledWith('remove', {
             name: itemA.name,
-            id: itemA.id,
-            type: 'remove'
+            id: itemA.id
+        });
+    });
+
+    describe('checkbox is changed,', function() {
+        beforeEach(function() {
+            itemA.$checkbox.prop('checked', true);
+        });
+
+        it('should fire "check" custom event.', function() {
+            spyOn(itemA, 'fire');
+
+            itemA.$checkbox.change();
+
+            expect(itemA.fire).toHaveBeenCalledWith('check', {
+                id: itemA.id,
+                name: itemA.name,
+                size: itemA.size
+            }, true);
+        });
+
+        it('this element set checked state.', function() {
+            var $target = utils.getLabelElement(itemA.$checkbox);
+
+            itemA.$checkbox.change();
+            expect($target.hasClass(consts.CLASSNAME.IS_CHECKED)).toBe(true);
+
+            itemA.$checkbox.prop('checked', false);
+            itemA.$checkbox.change();
+            expect($target.hasClass(consts.CLASSNAME.IS_CHECKED)).toBe(false);
         });
     });
 });

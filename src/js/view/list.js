@@ -1,11 +1,9 @@
-/**
- * @fileoverview FileListView listing files and display states(like size, count).
- * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- */
 'use strict';
 var utils = require('../utils');
 var Item = require('./item');
+var consts = require('../consts');
+
+var classNames = consts.CLASSNAME;
 
 /**
  * List has items. It can add and remove item, and get total usage.
@@ -16,8 +14,32 @@ var Item = require('./item');
  *  @param {jQuery} listInfo.size - Size jquery-element
  * @class List
  */
-var List = tui.util.defineClass(/** @lends List.prototype */{/*eslint-disable*/
-    init : function(listInfo) {/*eslint-enable*/
+var List = tui.util.defineClass(/** @lends List.prototype */{
+    init: function(options, $root) {
+        /**
+         * List type
+         * @type {string}
+         */
+        this.listType = options.type;
+
+        /**
+         * Item template preset of simple list
+         * @type {string}
+         */
+        this.item = options.item;
+
+        /**
+         * Item template preset of table
+         * @type {Array.<Object>}
+         */
+        this.columnList = options.columnList;
+
+        /**
+         * Item's template in list
+         * @type {string}
+         */
+        this.itemTemplate = null;
+
         /**
          * Items
          * @type {Array.<Item>}
@@ -25,129 +47,264 @@ var List = tui.util.defineClass(/** @lends List.prototype */{/*eslint-disable*/
         this.items = [];
 
         /**
-         * jQuery-element of List
-         * @type {jQuery}
+         * List of checked item's index
+         * @type {Array.<number>}
          */
-        this.$el = listInfo.list;
+        this.checkedIndexList = [];
 
         /**
-         * jQuery-element of count
+         * jQuery-element of list container
          * @type {jQuery}
          */
-        this.$counter = listInfo.count;
+        this.$el = $root;
 
         /**
-         * jQuery-element of total size
+         * jQuery-element of list
          * @type {jQuery}
          */
-        this.$size = listInfo.size;
+        this.$list = null;
+
+        /**
+         * jQuery-element of checkbox in header
+         * @type {jQuery}
+         */
+        this.$checkbox = null;
+
+        this._render();
+        this._addEvent();
     },
 
     /**
-     * Update item list
-     * @param {object} data - File information(s) with type
-     * @param {object} [data.type] - 'remove' or not.
-     */
-    update: function(data) {
-        if (data.type === 'remove') {
-            this._removeFileItem(data.id);
-        } else {
-            this._addFileItems(data);
-        }
-    },
-
-    /**
-     * Update items total count, total size information.
-     * @param {object} [info] A information to update list.
-     *  @param {array} info.items The list of file information.
-     *  @param {string} info.size The total size.
-     *  @param {string} info.count The count of files.
-     */
-    updateTotalInfo: function(info) {
-        if (info) {
-            this._updateTotalCount(info.count);
-            this._updateTotalUsage(info.size);
-        } else {
-            this._updateTotalCount();
-            this._updateTotalUsage();
-        }
-    },
-
-    /**
-     * Update items total count and refresh element
-     * @param {(number|string)} [count] Total file count
+     * Render list view
      * @private
      */
-    _updateTotalCount: function(count) {
-        if (!tui.util.isExisty(count)) {
-            count = this.items.length;
-        }
+    _render: function() {
+        var isTableList = (this.listType === 'table');
+        var $listContainer = this._getListContainer(isTableList);
 
-        this.$counter.html(count);
-    },
+        this.$el.append($listContainer);
 
-    /**
-     * Update items total size and refresh element
-     * @param {(number|string)} [size] Total files sizes
-     * @private
-     */
-    _updateTotalUsage: function(size) {
-        if (!tui.util.isExisty(size)) {
-            size = this._getSumAllItemUsage();
-        }
-        if (tui.util.isNumber(size) && !isNaN(size)) {
-            size = utils.getFileSizeWithUnit(size);
-            this.$size.html(size);
-            this.$size.show();
+        if (isTableList) {
+            this._setColumnGroup();
+            this._setTableHeader();
+            this._setTableRowTemplate();
         } else {
-            this.$size.hide();
+            this._setListItemTemplate();
         }
+
+        this.$list = this.$el.find('.' + classNames.LIST_ITEMS_CONTAINER);
+        this.$checkbox = this.$el.find(':checkbox');
     },
 
     /**
-     * Sum sizes of all items.
-     * @returns {number} totalSize
+     * Add event on checkbox
      * @private
      */
-    _getSumAllItemUsage: function() {
-        var items = this.items,
-            totalUsage = 0;
+    _addEvent: function() {
+        if (!this.$checkbox) {
+            return;
+        }
+        this.$checkbox.on('change', $.proxy(this._onChange, this));
+    },
 
-        tui.util.forEach(items, function(item) {
-            totalUsage += parseFloat(item.size);
+    /**
+     * Change event handler
+     * @private
+     */
+    _onChange: function() {
+        var state = !!this.$checkbox.attr('checked');
+
+        this._changeCheckboxInItem(state);
+        this._changeCheckboxInHeader(state);
+    },
+
+    /**
+     * Get container element of list
+     * @param {boolean} isTableList - Whether list type is "table" or not
+     * @returns {jQuery} List container
+     * @private
+     */
+    _getListContainer: function(isTableList) {
+        var template = isTableList ? consts.TABLE_TEMPLATE : consts.LIST_TEMPLATE;
+
+        return $(utils.template({
+            listItemsClassName: classNames.LIST_ITEMS_CONTAINER
+        }, template.CONTAINER));
+    },
+
+    /**
+     * Set column group in table
+     * @private
+     */
+    _setColumnGroup: function() {
+        var $colgroup = this.$el.find('colgroup');
+        var columns = this.columnList;
+        var html = '';
+        var width;
+
+        tui.util.forEach(columns, function(column) {
+            width = column.width;
+
+            if (width) {
+                html += '<col width="' + column.width + '">';
+            } else {
+                html += '<col>';
+            }
         });
 
-        return totalUsage;
+        if (columns) {
+            $colgroup.html(html);
+        }
+    },
+
+    /**
+     * Set table header
+     * @private
+     */
+    _setTableHeader: function() {
+        var columns = this.columnList;
+        var html = '';
+        var header;
+
+        tui.util.forEach(columns, function(column) {
+            header = column.header;
+
+            if (!tui.util.isUndefined(header)) {
+                html += '<th scope="col">' + header + '</th>';
+            }
+        });
+
+        this._setHeaderElement(html);
+    },
+
+    /**
+     * Set header element
+     * @param {string} html - Template of header
+     * @private
+     */
+    _setHeaderElement: function(html) {
+        var $thead = this.$el.find('thead');
+        var theadClassName = classNames.THEAD_STYLE;
+
+        if (html) {
+            html = utils.template({
+                checkbox: consts.HTML.CHECKBOX
+            }, html);
+            $thead.html('<tr>' + html + '</tr>');
+        }
+        $thead.find('th').first().addClass(theadClassName);
+        $thead.find('th').last().addClass(theadClassName);
+    },
+
+    /**
+     * Set row's template of table
+     * @private
+     */
+    _setTableRowTemplate: function() {
+        var columns = this.columnList;
+        var html = '';
+
+        tui.util.forEach(columns, function(column) {
+            html += '<td>' + column.body + '</td>';
+        });
+
+        if (html) {
+            html = '<tr>' + html + '</tr>';
+        } else {
+            html = consts.TABLE_TEMPLATE.LIST_ITEM;
+        }
+
+        this.itemTemplate = html;
+    },
+
+    /**
+     * Set item's template of list
+     * @private
+     */
+    _setListItemTemplate: function() {
+        var item = this.item;
+        var html;
+
+        if (item) {
+            html = '<li>' + item + '</li>';
+        } else {
+            html = consts.LIST_TEMPLATE.LIST_ITEM;
+        }
+
+        this.itemTemplate = html;
+    },
+
+    /**
+     * Set class name to list
+     * @private
+     */
+    _setHasItemsClassName: function() {
+        var className = classNames.HAS_ITEMS;
+        var hasItems = !!this.items.length;
+
+        if (hasItems) {
+            this.$el.addClass(className);
+        } else {
+            this.$el.removeClass(className);
+        }
     },
 
     /**
      * Add file items
-     * @param {object} target Target item information.
+     * @param {object} files - Added file list
      * @private
      */
-    _addFileItems: function(target) {
-        if (!tui.util.isArraySafe(target)) { // for target from iframe, use "isArraySafe"
-            target = [target];
+    _addFileItems: function(files) {
+        if (!tui.util.isArraySafe(files)) { // for target from iframe, use "isArraySafe"
+            files = [files];
         }
-        tui.util.forEach(target, function(data) {
-            this.items.push(this._createItem(data));
+        tui.util.forEach(files, function(file) {
+            this.items.push(this._createItem(file));
         }, this);
     },
 
     /**
-     * Remove file item
-     * @param {string} id - The item id to remove
+     * Remove file items
+     * @param {Array.<object>} files - Removed file list
      * @private
      */
-    _removeFileItem: function(id) {
-        tui.util.forEach(this.items, function(item, index) {
-            if (id === item.id) {
-                item.destroy();
+    _removeFileItems: function(files) {
+        var index;
+
+        this.checkedIndexList.length = 0;
+
+        tui.util.forEach(files, function(file) {
+            index = this._findIndexOfItem(file.id);
+            if (file.state) {
+                this.items[index].destroy();
                 this.items.splice(index, 1);
-                return false;
+            } else {
+                this.checkedIndexList.push(index);
             }
         }, this);
     },
+
+    /**
+     * Find index of checked item
+     * @param {string} id - Item's id to find
+     * @returns {number} item's index
+     * @private
+     */
+    /*eslint-disable consistent-return*/
+    _findIndexOfItem: function(id) {
+        var itemIndex;
+
+        tui.util.forEach(this.items, function(item, index) {
+            if (item.id === id) {
+                itemIndex = index;
+
+                return false;
+            }
+        });
+
+        return itemIndex;
+    },
+    /*eslint-enable consistent-return*/
 
     /**
      * Create item By Data
@@ -156,23 +313,116 @@ var List = tui.util.defineClass(/** @lends List.prototype */{/*eslint-disable*/
      * @private
      */
     _createItem: function(data) {
-        var item = new Item({
-            root: this,
-            name: data.name,
-            size: data.size,
-            id: data.id
-        });
-        item.on('remove', this._removeFile, this);
+        var item = new Item(data, this.$list, this.itemTemplate);
+        item.on('remove', this._onRemove, this);
+        item.on('check', this._onCheck, this);
+
         return item;
     },
 
     /**
-     * Callback Remove File
+     * Remove event handler
      * @param {Item} item - Item
      * @private
      */
-    _removeFile: function(item) {
-        this.fire('remove', item);
+    _onRemove: function(item) {
+        this.fire('remove', {
+            filelist: [item]
+        });
+    },
+
+    /**
+     * Check event handler
+     * @param {string} data - Current selected item's data
+     * @param {boolean} isChecked - Checked state
+     * @private
+     */
+    _onCheck: function(data, isChecked) {
+        this._setCheckedItemsIndex(data.id, isChecked);
+        this._setCheckedAll();
+
+        this.fire('check', {
+            id: data.id,
+            name: data.name,
+            size: data.size,
+            isChecked: isChecked
+        });
+    },
+
+    /**
+     * Set list of checked item's index
+     * @param {string} id - File id
+     * @param {boolean} isChecked - Checked state
+     * @private
+     */
+    _setCheckedItemsIndex: function(id, isChecked) {
+        var checkedIndexList = this.checkedIndexList;
+        var checkedIndex = this._findIndexOfItem(id);
+
+        if (isChecked) {
+            checkedIndexList.push(checkedIndex);
+        } else {
+            utils.removeItemFromArray(checkedIndex, checkedIndexList);
+        }
+    },
+
+    /**
+     * Set checked all state
+     * @private
+     */
+    _setCheckedAll: function() {
+        var isCheckedAll = (this.checkedIndexList.length === this.items.length) &&
+                            !!this.checkedIndexList.length;
+
+        this.$checkbox.prop('checked', isCheckedAll);
+        this._changeCheckboxInHeader(isCheckedAll);
+    },
+
+    /**
+     * Change checkbox in table header
+     * @param {boolean} state - Checked state
+     * @private
+     */
+    _changeCheckboxInHeader: function(state) {
+        var $checkbox = this.$checkbox;
+        var $label = utils.getLabelElement($checkbox);
+        var $target = ($label) ? $label : $checkbox;
+        var className = classNames.IS_CHECKED;
+
+        if (state) {
+            $target.addClass(className);
+        } else {
+            $target.removeClass(className);
+        }
+    },
+
+    /**
+     * Change checkbox in list item
+     * @param {boolean} state - Checked state
+     * @private
+     */
+    _changeCheckboxInItem: function(state) {
+        this.checkedIndexList = [];
+
+        tui.util.forEach(this.items, function(item) {
+            item.$checkbox.prop('checked', state);
+            item.onChange();
+        });
+    },
+
+    /**
+     * Update item list
+     * @param {object} data - File information(s) with type
+     * @param {*} type - Update type
+     */
+    update: function(data, type) {
+        if (type === 'remove') {
+            this._removeFileItems(data);
+        } else {
+            this._addFileItems(data);
+        }
+        this._setHasItemsClassName();
+        this._setCheckedAll();
     },
 
     /**
@@ -183,7 +433,9 @@ var List = tui.util.defineClass(/** @lends List.prototype */{/*eslint-disable*/
             item.destroy();
         });
         this.items.length = 0;
-        this.updateTotalInfo();
+        this.checkedIndexList.length = 0;
+        this._setHasItemsClassName();
+        this._setCheckedAll();
     }
 });
 

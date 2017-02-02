@@ -10,10 +10,10 @@ var TYPE = consts.CONF.REQUESTER_TYPE_OLD;
  * @param {Uploader} uploader - Uploader
  * @class
  */
-var Old = tui.util.defineClass(/** @lends Old.prototype */{/*eslint-disable*/
-    init: function(uploader) {/*eslint-enable*/
-        var $hiddenFrame = uploader.$targetFrame,
-            formView = uploader.formView;
+var Old = tui.util.defineClass(/** @lends Old.prototype */{
+    init: function(uploader) {
+        var $hiddenFrame = uploader.$targetFrame;
+        var formView = uploader.formView;
 
         /**
          * Uploader
@@ -63,8 +63,8 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{/*eslint-disable*/
      * @private
      */
     _onLoadHiddenFrame: function($hiddenFrame) {
-        var frameBody,
-            data;
+        var frameBody;
+        var data;
 
         try {
             frameBody = $hiddenFrame[0].contentWindow.document.body;
@@ -85,8 +85,8 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{/*eslint-disable*/
      * Store file input element from upload form
      */
     store: function() {
-        var el = this.formView.$fileInput[0],
-            id = tui.util.stamp(el);
+        var el = this.formView.$fileInput[0];
+        var id = tui.util.stamp(el);
 
         this.pool.store(el);
         this.formView.resetFileInput();
@@ -130,7 +130,6 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{/*eslint-disable*/
             dataType: 'jsonp',
             data: params,
             success: $.proxy(function(data) {
-                data.type = 'remove';
                 this.fire('removed', data);
             }, this)
         });
@@ -143,7 +142,12 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{/*eslint-disable*/
      * @private
      */
     _removeWhenBatch: function(params) {
-        var result = this.pool.remove(params);
+        var result = false;
+
+        tui.util.forEach(params.filelist, function(file) {
+            result = this.pool.remove(file);
+            file.state = result;
+        }, this);
 
         this.fire('removed', tui.util.extend({
             message: result ? 'success' : 'fail'
