@@ -9,8 +9,9 @@ var STAMP_ID = '__fe_id';
 
 /**
  * This view control input element typed file.
+ * @class Form
  * @param {Uploader} uploader - Uploader instance
- * @constructor View.Form
+ * @ignore
  */
 var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
     init: function(uploader) {

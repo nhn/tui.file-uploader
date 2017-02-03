@@ -8,6 +8,8 @@ var DROP_ENABLED_CLASS = consts.CLASSNAME.DROP_ENABLED;
 /**
  * Makes drag and drop area, the dropped file is added via event drop event.
  * @class DragAndDrop
+ * @param {jQuery} $el - Dropzone element
+ * @ignore
  */
 var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{
     init: function($el) {

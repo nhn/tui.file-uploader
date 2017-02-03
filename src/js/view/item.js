@@ -7,19 +7,19 @@ var classNames = consts.CLASSNAME;
 var htmls = consts.HTML;
 
 /**
- * Class of item that is member of file list.
+ * List item view
  * @class Item
- * @param {object} options
- *  @param {string} options.name File name
- *  @param {string} options.type File type
- *  @param {object} options.root List instance
- *  @param {string} [options.id] Unique key, what if the key is not exist id will be the file name.
- *  @param {string} [options.deleteButtonClassName='uploader_btn_delete'] The class name is for delete button.
- *  @param {string} [options.template] item template
- *  @param {(string|number)} [options.size] File size (but ie low browser, x-domain)
+ * @param {jQuery} $root - List element to append item view
+ * @param {object} data - Item's data (file info)
+ *     @param {string} data.name - File name
+ *     @param {string} data.type - File type
+ *     @param {string} [data.id] - Unique key, what if the key is not exist id will be the file name
+ *     @param {(string|number)} [options.size] File size (but ie low browser, x-domain)
+ *  @param {string} options.template - Item template
+ *  @ignore
  */
 var Item = tui.util.defineClass(/** @lends Item.prototype **/{
-    init: function(data, $root, template) {
+    init: function($root, data, template) {
         /**
          * Item: LI element
          * @type {jQuery}

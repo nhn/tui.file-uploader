@@ -2,10 +2,12 @@
 
 var consts = require('./consts');
 
+var snippet = tui.util;
+var forEach = snippet.forEach;
+var hasStamp = snippet.hasStamp;
+var stamp = snippet.stamp;
+
 var HIDDEN_FILE_INPUT_CLASS = consts.CLASSNAME.HIDDEN_FILE_INPUT;
-var forEach = tui.util.forEach;
-var hasStamp = tui.util.hasStamp;
-var stamp = tui.util.stamp;
 
 /**
  * The pool for save files.

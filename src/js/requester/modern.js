@@ -9,6 +9,7 @@ var forEach = tui.util.forEach;
  * Modern requester
  * @param {Uploader} uploader - Uploader
  * @class
+ * @ignore
  */
 var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
     init: function(uploader) {

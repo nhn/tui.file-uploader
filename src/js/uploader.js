@@ -8,38 +8,64 @@ var DragAndDrop = require('./view/drag');
 var OldRequester = require('./requester/old');
 var ModernRequester = require('./requester/modern');
 
-var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
 var classNames = consts.CLASSNAME;
+var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
 
 /**
- * @constructor
- * @param {object} options To set up uploader modules.
- *  @param {object} options.url File server urls.
- *      @param {string} options.url.send Send url.
- *      @param {string} options.url.remove Delete url.
- *  @param {boolean} options.useFolder Use directory upload. If ture, 'isMultiple' option will be ignored.
- *  @param {boolean} options.isMultiple Use multiple files upload.
- * @param {jQuery} $el Root Element of Uploader
+ * FileUploader component controller
+ * @class Uploader
+ * @param {jQuery} container - Container element to generate component
+ * @param {object} options - Options
+ *     @param {object} options.url - File server urls
+ *         @param {string} options.url.send - Send files url
+ *         @param {string} options.url.remove - Remove files url
+ *     @param {boolean} [options.isMultiple] Use multiple files upload
+ *     @param {boolean} [options.useFolder] - Use directory upload. If ture, 'isMultiple' option will be ignored
+ *     @param {boolean} [options.useDrag] - Use file drag and drop
+ *     @param {object} options.listUI - List area preset
+ *         @param {object} options.listUI.type - List type ('simple' or 'table')
+ *         @param {object} [options.listUI.item] - To customize item contents when list type is 'simple'
+ *         @param {object} [options.listUI.columnList] - To customize row contents when list type is 'table'
  * @example
- * // HTML
- * //  <div id="uploader"></div>
- * //  <div id="list">
- * //    <div class="count">count : <strong id="file_count"></strong></div>
- * //    <div class="size">size : <strong id="size_count"></strong></div>
- * //    <ul id="files"></ul>
- * //  </div>
- *
- * var uploader = new tui.component.Uploader({
+ * // Case 1: Using normal transfer & simple list
+ * //
+ * // <!-- HTML -->
+ * // <div id="uploader">
+ * //     <input type="file" name="userfile[]">
+ * //     <div class="tui-js-file-uploader-list"></div>
+ * // </div>
+ * //
+ * var uploader = new tui.component.FileUploader($('#uploader'), {
  *     url: {
- *         send: "http://fe.nhnent.com/etc/etc/uploader/uploader.php",
- *         remove: "http://fe.nhnent.com/etc/etc/uploader/remove.php"
+ *         send: 'http://localhost:3000/upload',
+ *         remove: 'http://localhost:3000/remove'
  *     },
- *     listInfo: {
- *         list: $('#files'),
- *         count: $('#file_count'),
- *         size: $('#size_count')
+ *     isBatchTransfer: false,
+ *     listUI: {
+ *         type: 'simple'
  *     }
- * }, $('#uploader'));
+ * });
+ *
+ * // Case 2: Using batch transfer & table list & make dropzone
+ * //
+ * // <!-- HTML -->
+ * // <div id="uploader">
+ * //     <input type="file" name="userfile[]">
+ * //     <div class="tui-js-file-uploader-list tui-js-file-uploader-dropzone"></div>
+ * //     <button type="submit">Upload</button>
+ * // </div>
+ * //
+ * var uploader = new tui.component.FileUploader($('#uploader'), {
+ *     url: {
+ *         send: 'http://localhost:3000/upload',
+ *         remove: 'http://localhost:3000/remove'
+ *     },
+ *     isBatchTransfer: true,
+ *     useDrag: true,
+ *     listUI: {
+ *         type: 'table'
+ *     }
+ * });
  */
 var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
     init: function($container, options) {
@@ -133,7 +159,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          * @private
          * @type {List}
          */
-        this.listView = new List(options.listUI, this.$el.find('.' + classNames.LIST_CONTAINER));
+        this.listView = new List(this.$el.find('.' + classNames.LIST_CONTAINER), options.listUI);
 
         if (this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
             /**

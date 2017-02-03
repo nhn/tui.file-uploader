@@ -4,18 +4,41 @@ var Item = require('./item');
 var consts = require('../consts');
 
 var classNames = consts.CLASSNAME;
+var snippet = tui.util;
+var forEach = snippet.forEach;
+var isUndefined = snippet.isUndefined;
+var isArraySafe = snippet.isArraySafe;
 
 /**
- * List has items. It can add and remove item, and get total usage.
- * @param {Uploader} uploader - Uploader
- * @param {Object.<string, jQuery>} listInfo
- *  @param {jQuery} listInfo.list - List jquery-element
- *  @param {jQuery} listInfo.count - Count jquery-element
- *  @param {jQuery} listInfo.size - Size jquery-element
+ * List view
  * @class List
+ * @param {jQuery} $el - Container element to generate list view
+ * @param {object} options - Options to set list view
+ *     @param {object} options.listType - List type ('simple' or 'table')
+ *     @param {object} [options.item] - To customize item contents when list type is 'simple'
+ *     @param {object} [options.columnList] - To customize row contents when list type is 'table'
+ * @ignore
  */
 var List = tui.util.defineClass(/** @lends List.prototype */{
-    init: function(options, $root) {
+    init: function($el, options) {
+        /**
+         * jQuery-element of list container
+         * @type {jQuery}
+         */
+        this.$el = $el;
+
+        /**
+         * jQuery-element of list
+         * @type {jQuery}
+         */
+        this.$list = null;
+
+        /**
+         * jQuery-element of checkbox in header
+         * @type {jQuery}
+         */
+        this.$checkbox = null;
+
         /**
          * List type
          * @type {string}
@@ -51,24 +74,6 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
          * @type {Array.<number>}
          */
         this.checkedIndexList = [];
-
-        /**
-         * jQuery-element of list container
-         * @type {jQuery}
-         */
-        this.$el = $root;
-
-        /**
-         * jQuery-element of list
-         * @type {jQuery}
-         */
-        this.$list = null;
-
-        /**
-         * jQuery-element of checkbox in header
-         * @type {jQuery}
-         */
-        this.$checkbox = null;
 
         this._render();
         this._addEvent();
@@ -142,7 +147,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
         var html = '';
         var width;
 
-        tui.util.forEach(columns, function(column) {
+        forEach(columns, function(column) {
             width = column.width;
 
             if (width) {
@@ -166,10 +171,10 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
         var html = '';
         var header;
 
-        tui.util.forEach(columns, function(column) {
+        forEach(columns, function(column) {
             header = column.header;
 
-            if (!tui.util.isUndefined(header)) {
+            if (!isUndefined(header)) {
                 html += '<th scope="col">' + header + '</th>';
             }
         });
@@ -204,7 +209,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
         var columns = this.columnList;
         var html = '';
 
-        tui.util.forEach(columns, function(column) {
+        forEach(columns, function(column) {
             html += '<td>' + column.body + '</td>';
         });
 
@@ -255,10 +260,10 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
      * @private
      */
     _addFileItems: function(files) {
-        if (!tui.util.isArraySafe(files)) { // for target from iframe, use "isArraySafe"
+        if (!isArraySafe(files)) { // for target from iframe, use "isArraySafe"
             files = [files];
         }
-        tui.util.forEach(files, function(file) {
+        forEach(files, function(file) {
             this.items.push(this._createItem(file));
         }, this);
     },
@@ -273,7 +278,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
 
         this.checkedIndexList.length = 0;
 
-        tui.util.forEach(files, function(file) {
+        forEach(files, function(file) {
             index = this._findIndexOfItem(file.id);
             if (file.state) {
                 this.items[index].destroy();
@@ -294,7 +299,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
     _findIndexOfItem: function(id) {
         var itemIndex;
 
-        tui.util.forEach(this.items, function(item, index) {
+        forEach(this.items, function(item, index) {
             if (item.id === id) {
                 itemIndex = index;
 
@@ -313,7 +318,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
      * @private
      */
     _createItem: function(data) {
-        var item = new Item(data, this.$list, this.itemTemplate);
+        var item = new Item(this.$list, data, this.itemTemplate);
         item.on('remove', this._onRemove, this);
         item.on('check', this._onCheck, this);
 
@@ -404,7 +409,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
     _changeCheckboxInItem: function(state) {
         this.checkedIndexList = [];
 
-        tui.util.forEach(this.items, function(item) {
+        forEach(this.items, function(item) {
             item.$checkbox.prop('checked', state);
             item.onChange();
         });
@@ -429,7 +434,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
      * Clear list
      */
     clear: function() {
-        tui.util.forEach(this.items, function(item) {
+        forEach(this.items, function(item) {
             item.destroy();
         });
         this.items.length = 0;

@@ -9,6 +9,7 @@ var TYPE = consts.CONF.REQUESTER_TYPE_OLD;
  * Old requester
  * @param {Uploader} uploader - Uploader
  * @class
+ * @ignore
  */
 var Old = tui.util.defineClass(/** @lends Old.prototype */{
     init: function(uploader) {
