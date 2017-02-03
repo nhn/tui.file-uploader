@@ -2,7 +2,8 @@
 
 var consts = require('../consts');
 
-var DROPZONE_ENABLED_CLASS = consts.CLASSNAME.DROPZONE_ENABLED;
+var USE_DROPZONE_CLASS = consts.CLASSNAME.USE_DROPZONE;
+var DROP_ENABLED_CLASS = consts.CLASSNAME.DROP_ENABLED;
 
 /**
  * Makes drag and drop area, the dropped file is added via event drop event.
@@ -14,14 +15,14 @@ var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{
          * Drop zone jQuery-element
          * @type {jQuery}
          */
-        this.$el = $el.addClass('tui-dropzone');
+        this.$el = $el.addClass(USE_DROPZONE_CLASS);
 
         /**
          * Class for drop enabled
          * @type {string}
          * @private
          */
-        this._enableClass = DROPZONE_ENABLED_CLASS;
+        this._enableClass = DROP_ENABLED_CLASS;
 
         this._addEvent();
     },
