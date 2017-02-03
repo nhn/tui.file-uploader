@@ -24,8 +24,8 @@ var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
  *     @param {boolean} [options.useDrag] - Use file drag and drop
  *     @param {object} options.listUI - List area preset
  *         @param {object} options.listUI.type - List type ('simple' or 'table')
- *         @param {object} [options.listUI.item] - To customize item contents when list type is 'simple'
- *         @param {object} [options.listUI.columnList] - To customize row contents when list type is 'table'
+ *         @param {string} [options.listUI.item] - To customize item contents when list type is 'simple'
+ *         @param {array.<object>} [options.listUI.columnList] - To customize row contents when list type is 'table'
  * @example
  * // Case 1: Using normal transfer & simple list
  * //

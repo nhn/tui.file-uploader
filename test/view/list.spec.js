@@ -18,14 +18,14 @@ describe('List test', function() {
         };
 
         $rootA = $('<div></div>');
-        listA = new List({
+        listA = new List($rootA, {
             type: 'simple'
-        }, $rootA);
+        });
 
         $rootB = $('<div></div>');
-        listB = new List({
+        listB = new List($rootB, {
             type: 'table'
-        }, $rootB);
+        });
     });
 
     describe('create simple list,', function() {
@@ -130,10 +130,10 @@ describe('List test', function() {
 
     it('create with "item" option, each item set to this value.', function() {
         $rootA = $('<div></div>');
-        listA = new List({
+        listA = new List($rootA, {
             type: 'simple',
             item: 'test'
-        }, $rootA);
+        });
 
         listA._addFileItems(fileItem);
         expect(listA.$list.find('li').html()).toBe('test');
@@ -169,10 +169,10 @@ describe('List test', function() {
                     body: '{{removeButton}}'
                 }
             ];
-            listB = new List({
+            listB = new List($rootB, {
                 type: 'table',
                 columnList: columnList
-            }, $rootB);
+            });
         });
 
         it('elements of table are created as length of column list.', function() {

@@ -15,8 +15,8 @@ var isArraySafe = snippet.isArraySafe;
  * @param {jQuery} $el - Container element to generate list view
  * @param {object} options - Options to set list view
  *     @param {object} options.listType - List type ('simple' or 'table')
- *     @param {object} [options.item] - To customize item contents when list type is 'simple'
- *     @param {object} [options.columnList] - To customize row contents when list type is 'table'
+ *     @param {string} [options.item] - To customize item contents when list type is 'simple'
+ *     @param {array.<object>} [options.columnList] - To customize row contents when list type is 'table'
  * @ignore
  */
 var List = tui.util.defineClass(/** @lends List.prototype */{

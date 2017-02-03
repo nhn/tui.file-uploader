@@ -11,17 +11,17 @@ describe('Item test -', function() {
         $root = $('<ul></ul>');
         template = '<li>{{checkbox}} {{removeButton}}</li>';
 
-        itemA = new Item({
+        itemA = new Item($root, {
             name: 'filename1.jpg',
             id: '1',
             size: '10'
-        }, $root, template);
+        }, template);
 
-        itemB = new Item({
+        itemB = new Item($root, {
             name: 'filename2.png',
             id: '2',
             size: '10'
-        }, $root, template);
+        }, template);
     });
 
     it('each item should have type from name', function() {
