@@ -17,8 +17,6 @@ var classNames = consts.CLASSNAME;
  *  @param {object} options.url File server urls.
  *      @param {string} options.url.send Send url.
  *      @param {string} options.url.remove Delete url.
- *  @param {string} [options.formTarget='tuiUploaderHiddenFrame'] The target name(iframe) for CORS.
- *  @param {object} options.listInfo To display files information.
  *  @param {boolean} options.useFolder Use directory upload. If ture, 'isMultiple' option will be ignored.
  *  @param {boolean} options.isMultiple Use multiple files upload.
  * @param {jQuery} $el Root Element of Uploader
@@ -44,13 +42,13 @@ var classNames = consts.CLASSNAME;
  * }, $('#uploader'));
  */
 var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
-    init: function($el, options) {
+    init: function($container, options) {
         /**
          * Uploader element
          * @type {jQuery}
          * @private
          */
-        this.$el = $el;
+        this.$el = $container;
 
         /**
          * Send/Remove url
@@ -324,21 +322,13 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
     /**
      * Submit for data submit to server
      * @param {Event} [event] - Form submit event
+     * @private
      */
     submit: function(event) {
         if (event && this._requester.TYPE === REQUESTER_TYPE_MODERN) {
             event.preventDefault();
         }
         this._requester.upload();
-    },
-
-    /**
-     * Clear uploader
-     */
-    clear: function() {
-        this._requester.clear();
-        this.formView.clear();
-        this.listView.clear();
     },
 
     /**
@@ -351,12 +341,20 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
     },
 
     /**
-     * Remove checked file list
-     * @param {Array.<number>} indexList - Index list
+     * Clear uploader
      */
-    removeCheckedList: function(indexList) {
+    clear: function() {
+        this._requester.clear();
+        this.formView.clear();
+        this.listView.clear();
+    },
+
+    /**
+     * Remove checked file list
+     */
+    removeCheckedList: function() {
         var listView = this.listView;
-        var chekcedIndexList = indexList || listView.checkedIndexList;
+        var chekcedIndexList = listView.checkedIndexList;
         var files = listView.items;
         var checkedFiles = [];
         var file;

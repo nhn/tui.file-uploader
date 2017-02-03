@@ -145,13 +145,12 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
         var isMultiple = this._isMultiple;
         var useFolder = this._useFolder;
 
-        $fileInput.attr({
-            multiple: isMultiple
+        $fileInput.prop({
+            multiple: isMultiple,
+            directory: useFolder,
+            mozdirectory: useFolder,
+            webkitdirectory: useFolder
         });
-
-        if (useFolder) {
-            $fileInput.attr('directory mozdirectory webkitdirectory');
-        }
 
         return $fileInput;
     },
@@ -174,7 +173,6 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
      */
     _addInputEvent: function() {
         this.$fileInput.on('change', $.proxy(this.onChange, this));
-        this.$fileInput.attr('title', ' ');
     },
 
     /**
