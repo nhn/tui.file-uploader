@@ -3,7 +3,7 @@
 var Form = require('../../src/js/view/form.js');
 var consts = require('../../src/js/consts');
 
-var HIDDEN_FILE_INPUT_CLASS = consts.CLASSNAME.HIDDEN_FILE_INPUT;
+var HIDDEN_FILE_INPUT_CLASS = consts.className.HIDDEN_FILE_INPUT;
 
 describe('Input test', function() {
     var uploader, normalForm, batchForm, html;
@@ -14,7 +14,7 @@ describe('Input test', function() {
                     '<button type="submit">submit</button>' +
                 '</div>';
         uploader = {
-            $el: $(html),
+            $container: $(html),
             fileField: 'userfile[]',
             url: {
                 send: 'uploadURL',

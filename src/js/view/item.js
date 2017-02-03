@@ -1,10 +1,14 @@
+/**
+ * @fileoverview ItemView make element to display added file information. It has attached file ID to request for remove.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 var consts = require('../consts');
 var utils = require('../utils');
 
-var classNames = consts.CLASSNAME;
-var htmls = consts.HTML;
+var classNames = consts.className;
+var htmls = consts.html;
 
 /**
  * List item view
@@ -149,7 +153,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{
     _changeCheckbox: function(state) {
         var $checkbox = this.$checkbox;
         var $label = utils.getLabelElement($checkbox);
-        var $target = ($label) ? $label : $checkbox;
+        var $target = $label ? $label : $checkbox;
         var className = classNames.IS_CHECKED;
 
         if (state) {
@@ -163,7 +167,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{
      * Change event handler
      */
     onChange: function() {
-        var state = !!this.$checkbox.attr('checked');
+        var state = !!this.$checkbox.prop('checked');
         this._changeCheckbox(state);
         this.fire('check', {
             id: this.id,

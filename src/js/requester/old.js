@@ -1,9 +1,13 @@
+/**
+ * @fileoverview Requester for old browsers.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
-var Pool = require('../pool'),
-    consts = require('../consts');
+var Pool = require('../pool');
+var consts = require('../consts');
 
-var TYPE = consts.CONF.REQUESTER_TYPE_OLD;
+var TYPE = consts.conf.REQUESTER_TYPE_OLD;
 
 /**
  * Old requester
@@ -146,7 +150,7 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{
         var result = false;
 
         tui.util.forEach(params.filelist, function(file) {
-            result = this.pool.remove(file);
+            result = this.pool.remove(file.id, file.name);
             file.state = result;
         }, this);
 

@@ -1,8 +1,12 @@
+/**
+ * @fileoverview Requester for modern browsers.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 var consts = require('../consts');
 
-var TYPE = consts.CONF.REQUESTER_TYPE_MODERN;
+var TYPE = consts.conf.REQUESTER_TYPE_MODERN;
 var forEach = tui.util.forEach;
 
 /**
@@ -146,7 +150,7 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
         var result = false;
 
         forEach(params.filelist, function(file) {
-            result = this._removeFileInPool(file);
+            result = this._removeFileInPool(file.id);
             file.state = result;
         }, this);
 
@@ -157,29 +161,27 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
 
     /**
      * Remove file in pool
-     * @param {object} data - File data
+     * @param {string} id - File's id to find
      * @returns {boolean} Removed state
      * @private
      */
-    /*eslint-disable consistent-return*/
-    _removeFileInPool: function(data) {
+    _removeFileInPool: function(id) {
         var pool = this.pool;
-        var hasStamp = tui.util.hasStamp;
         var stamp = tui.util.stamp;
         var result = false;
+        var i = 0;
+        var len = pool.length;
 
-        forEach(pool, function(file, index) {
-            if (hasStamp(file) && (stamp(file) === data.id)) {
-                pool.splice(index, 1);
+        for (; i < len; i += 1) {
+            if (stamp(pool[i]) === id) {
+                pool.splice(i, 1);
                 result = true;
-
-                return false;
+                break;
             }
-        });
+        }
 
         return result;
     },
-    /*eslint-enable consistent-return*/
 
     /**
      * Clear the pool

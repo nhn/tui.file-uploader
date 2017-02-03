@@ -1,3 +1,7 @@
+/**
+ * @fileoverview This is manager of input elements that act like file pool.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 var consts = require('./consts');
@@ -7,7 +11,7 @@ var forEach = snippet.forEach;
 var hasStamp = snippet.hasStamp;
 var stamp = snippet.stamp;
 
-var HIDDEN_FILE_INPUT_CLASS = consts.CLASSNAME.HIDDEN_FILE_INPUT;
+var HIDDEN_FILE_INPUT_CLASS = consts.className.HIDDEN_FILE_INPUT;
 
 /**
  * The pool for save files.
@@ -52,11 +56,12 @@ var Pool = tui.util.defineClass(/** @lends Pool.prototype */{
 
     /**
      * Remove a input element[type=file] from pool.
-     * @param {object} params - A file name that have to be removed.
+     * @param {string} id - File's id
+     * @param {string} name - File's name
      * @returns {boolean} result
      */
-    remove: function(params) {
-        var key = params.id + params.name;
+    remove: function(id, name) {
+        var key = id + name;
         var element = this.files[key];
 
         if (!element) {

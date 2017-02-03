@@ -1,10 +1,14 @@
+/**
+ * @fileoverview From-view makes a form by template. Add events for file upload.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 var consts = require('../consts');
 var utils = require('../utils');
 
 var isSupportFormData = utils.isSupportFormData();
-var HIDDEN_FILE_INPUT_CLASS = consts.CLASSNAME.HIDDEN_FILE_INPUT;
+var HIDDEN_FILE_INPUT_CLASS = consts.className.HIDDEN_FILE_INPUT;
 var STAMP_ID = '__fe_id';
 
 /**
@@ -77,23 +81,25 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
      */
     _render: function(attributes) {
         var uploader = this._uploader;
-        var $fileInput = this._getFileInput();
+        var $fileInput = uploader.$container.find(':file');
         var $el = $(this._html.FORM)
-                .append(uploader.$el.children())
-                .attr(attributes);
+                    .append(uploader.$container.children())
+                    .attr(attributes);
 
         this.$el = $el;
         this.$fileInput = $fileInput;
 
+        this._setFileInput();
+
         if (uploader.isBatchTransfer) {
-            this.$submit = uploader.$el.find(':submit');
+            this.$submit = uploader.$container.find(':submit');
         }
 
         if (uploader.isCrossDomain && !isSupportFormData) {
             this._setHiddenInputForCORS();
         }
 
-        uploader.$el.append(this.$el);
+        uploader.$container.append(this.$el);
 
         this._addEvent();
     },
@@ -133,27 +139,23 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
      * @returns {Object.<string, string>} The html template string set for form.
      */
     _setTemplate: function(template) {
-        return tui.util.extend({}, consts.HTML, template);
+        return tui.util.extend({}, consts.html, template);
     },
 
     /**
-     * Makes and returns jquery element
+     * Set property value to file input element
      * @private
-     * @returns {jQuery} The jquery object wrapping original input element
      */
-    _getFileInput: function() {
-        var $fileInput = this._uploader.$el.find(':file');
+    _setFileInput: function() {
         var isMultiple = this._isMultiple;
         var useFolder = this._useFolder;
 
-        $fileInput.prop({
+        this.$fileInput.prop({
             multiple: isMultiple,
             directory: useFolder,
             mozdirectory: useFolder,
             webkitdirectory: useFolder
         });
-
-        return $fileInput;
     },
 
     /**

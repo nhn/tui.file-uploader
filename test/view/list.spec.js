@@ -95,7 +95,7 @@ describe('List test', function() {
         });
 
         it('"setHasItemsClassName" set class name on list element as having items', function() {
-            var hasItemsClassName = consts.CLASSNAME.HAS_ITEMS;
+            var hasItemsClassName = consts.className.HAS_ITEMS;
 
             listA._addFileItems(addedfiles);
             listA._setHasItemsClassName();
@@ -256,7 +256,7 @@ describe('List test', function() {
         });
 
         it('when all items are checked, checkbox in header is checked.', function() {
-            var checkedClassName = consts.CLASSNAME.IS_CHECKED;
+            var checkedClassName = consts.className.IS_CHECKED;
             spyOn(utils, 'getLabelElement').and.returnValue(listB.$checkbox);
 
             listB._changeCheckboxInHeader(true);

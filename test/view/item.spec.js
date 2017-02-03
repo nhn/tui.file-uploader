@@ -81,11 +81,11 @@ describe('Item test -', function() {
             var $target = utils.getLabelElement(itemA.$checkbox);
 
             itemA.$checkbox.change();
-            expect($target.hasClass(consts.CLASSNAME.IS_CHECKED)).toBe(true);
+            expect($target.hasClass(consts.className.IS_CHECKED)).toBe(true);
 
             itemA.$checkbox.prop('checked', false);
             itemA.$checkbox.change();
-            expect($target.hasClass(consts.CLASSNAME.IS_CHECKED)).toBe(false);
+            expect($target.hasClass(consts.className.IS_CHECKED)).toBe(false);
         });
     });
 });

@@ -1,12 +1,15 @@
+/**
+ * @fileoverview Configuration or default values.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
-/*eslint-disable*/
 /**
  * Uploader config
  * @type {object}
  * @ignore
  */
-module.exports.CONF = {
+module.exports.conf = {
     REQUESTER_TYPE_MODERN: 'modernRequester',
     REQUESTER_TYPE_OLD: 'oldRequester',
     FORM_TARGET_NAME: 'tuiUploaderHiddenFrame'
@@ -17,7 +20,7 @@ module.exports.CONF = {
  * @type {object}
  * @ignore
  */
-module.exports.CLASSNAME = {
+module.exports.className = {
     HIDDEN_FILE_INPUT: 'tui-js-hidden-file-input',
     LIST_CONTAINER: 'tui-js-file-uploader-list',
     LIST_ITEMS_CONTAINER: 'tui-js-file-uploader-list-items',
@@ -34,7 +37,7 @@ module.exports.CLASSNAME = {
  * @type {object}
  * @ignore
  */
-module.exports.HTML = {
+module.exports.html = {
     FORM: '<form enctype="multipart/form-data" id="tui-uploader-form" method="post"></form>',
     HIDDEN_INPUT: '<input type="hidden" name="{{name}}" value="{{value}}">',
     CHECKBOX: [
@@ -50,7 +53,7 @@ module.exports.HTML = {
  * @type {object}
  * @ignore
  */
-module.exports.LIST_TEMPLATE = {
+module.exports.listTemplate = {
     CONTAINER: '<ul class="tui-upload-lst {{listItemsClassName}}"></ul>',
     LIST_ITEM: [
         '<li class="tui-upload-item">',
@@ -67,7 +70,7 @@ module.exports.LIST_TEMPLATE = {
  * @type {object}
  * @ignore
  */
-module.exports.TABLE_TEMPLATE = {
+module.exports.tableTemplate = {
     CONTAINER: [
         '<table class="tui-file-uploader-tbl">',
             '<caption><span>File Uploader List</span></caption>',

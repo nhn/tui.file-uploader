@@ -1,9 +1,14 @@
+/**
+ * @fileoverview FileListView listing files and display states(like size, count).
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
+
 var utils = require('../utils');
 var Item = require('./item');
 var consts = require('../consts');
 
-var classNames = consts.CLASSNAME;
+var classNames = consts.className;
 var snippet = tui.util;
 var forEach = snippet.forEach;
 var isUndefined = snippet.isUndefined;
@@ -106,10 +111,9 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
      * @private
      */
     _addEvent: function() {
-        if (!this.$checkbox) {
-            return;
+        if (this.$checkbox) {
+            this.$checkbox.on('change', $.proxy(this._onChange, this));
         }
-        this.$checkbox.on('change', $.proxy(this._onChange, this));
     },
 
     /**
@@ -117,7 +121,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
      * @private
      */
     _onChange: function() {
-        var state = !!this.$checkbox.attr('checked');
+        var state = !!this.$checkbox.prop('checked');
 
         this._changeCheckboxInItem(state);
         this._changeCheckboxInHeader(state);
@@ -130,7 +134,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
      * @private
      */
     _getListContainer: function(isTableList) {
-        var template = isTableList ? consts.TABLE_TEMPLATE : consts.LIST_TEMPLATE;
+        var template = isTableList ? consts.tableTemplate : consts.listTemplate;
 
         return $(utils.template({
             listItemsClassName: classNames.LIST_ITEMS_CONTAINER
@@ -193,7 +197,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
 
         if (html) {
             html = utils.template({
-                checkbox: consts.HTML.CHECKBOX
+                checkbox: consts.html.CHECKBOX
             }, html);
             $thead.html('<tr>' + html + '</tr>');
         }
@@ -216,7 +220,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
         if (html) {
             html = '<tr>' + html + '</tr>';
         } else {
-            html = consts.TABLE_TEMPLATE.LIST_ITEM;
+            html = consts.tableTemplate.LIST_ITEM;
         }
 
         this.itemTemplate = html;
@@ -233,7 +237,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
         if (item) {
             html = '<li>' + item + '</li>';
         } else {
-            html = consts.LIST_TEMPLATE.LIST_ITEM;
+            html = consts.listTemplate.LIST_ITEM;
         }
 
         this.itemTemplate = html;

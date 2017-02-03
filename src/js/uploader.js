@@ -1,3 +1,8 @@
+/**
+ * @fileoverview FileUploader is core of file uploader component.
+ *               FileManager manage connector to connect server and update FileListView.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 var consts = require('./consts');
@@ -8,8 +13,8 @@ var DragAndDrop = require('./view/drag');
 var OldRequester = require('./requester/old');
 var ModernRequester = require('./requester/modern');
 
-var classNames = consts.CLASSNAME;
-var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
+var classNames = consts.className;
+var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
 
 /**
  * FileUploader component controller
@@ -21,7 +26,7 @@ var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
  *         @param {string} options.url.remove - Remove files url
  *     @param {boolean} [options.isMultiple] Use multiple files upload
  *     @param {boolean} [options.useFolder] - Use directory upload. If ture, 'isMultiple' option will be ignored
- *     @param {boolean} [options.useDrag] - Use file drag and drop
+ *     @param {boolean} [options.useDropzone] - Use file drag and drop
  *     @param {object} options.listUI - List area preset
  *         @param {object} options.listUI.type - List type ('simple' or 'table')
  *         @param {string} [options.listUI.item] - To customize item contents when list type is 'simple'
@@ -61,7 +66,7 @@ var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
  *         remove: 'http://localhost:3000/remove'
  *     },
  *     isBatchTransfer: true,
- *     useDrag: true,
+ *     useDropzone: true,
  *     listUI: {
  *         type: 'table'
  *     }
@@ -74,7 +79,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          * @type {jQuery}
          * @private
          */
-        this.$el = $container;
+        this.$container = $container;
 
         /**
          * Send/Remove url
@@ -95,7 +100,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          * @private
          * @type {string}
          */
-        this.formTarget = consts.CONF.FORM_TARGET_NAME;
+        this.formTarget = consts.conf.FORM_TARGET_NAME;
 
         /**
          * Target frame for CORS (IE7, 8, 9)
@@ -103,7 +108,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          * @type {jQuery}
          */
         this.$targetFrame = this._createTargetFrame()
-            .appendTo(this.$el);
+            .appendTo(this.$container);
 
         /**
          * Whether the uploader uses batch-transfer
@@ -138,7 +143,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          * @private
          * @type {boolean}
          */
-        this.useDrag = !!(options.useDrag);
+        this.useDropzone = !!(options.useDropzone);
 
         /**
          * Whether the user uses folder upload
@@ -159,15 +164,15 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
          * @private
          * @type {List}
          */
-        this.listView = new List(this.$el.find('.' + classNames.LIST_CONTAINER), options.listUI);
+        this.listView = new List(this.$container.find('.' + classNames.LIST_CONTAINER), options.listUI);
 
-        if (this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
+        if (this.useDropzone && !this.useFolder && utils.isSupportFileSystem()) {
             /**
              * Drag & Drop View
              * @private
              * @type {DragAndDrop}
              */
-            this.dragView = new DragAndDrop(this.$el.find('.' + classNames.DROPZONE));
+            this.dragView = new DragAndDrop(this.$container.find('.' + classNames.DROPZONE));
         }
 
         this._setRequester();
@@ -282,7 +287,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
             }
         }, this);
 
-        if (this.useDrag && this.dragView) {
+        if (this.useDropzone && this.dragView) {
             this.dragView.on('drop', this.store, this);
         }
     },
@@ -308,7 +313,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
             }
         }, this);
 
-        if (this.useDrag && this.dragView) {
+        if (this.useDropzone && this.dragView) {
             this.dragView.on('drop', function(files) {
                 this.store(files);
                 this.submit();
@@ -382,17 +387,15 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
         var listView = this.listView;
         var chekcedIndexList = listView.checkedIndexList;
         var files = listView.items;
-        var checkedFiles = [];
-        var file;
+        var checkedFiles, file;
 
-        tui.util.forEach(chekcedIndexList, function(index) {
+        checkedFiles = tui.util.map(chekcedIndexList, function(index) {
             file = files[index];
-
-            checkedFiles.push({
+            return {
                 id: file.id,
                 name: file.name
-            });
-        }, this);
+            };
+        });
 
         if (checkedFiles.length) {
             this.removeFile({filelist: checkedFiles});
@@ -455,7 +458,7 @@ module.exports = Uploader;
 /**
  * Remove event
  * @event Uploader#remove
- * @param {object} data - Remove data from this component
+ * @param {object} data.filelist - Remove data from this component
  *  @param {string} data.message - 'success' or 'fail'
  *  @param {string} data.name - file name
  *  @param {string} data.id - file id

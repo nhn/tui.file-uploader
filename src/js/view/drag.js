@@ -1,9 +1,13 @@
+/**
+ * @fileoverview This file is about drag and drop file to send. Drag and drop is running via file api.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 var consts = require('../consts');
 
-var USE_DROPZONE_CLASS = consts.CLASSNAME.USE_DROPZONE;
-var DROP_ENABLED_CLASS = consts.CLASSNAME.DROP_ENABLED;
+var USE_DROPZONE_CLASS = consts.className.USE_DROPZONE;
+var DROP_ENABLED_CLASS = consts.className.DROP_ENABLED;
 
 /**
  * Makes drag and drop area, the dropped file is added via event drop event.

@@ -43,15 +43,11 @@ describe('Input elements[type=files] pool behavior test.', function() {
         pool.store(inputF1);
         pool.store(inputF2);
         pool.store(inputF3);
-        pool.remove({
-            id: stampId1,
-            name: fileName1
-        });
+        pool.remove(stampId1, fileName1);
 
         expect(pool.files[key1]).not.toBeDefined();
         expect(pool.files[key2]).toBeDefined();
         expect(pool.files[key3]).toBeDefined();
-
     });
 
     it('remove file from pool', function() {
@@ -64,7 +60,6 @@ describe('Input elements[type=files] pool behavior test.', function() {
         expect(pool.files[key1]).not.toBeDefined();
         expect(pool.files[key2]).not.toBeDefined();
         expect(pool.files[key3]).not.toBeDefined();
-
     });
 
     it('plant pool elements to other element', function() {
