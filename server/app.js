@@ -101,7 +101,6 @@ app.post('/upload', upload, function(req, res) { // Let us suppose that all the 
             '</script>'
         );
     } else if (redirectURL) { // CORS - IE 7
-        console.log('??');
         responseData = encodeURIComponent(responseData);
         res.redirect(redirectURL + '?' + responseData);
     } else {
@@ -113,17 +112,27 @@ app.post('/upload', upload, function(req, res) { // Let us suppose that all the 
  * API - get
  *  /remove
  *      req.query.callback - Callback name for jsonp
- *      req.query.id - File id
- *      req.query.name - File name
+ *      req.query.filelist - Removed files list
  */
 app.get('/remove', function(req, res) { // Suppose that the file was removed successfully.
-    var callbackName = req.query.callback,
-        result = JSON.stringify({
-            message: 'success',
-            id: req.query.id,
-            name: req.query.name
+    var callbackName = req.query.callback;
+    var filelist = [];
+    var result;
+
+    req.query.filelist.forEach(function(file) {
+        filelist.push({
+            id: file.id,
+            state: true
         });
+    });
+
+    result = JSON.stringify({
+        message: 'success',
+        filelist: filelist
+    });
+
     log('remove', req.query);
+    log('remove', result);
 
     if (callbackName) { // for x-domain jsonp
         res.send(callbackName + '(' + result + ')');

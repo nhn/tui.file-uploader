@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">
+    <link rel="stylesheet" type="text/css" href="css/sample.css" />
+    <style type="text/css">
+    form{display: inline-block;}
+    </style>
+</head>
+<body>
+<h1>
+    Without server, <br>
+    This sample operates normally in modern browser(supporting FormData)
+</h1>
+<div class="code-html">
+    <div id="uploader" class="tui-file-uploader">
+        <div id="fileBtn" class="tui-btn-area">
+            <button type="button" class="tui-btn tui-btn-cancel tui-is-disabled">삭제</button>
+        </div>
+        <!-- <div class="tui-file-uploader-area">
+            <div id="dropzone" class="tui-drop-zone dropzone">
+                <p class="tui-txt-desc">업로드할 파일 또는 폴더를 내려놓으세요.</p>
+            </div>
+            <table class="tui-file-uploader-tbl">
+				<caption><span>파일 업로드 목록</span></caption>
+    				<colgroup>
+        				<col class="tui-col-1">
+        				<col class="tui-col-3">
+        				<col class="tui-col-4">
+    				</colgroup>
+				<thead class="tui-form-header">
+				<tr>
+					<th scope="col" class="tui-col-name">
+						<label class="tui-checkbox">
+							<span class="tui-ico-check"><input type="checkbox" id="checkedAll"></span>
+						</label>
+					</th>
+					<th scope="col">파일명</th>
+					<th scope="col" class="tui-col-name">크기</th>
+				</tr>
+				</thead>
+				<tbody id="files" class="tui-form-body"></tbody>
+			</table>
+		</div> -->
+        <div class="tui-file-uploader-info">
+			<span class="tui-info-txt"><em class="tui-spec"><span id="file_count">0</span>개</em> 업로드 (<span id="size_count">0</span>)</span>
+		</div>
+    </div>
+</div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
+<script type="text/javascript" src="../dist/file-uploader.js"></script>
+<script type="text/javascript" class="code-js">
+    var uploader = new tui.component.Uploader({
+        url: {
+            send: 'http://localhost:3000/upload',
+            remove: 'http://localhost:3000/remove'
+        },
+        redirectURL: 'http://localhost:8080/samples/result.html',
+        isBatchTransfer: true,
+        listInfo: {
+            dropzone: $('#dropzone'),
+            list: $('#files'),
+            count: $('#file_count'),
+            size: $('#size_count'),
+            checkbox: $('#checkedAll')
+        },
+        fileField: 'userfile[]',
+        isMultiple: true,
+        useDrag: true,
+        form: $('#fileBtn'),
+        template: {
+            listItem:
+                '<tr>' +
+                    '<td>{{checkbox}}</td>' +
+                    '<td>' +
+                        '<span class="tui-filename-area">' +
+                            '<span class="tui-file-name">{{filename}}</span>' +
+                        '</span>' +
+                    '</td>' +
+                    '<td>{{filesize}}</td>' +
+                '</tr>'
+        }
+    }, $('#uploader'));
+
+    uploader.on('success', function(data) {
+        $('#status').html(data.success + ' files added');
+    });
+    uploader.on('remove', function(data) {
+        $('#status').html(data.name + ' file removed');
+    });
+    $('.tui-btn-cancel').on('click', function() {
+        uploader.removeCheckedList();
+    });
+</script>
+</body>
+</html>

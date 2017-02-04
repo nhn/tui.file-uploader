@@ -41,7 +41,7 @@ module.exports = function(config) {
         browserify: {
             debug: true,
             bundleDelay: 1000,
-            transform:[istanbul({
+            transform: [istanbul({
                 ignore: [
                     'index.js'
                 ]
@@ -83,25 +83,25 @@ module.exports = function(config) {
 
         customLaunchers: {
             'IE8': {
-                base: 'WebDriver', 
+                base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
                 version: 8
             },
             'IE9': {
-                base: 'WebDriver', 
+                base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
                 version: 9
             },
             'IE10': {
-                base: 'WebDriver', 
+                base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
                 version: 10
             },
             'IE11': {
-                base: 'WebDriver', 
+                base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
                 version: 11
@@ -112,14 +112,14 @@ module.exports = function(config) {
                 browserName: 'MicrosoftEdge'
             },
             'Chrome-WebDriver': {
-                base: 'WebDriver', 
-                config: webdriverConfig, 
-                browserName: 'chrome' 
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'chrome'
             },
             'Firefox-WebDriver': {
-                base: 'WebDriver', 
-                config: webdriverConfig, 
-                browserName: 'firefox' 
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'firefox'
             }
         },
 

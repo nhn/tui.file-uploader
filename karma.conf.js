@@ -36,7 +36,7 @@ module.exports = function(config) {
         browserify: {
             debug: true,
             bundleDelay: 1000,
-            transform:[istanbul({
+            transform: [istanbul({
                 ignore: [
                     'index.js'
                 ]
