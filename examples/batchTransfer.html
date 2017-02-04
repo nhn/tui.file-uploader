@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>FileUploader with table list & batch transfer</title>
+        <link rel="stylesheet" href="../dist/tui-component-file-uploader.css" />
+    </head>
+
+    <body>
+        <div class="code-html">
+            <div id="uploader" class="tui-file-uploader">
+                <div class="tui-file-uploader-header">
+                    <div class="tui-btn-area">
+                        <button type="button" class="tui-btn tui-btn-cancel" id="removeFiles">Remove</button>
+                        <label class="tui-btn tui-btn-upload">
+                			<span class="tui-btn-txt">Select files</span>
+                			<input type="file" name="userfile[]" class="tui-input-file">
+                		</label>
+            		</div>
+                </div>
+                <div class="tui-file-uploader-area tui-js-file-uploader-list tui-js-file-uploader-dropzone">
+                    <div class="tui-drop-zone">
+                        <p class="tui-txt-desc">Drop files here</p>
+                    </div>
+                </div>
+                <div class="tui-btn-submit">
+        			<button type="submit" class="tui-btn tui-btn-large">Upload</button>
+        		</div>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
+        <script type="text/javascript" src="../dist/tui-component-file-uploader.js"></script>
+        <script type="text/javascript" class="code-js">
+
+            var uploader = new tui.component.FileUploader($('#uploader'), {
+                url: {
+                    send: 'http://localhost:3000/upload',
+                    remove: 'http://localhost:3000/remove'
+                },
+                isMultiple: true,
+                listUI: {
+                    type: 'table'
+                }
+            });
+
+        </script>
+    </body>
+</html>

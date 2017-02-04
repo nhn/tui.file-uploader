@@ -32,6 +32,7 @@ module.exports.className = {
     THEAD_STYLE: 'tui-col-name'
 };
 
+/*eslint-disable*/
 /**
  * Default Htmls
  * @type {object}
@@ -43,7 +44,7 @@ module.exports.html = {
     CHECKBOX: [
         '<label class="tui-checkbox">',
             '<span class="tui-ico-check"><input type="checkbox"></span>',
-        '</label>',
+        '</label>'
     ].join(''),
     REMOVE_BUTTON: '<button type="button" class="tui-btn-delete">Remove</button>'
 };

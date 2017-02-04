@@ -391,6 +391,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
 
         checkedFiles = tui.util.map(chekcedIndexList, function(index) {
             file = files[index];
+
             return {
                 id: file.id,
                 name: file.name
