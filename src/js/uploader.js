@@ -26,7 +26,6 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  *         @param {string} options.url.remove - Remove files url
  *     @param {boolean} [options.isMultiple] Use multiple files upload
  *     @param {boolean} [options.useFolder] - Use directory upload. If ture, 'isMultiple' option will be ignored
- *     @param {boolean} [options.useDropzone] - Use file drag and drop
  *     @param {object} options.listUI - List area preset
  *         @param {object} options.listUI.type - List type ('simple' or 'table')
  *         @param {string} [options.listUI.item] - To customize item contents when list type is 'simple'
@@ -66,7 +65,6 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  *         remove: 'http://localhost:3000/remove'
  *     },
  *     isBatchTransfer: true,
- *     useDropzone: true,
  *     listUI: {
  *         type: 'table'
  *     }
@@ -74,6 +72,8 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  */
 var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
     init: function($container, options) {
+        var dropzone = $container.find('.' + classNames.DROPZONE);
+
         /**
          * Uploader element
          * @type {jQuery}
@@ -139,18 +139,18 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
         this.isMultiple = !!(options.isMultiple);
 
         /**
-         * Whether the user uses drag&drop upload
-         * @private
-         * @type {boolean}
-         */
-        this.useDropzone = !!(options.useDropzone);
-
-        /**
          * Whether the user uses folder upload
          * @private
          * @type {boolean}
          */
         this.useFolder = !!(options.useFolder);
+
+        /**
+         * Whether the user uses drag&drop upload
+         * @private
+         * @type {boolean}
+         */
+        this.useDropzone = !!(dropzone);
 
         /**
          * From View
@@ -172,7 +172,9 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
              * @private
              * @type {DragAndDrop}
              */
-            this.dragView = new DragAndDrop(this.$container.find('.' + classNames.DROPZONE));
+            this.dragView = new DragAndDrop(dropzone);
+        } else {
+            dropzone.addClass(classNames.NOT_SUPPORT_DROPZONE);
         }
 
         this._setRequester();

@@ -3,7 +3,7 @@
     "author": "NHNEnt FE Development Lab <dl_javascript@nhnent.com>",
     "version": "2.0.0",
     "license": "MIT",
-    "repository": "https://github.com/nhnent/tui.component.file-uploader.git",
+    "repository": "https://github.com/nhnent/tuigi.component.file-uploader.git",
     "description": "FileUploader component",
     "devDependencies": {
         "babel-polyfill": "^6.16.0",

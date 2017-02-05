@@ -25,7 +25,7 @@ module.exports.className = {
     LIST_CONTAINER: 'tui-js-file-uploader-list',
     LIST_ITEMS_CONTAINER: 'tui-js-file-uploader-list-items',
     DROPZONE: 'tui-js-file-uploader-dropzone',
-    USE_DROPZONE: 'tui-dropzone-using',
+    NOT_SUPPORT_DROPZONE: 'tui-dropzone-not-support',
     DROP_ENABLED: 'tui-dropzone-enabled',
     HAS_ITEMS: 'tui-has-items',
     IS_CHECKED: 'tui-is-checked',

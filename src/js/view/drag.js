@@ -6,7 +6,6 @@
 
 var consts = require('../consts');
 
-var USE_DROPZONE_CLASS = consts.className.USE_DROPZONE;
 var DROP_ENABLED_CLASS = consts.className.DROP_ENABLED;
 
 /**
@@ -21,7 +20,7 @@ var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{
          * Drop zone jQuery-element
          * @type {jQuery}
          */
-        this.$el = $el.addClass(USE_DROPZONE_CLASS);
+        this.$el = $el;
 
         /**
          * Class for drop enabled

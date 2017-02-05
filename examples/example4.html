@@ -2,15 +2,20 @@
 <html>
     <head lang="en">
         <meta charset="UTF-8">
-        <title>FileUploader with simple list & normal transfer</title>
+        <title>FileUploader with simple list & batch transfer</title>
+        <link rel="stylesheet" href="css/docs.css" />
         <link rel="stylesheet" href="../dist/tui-component-file-uploader.css" />
     </head>
 
     <body>
+        <div class="explain">
+            This example just show a list style.<br>
+            So, don't include submit button despite of using batch transfer.
+        </div>
         <div class="code-html">
             <div id="uploader" class="tui-file-uploader">
                 <label class="tui-btn tui-btn-upload">
-        			<span class="tui-btn-txt">Upload files</span>
+        			<span class="tui-btn-txt">Add files</span>
         			<input type="file" name="userfile[]" class="tui-input-file">
         		</label>
                 <div class="tui-js-file-uploader-list"></div>
@@ -21,16 +26,17 @@
         <script type="text/javascript" src="../dist/tui-component-file-uploader.js"></script>
         <script type="text/javascript" class="code-js">
 
-            var uploader = new tui.component.FileUploader($('#uploader'), {
-                url: {
-                    send: 'http://localhost:3000/upload',
-                    remove: 'http://localhost:3000/remove'
-                },
-                isMultiple: true,
-                listUI: {
-                    type: 'simple'
-                }
-            });
+        var uploader = new tui.component.FileUploader($('#uploader'), {
+            url: {
+                send: 'http://localhost:3000/upload',
+                remove: 'http://localhost:3000/remove'
+            },
+            isMultiple: true,
+            isBatchTransfer: true,
+            listUI: {
+                type: 'simple'
+            }
+        });
 
         </script>
     </body>

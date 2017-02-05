@@ -40,7 +40,7 @@
 /******/ 	__webpack_require__.c = installedModules;
 
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "dist";
 
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -599,7 +599,7 @@
 	 * @ignore
 	 */
 	module.exports.html = {
-	    FORM: '<form enctype="multipart/form-data" id="tui-uploader-form" method="post"></form>',
+	    FORM: '<form enctype="multipart/form-data" id="tui-uploader-form" method="post" style="position:absolute;"></form>',
 	    HIDDEN_INPUT: '<input type="hidden" name="{{name}}" value="{{value}}">',
 	    CHECKBOX: [
 	        '<label class="tui-checkbox">',

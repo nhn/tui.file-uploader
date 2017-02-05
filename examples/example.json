@@ -1,8 +1,23 @@
 {
-    "simpleListUI": {
-        "title": "List UI : Simple"
+    "example1": {
+        "title": "Normal transfer"
     },
-    "tableListUI": {
-        "title": "List UI : Table"
-    }
+    "example2": {
+        "title": "Batch transfer"
+    },
+    "example3": {
+        "title": "Select folder"
+    },
+    "example4": {
+        "title": "Simple list UI"
+    },
+    "exmampl5": {
+        "title": "Table list UI"
+    },
+    "example6": {
+        "title": "Using dropzone"
+    },
+    "example7": {
+        "title": "Customizing"
+    },
 }
