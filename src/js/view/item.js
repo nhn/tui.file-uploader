@@ -57,7 +57,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{
          * @type {string}
          * @private
          */
-        this.id = data.id || data.name;
+        this.id = data.id;
 
         /**
          * Item size
@@ -107,7 +107,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{
         var template = this.template;
         var map = {
             filetype: this.type,
-            filename: this.name,
+            filename: utils.getPlainFileName(this.name),
             filesize: this.size ? utils.getFileSizeWithUnit(this.size) : '',
             checkbox: htmls.CHECKBOX,
             removeButton: htmls.REMOVE_BUTTON
@@ -130,8 +130,22 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{
      * @private
      */
     _addEvent: function() {
-        this.$checkbox.on('change', $.proxy(this.onChange, this));
+        this.$checkbox.on('change', $.proxy(this._onChange, this));
         this.$removeButton.on('click', $.proxy(this._onClickEvent, this));
+    },
+
+    /**
+     * Change event handler
+     * @private
+     */
+    _onChange: function() {
+        var state = !!this.$checkbox.prop('checked');
+        this._changeCheckbox(state);
+        this.fire('check', {
+            id: this.id,
+            name: this.name,
+            size: this.size
+        }, state);
     },
 
     /**
@@ -139,10 +153,9 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{
      * @private
      */
     _onClickEvent: function() {
-        this.fire('remove', {
-            name: this.name,
-            id: this.id
-        });
+        var data = {};
+        data[this.id] = true;
+        this.fire('remove', data);
     },
 
     /**
@@ -164,16 +177,20 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{
     },
 
     /**
-     * Change event handler
+     * Change checkbox state
+     * @param {boolean} state - Checked state
      */
-    onChange: function() {
-        var state = !!this.$checkbox.prop('checked');
-        this._changeCheckbox(state);
-        this.fire('check', {
-            id: this.id,
-            name: this.name,
-            size: this.size
-        }, state);
+    changeCheckboxState: function(state) {
+        this.$checkbox.prop('checked', state);
+        this._onChange();
+    },
+
+    /**
+     * Get state of checkbox
+     * @returns {boolean} Checkbox state
+     */
+    getCheckedState: function() {
+        return this.$checkbox.prop('checked');
     },
 
     /**

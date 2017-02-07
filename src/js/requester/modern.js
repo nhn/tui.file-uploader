@@ -127,7 +127,7 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
     /**
      * Remove file (ajax-jsonp)
      * It is not used for batch transfer.
-     * @param {Object} params - Parameters to remove file
+     * @param {Object} params - Removed items id list (removeIdList: [])
      */
     remove: function(params) {
         $.ajax({
@@ -141,46 +141,17 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
     },
 
     /**
-     * Remove file (ajax-jsonp)
+     * Remove file
      * It is used for batch transfer.
-     * @param {Object} params - Parameters to remove file
+     * @param {Object} removedItems - Removed items info
      * @private
      */
-    _removeWhenBatch: function(params) {
-        var result = false;
+    _removeWhenBatch: function(removedItems) {
+        this.pool = tui.util.filter(this.pool, function(file) {
+            return (removedItems[file.id]);
+        });
 
-        forEach(params.filelist, function(file) {
-            result = this._removeFileInPool(file.id);
-            file.state = result;
-        }, this);
-
-        this.fire('removed', tui.util.extend({
-            message: result ? 'success' : 'fail'
-        }, params));
-    },
-
-    /**
-     * Remove file in pool
-     * @param {string} id - File's id to find
-     * @returns {boolean} Removed state
-     * @private
-     */
-    _removeFileInPool: function(id) {
-        var pool = this.pool;
-        var stamp = tui.util.stamp;
-        var result = false;
-        var i = 0;
-        var len = pool.length;
-
-        for (; i < len; i += 1) {
-            if (stamp(pool[i]) === id) {
-                pool.splice(i, 1);
-                result = true;
-                break;
-            }
-        }
-
-        return result;
+        this.fire('removed', removedItems);
     },
 
     /**

@@ -126,12 +126,11 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{
     /**
      * Remove file (ajax-jsonp)
      * It is not used for batch transfer.
-     * @param {Object} params - Parameters to remove file
+     * @param {Object} params - Removed items id list (removeIdList: [])
      */
     remove: function(params) {
-        var uploader = this.uploader;
         $.ajax({
-            url: uploader.url.remove,
+            url: this.uploader.url.remove,
             dataType: 'jsonp',
             data: params,
             success: $.proxy(function(data) {
@@ -141,22 +140,17 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{
     },
 
     /**
-     * Remove file (ajax-jsonp)
+     * Remove file
      * It is used for batch transfer.
-     * @param {Object} params - Parameters to remove file
+     * @param {Object} removedItems - Removed items info
      * @private
      */
-    _removeWhenBatch: function(params) {
-        var result = false;
-
-        tui.util.forEach(params.filelist, function(file) {
-            result = this.pool.remove(file.id, file.name);
-            file.state = result;
+    _removeWhenBatch: function(removedItems) {
+        tui.util.forEach(removedItems, function(id, name) {
+            this.pool.remove(id, name);
         }, this);
 
-        this.fire('removed', tui.util.extend({
-            message: result ? 'success' : 'fail'
-        }, params));
+        this.fire('removed', removedItems);
     },
 
     /**

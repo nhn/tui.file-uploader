@@ -91,8 +91,8 @@ function isSupportFileSystem() {
  * @memberof utils
  */
 function isCrossDomain(url) {
-    var here = parseURL(window.location.href),
-        target = parseURL(url);
+    var here = parseURL(window.location.href);
+    var target = parseURL(url);
 
     return target.hostname !== here.hostname
         || target.port !== here.port
@@ -131,6 +131,15 @@ function getLabelElement($target) {
     return null;
 }
 
+/**
+ * Get plain file name
+ * @param {string} filename - File name including extension
+ * @returns {string} Plain file name
+ */
+function getPlainFileName(filename) {
+    return filename.replace(/\.[^.$]+$/, '');
+}
+
 module.exports = {
     getFileSizeWithUnit: getFileSizeWithUnit,
     isSupportFileSystem: isSupportFileSystem,
@@ -138,5 +147,6 @@ module.exports = {
     template: template,
     isCrossDomain: isCrossDomain,
     removeItemFromArray: removeItemFromArray,
-    getLabelElement: getLabelElement
+    getLabelElement: getLabelElement,
+    getPlainFileName: getPlainFileName
 };

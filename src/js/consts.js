@@ -25,11 +25,11 @@ module.exports.className = {
     LIST_CONTAINER: 'tui-js-file-uploader-list',
     LIST_ITEMS_CONTAINER: 'tui-js-file-uploader-list-items',
     DROPZONE: 'tui-js-file-uploader-dropzone',
-    NOT_SUPPORT_DROPZONE: 'tui-dropzone-not-support',
+    SUPPORT_DROPZONE: 'tui-dropzone-support',
     DROP_ENABLED: 'tui-dropzone-enabled',
     HAS_ITEMS: 'tui-has-items',
-    IS_CHECKED: 'tui-is-checked',
-    THEAD_STYLE: 'tui-col-name'
+    HAS_SCROLL: 'tui-has-scroll',
+    IS_CHECKED: 'tui-is-checked'
 };
 
 /*eslint-disable*/
@@ -59,7 +59,8 @@ module.exports.listTemplate = {
     LIST_ITEM: [
         '<li class="tui-upload-item">',
             '<span class="tui-filename-area">',
-                '<span class="tui-file-name">{{filename}} ({{filesize}})</span>',
+                '<span class="tui-file-name">{{filename}}</span>',
+                '<span class="tui-file-tail">.{{filetype}} ({{filesize}})</span>',
             '</span>',
             '<button type="button" class="tui-btn-delete">remove</button>',
         '</li>'
@@ -83,14 +84,14 @@ module.exports.tableTemplate = {
             '</colgroup>',
             '<thead class="tui-form-header">',
                 '<tr>',
-                    '<th scope="col">',
+                    '<th scope="col" width="32" style="border-right:0;">',
                         '<label class="tui-checkbox">',
                             '<span class="tui-ico-check"><input type="checkbox"></span>',
                         '</label>',
                     '</th>',
-                    '<th scope="col">File Type</th>',
-                    '<th scope="col">File Name</th>',
-                    '<th scope="col">File Size</th>',
+                    '<th scope="col" width="156">File Type</th>',
+                    '<th scope="col" width="362">File Name</th>',
+                    '<th scope="col" width="146" style="border-right:0">File Size</th>',
                 '</tr>',
             '</thead>',
             '<tbody class="tui-form-body {{listItemsClassName}}"></tbody>',
@@ -98,14 +99,19 @@ module.exports.tableTemplate = {
     ].join(''),
     LIST_ITEM: [
         '<tr>',
-            '<td>',
+            '<td width="32">',
                 '<label class="tui-checkbox">',
                     '<span class="tui-ico-check"><input type="checkbox"></span>',
                 '</label>',
             '</td>',
-            '<td>{{filetype}}</td>',
-            '<td>{{filename}}</td>',
-            '<td>{{filesize}}</td>',
+            '<td width="156">{{filetype}}</td>',
+            '<td width="362">',
+                '<span class="tui-filename-area">',
+                    '<span class="tui-file-name">{{filename}}</span>',
+                    '<span class="tui-file-tail">.{{filetype}}</span>',
+                '</span>',
+            '</td>',
+            '<td width="146">{{filesize}}</td>',
         '</tr>'
     ].join('')
 };

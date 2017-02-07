@@ -43,32 +43,27 @@ var Pool = tui.util.defineClass(/** @lends Pool.prototype */{
      */
     store: function(inputFileEl) {
         var id = hasStamp(inputFileEl) && stamp(inputFileEl);
-        var filename, key;
 
         if (!id) {
             return;
         }
-        filename = inputFileEl.value;
-        key = id + filename;
 
-        this.files[key] = inputFileEl;
+        this.files[id] = inputFileEl;
     },
 
     /**
      * Remove a input element[type=file] from pool.
      * @param {string} id - File's id
-     * @param {string} name - File's name
      * @returns {boolean} result
      */
-    remove: function(id, name) {
-        var key = id + name;
-        var element = this.files[key];
+    remove: function(id) {
+        var element = this.files[id];
 
         if (!element) {
             return false;
         }
 
-        delete this.files[key];
+        delete this.files[id];
 
         return true;
     },

@@ -1,5 +1,9 @@
 @charset 'utf-8';
 
+.tui-file-uploader{
+	display:inline-block;
+	vertical-align:top;
+}
 
 .tui-file-uploader,
 .tui-file-uploader [class^=tui-] {
@@ -17,8 +21,6 @@
 
 .tui-ico-check,
 .tui-ico-checked,
-.tui-ico-help,
-.tui-ico-arr,
 .tui-ico-file,
 .tui-btn-delete:after,
 .tui-ico-default {
@@ -51,8 +53,9 @@
 .tui-file-uploader-area{
 	position:relative;
 	width:698px;
-	min-height:212px;
+	min-height:234px;
 	border:1px solid #ccc;
+	z-index:999;
 }
 
 .tui-file-uploader-tbl{
@@ -80,18 +83,17 @@
 	height:32px;
 	font-weight:normal;
 	border-right:1px solid #e5e5e5;
+	border-bottom:1px solid #eee;
 	background:#f6f6f6;
-}
-
-.tui-file-uploader-tbl tr:first-child td{
-	border-top:1px solid #eee;
+	box-sizing:border-box;
 }
 
 .tui-file-uploader-tbl td{
 	padding-left:19px;
-	height:40px;
+	height:42px;
 	border-bottom:1px solid #eee;
 	background:#fff;
+	box-sizing:border-box;
 }
 
 .tui-file-uploader-tbl th.tui-col-name{
@@ -107,6 +109,7 @@
 
 .tui-file-uploader .tui-file-name{
 	overflow:hidden;
+	max-width:280px;
 	display:inline-block;
 	font-size:12px;
 	white-space:nowrap;
@@ -117,7 +120,6 @@
 .tui-file-uploader .tui-file-tail {
 	font-size:12px;
 	vertical-align: top;
-
 }
 
 .tui-ico-check {
@@ -145,28 +147,6 @@
 	background-position:-16px 0;
 }
 
-.tui-file-uploader .tui-file-uploader-tit{
-	display:inline-block;
-	font-size:14px;
-	color:#555;
-	vertical-align:top;
-}
-
-.tui-ico-help{
-	margin:6px 0 0 3px;
-	border:0;
-	width:14px;
-	height:14px;
-	background-position:0 -17px;
-	cursor:pointer;
-	background-color:#fff;
-	font-size:0;
-}
-
-.tui-file-form .tui-ico-help {
-	margin-top:2px;
-}
-
 .tui-file-uploader .tui-file-uploader-header{
 	position:relative;
 	line-height:28px;
@@ -174,52 +154,14 @@
 	margin:0 0 5px;
 }
 
-.tui-file-uploader .tui-tooltip-wrap{
-	position: relative;
-	display: inline-block;
-}
-.tui-file-uploader .tui-tooltip-area{
-	display:none;
-	position:absolute;
-	left:-14px;
-	bottom:32px;
-	max-width: 190px;
-	z-index:30;
-}
-
-.tui-file-uploader .tui-tooltip{
-	display:block;
-	padding:13px 14px;
-	max-width:191px;
-	background-color:#5c5c5c;
-	font-size:12px;
-	color:#fff;
-	border-radius:5px;
-	line-height:16px;
-	white-space:nowrap;
-}
-
-.tui-file-uploader .tui-ico-arr{
-	position:absolute;
-	left:16px;
-	bottom:-8px;
-	width:16px;
-	height:8px;
-	background-position:-16px -17px;
-}
-
-.tui-file-uploader .tui-file-upload-msg{
-	display:inline-block;
-	margin-left:15px;
-	font-size:12px;
-	color:#4b96e6;
-	vertical-align:top;
-}
-
 .tui-file-uploader .tui-file-uploader-header .tui-btn-area{
-	position:absolute;
-	right:0;
-	bottom:0;
+    float:right;
+}
+
+.tui-file-uploader .tui-file-uploader-header:after{
+    display:block;
+    clear:both;
+    content:'';
 }
 
 .tui-file-uploader .tui-btn{
@@ -275,17 +217,20 @@
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 }
 
-.tui-file-uploader .tui-btn-upload .tui-btn-txt {
-
+.tui-file-uploader .tui-btn-upload .tui-btn-txt{
+	display:inline-block;
+	vertical-align:top;
+	line-height:32px;
 }
 
 .tui-file-uploader .tui-btn-cancel.tui-is-disabled{
 	background:#adadad;
 	cursor:default;
 }
-
+/*
 .tui-file-uploader .tui-file-upload-lst{
 	padding:0 16px;
+	min-height:202px;
 }
 
 .tui-file-uploader .tui-file-upload-lst .tui-file-uploader-tbl tr:nth-child(even){
@@ -303,9 +248,8 @@
 .tui-file-uploader .tui-file-upload-lst td.tui-align{
 	padding-right:9px;
 	text-align:right;
-}
-
-
+}*/
+/*
 .tui-file-uploader-tbl .tui-col-1{
 	width:32px;
 }
@@ -332,9 +276,7 @@
 
 .tui-file-uploader .tui-file-upload-lst .tui-col-4{
 	width:26px;
-}
-
-
+}*/
 
 .tui-file-uploader .tui-btn-delete{
 	overflow: hidden;
@@ -351,7 +293,7 @@
 }
 
 .tui-file-uploader .tui-btn-delete:after {
-	position: absolute;
+	position:absolute;
 	top:8px;
 	left:8px;
 	width:10px;
@@ -360,65 +302,50 @@
 	content:' ';
 }
 
-.tui-file-uploader .tui-drop-zone {
-	position: absolute;
-	top: 35px;
-	left: -1px;
-	right: -1px;
-	bottom: -1px;
-	border:1px solid #4b96e6;
-	z-index: 100;
+.tui-file-uploader .tui-dropzone-contents{
+	position:absolute;
+    top:32px;
+    left:-1px;
+    right:-1px;
+    bottom:-1px;
+    padding:90px 0;
+    margin:0;
+    font-size:12px;
+    color:#999;
+    text-align:center;
+    z-index:-999;
+    display:none;
 }
 
-.tui-file-upload-lst .tui-drop-zone {
+.tui-file-uploader .tui-dropzone-enabled{
+    border:1px solid #4b96e6;
+}
+
+.tui-file-uploader-area.tui-dropzone-support .tui-dropzone-contents{
+    display:block;
+}
+
+.tui-file-uploader-area.tui-has-items .tui-dropzone-contents{
+    display:none;
+}
+
+/*.tui-file-uploader .tui-file-upload-lst .tui-file-name{
+	max-width:400px;
+}*/
+
+/*.tui-file-uploader .tui-dropzone-enabled .tui-dropzone-contents {
 	top: -1px;
-}
+}*/
 
-.tui-file-uploader-area td.tui-uploader-move{
-	padding-left:0;
-	text-align:center;
-	height:auto;
-	border:0;
-}
-
-.tui-file-uploader-area .tui-txt-desc{
-	padding:80px 0;
+/*.tui-file-uploader-area .tui-txt-desc{
+	padding:90px 0;
 	margin:0;
 	font-size:12px;
 	color:#999;
-}
+	text-align:center;
+}*/
 
-.tui-file-uploader-info{
-	margin-top:11px;
-	text-align:right;
-	line-height:13px;
-}
-
-.tui-file-uploader-info .tui-info-txt{
-	font-size:12px;
-	color:#777;
-}
-
-.tui-file-uploader-info .tui-info-txt:before{
-	display:inline-block;
-	margin:3px 5px 0 2px;
-	width:1px;
-	height:10px;
-	background:#ddd;
-	vertical-align:top;
-	content:''
-}
-
-.tui-file-uploader-info .tui-info-txt:first-child:before{
-	background:none;
-}
-
-.tui-file-uploader-info .tui-spec{
-	color:#4b96e6;
-	font-style:normal;
-}
-
-.tui-file-uploader .tui-drag-zone .tui-ico-default{
+/*.tui-file-uploader .tui-drag-zone .tui-ico-default{
 	margin:3px 5px 0 0;
 	width:16px;
 	height:11px;
@@ -435,7 +362,7 @@
 	border-radius:10px;
 	line-height:18px;
 	vertical-align:top;
-}
+}*/
 
 .tui-file-uploader-form {
 	table-layout:fixed;
@@ -443,19 +370,7 @@
 	color:#555;
 }
 
-.tui-file-uploader-form .tui-form-row{
-	display:table-row;
-
-}
-.tui-file-uploader-form .tui-form-col{
-	display: table-cell;
-}
-
-.tui-file-uploader-form .tui-form-label{
-	width:132px;
-}
-
-.tui-file-uploader-form th {
+/*.tui-file-uploader-form th {
 	padding-top: 7px;
 	text-align: left;
 	vertical-align: top;
@@ -463,19 +378,7 @@
 
 .tui-file-uploader-form td{
 	vertical-align: middle;
-}
-
-.tui-file-uploader-form .tui-form-lbl {
-	position: relative;
-	font-weight: normal;
-	color: #555;
-}
-
-.tui-file-uploader-form .tui-form-lbl .tui-em {
-	position: absolute;
-	top: -4px;
-	color:#ef351c;
-}
+}*/
 
 .tui-file-uploader-form .tui-btn-upload {
 	vertical-align: middle;
@@ -490,7 +393,10 @@
 	margin-top:5px;
 	height: 26px;
 	line-height: 26px;
+}
 
+.tui-file-uploader .tui-upload-lst .tui-upload-item .tui-file-name{
+	max-width:122px;
 }
 
 .tui-file-uploader .tui-upload-item .tui-btn-delete {
@@ -501,9 +407,64 @@
 	vertical-align: middle;
 }
 
-.tui-file-uploader .tui-input-txt{
-	width:100%;
-	border:1px solid #ddd;
-	font-size:14px;
-	padding:4px 8px 5px;
+.tui-has-scroll thead{
+	float:left;
+	width:696px;
+}
+
+.tui-has-scroll tbody{
+	overflow:hidden;
+	overflow-y:auto;
+	display:block;
+	float:left;
+	max-height:200px;
+	width:696px;
+}
+
+.tui-has-scroll tbody tr{
+	display:table;
+}
+/*
+.tui-has-scroll .tui-col-name{
+	width:32px;
+}
+
+.tui-has-scroll .tui-col-name2{
+	width:156px;
+}
+
+.tui-has-scroll .tui-col-name3{
+	width:362px;
+}
+
+.tui-has-scroll .tui-col-name4{
+	width:146px;
+}
+
+.tui-has-scroll .tui-col-name4_2{
+	width:127px;
+}*/
+
+/*.tui-file-upload-lst.tui-has-scroll tbody{
+	width:680px;
+}*/
+/*
+.tui-file-upload-lst.tui-has-scroll .tui-col-name{
+	width:24px;
+}
+
+.tui-file-upload-lst.tui-has-scroll .tui-col-name2{
+	width:504px;
+}
+
+.tui-file-upload-lst.tui-has-scroll .tui-col-name3{
+	width:110px;
+}
+
+.tui-file-upload-lst.tui-has-scroll .tui-col-name4{
+	width:37px;
+}*/
+
+.tui-file-uploader-nodata tbody{
+	display:none;
 }

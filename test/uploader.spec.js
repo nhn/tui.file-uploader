@@ -49,15 +49,9 @@ describe('Uploader test', function() {
     });
 
     it('when fired remove event from listView, should remove file', function() {
-        var removeItemData = {
-            name: 'file1',
-            size: '10',
-            id: '3'
-        };
-
         spyOn(uploader._requester, 'remove');
-        uploader.listView.fire('remove', removeItemData);
+        uploader.listView.fire('remove', {'A': true});
 
-        expect(uploader._requester.remove).toHaveBeenCalledWith(removeItemData);
+        expect(uploader._requester.remove).toHaveBeenCalledWith({idList: ['A']});
     });
 });

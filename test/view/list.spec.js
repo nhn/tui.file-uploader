@@ -67,16 +67,10 @@ describe('List test', function() {
                     size: 10
                 }
             ];
-            removedFiles = [
-                {
-                    id: 'A',
-                    state: true
-                },
-                {
-                    id: 'B',
-                    state: true
-                }
-            ];
+            removedFiles = {
+                'A': true,
+                'B': true
+            };
         });
         it('"addFileItems" add items.', function() {
             listA._addFileItems(addedfiles);
@@ -89,11 +83,6 @@ describe('List test', function() {
             expect(listA.items.length).toBe(0);
         });
 
-        it('"findIndexOfItem" return index from item id.', function() {
-            listA._addFileItems(addedfiles);
-            expect(listA._findIndexOfItem('B')).toBe(1);
-        });
-
         it('"setHasItemsClassName" set class name on list element as having items', function() {
             var hasItemsClassName = consts.className.HAS_ITEMS;
 
@@ -104,6 +93,13 @@ describe('List test', function() {
             listA._removeFileItems(removedFiles);
             listA._setHasItemsClassName();
             expect(listA.$el.hasClass(hasItemsClassName)).toBe(false);
+        });
+
+        it('"changeCheckboxInItem" is called with true, all checkbox of item is checked.', function() {
+            listB._addFileItems(addedfiles);
+            listB._changeCheckboxInItem(true);
+            expect(listB.items[0].$checkbox.prop('checked')).toBe(true);
+            expect(listB.items[1].$checkbox.prop('checked')).toBe(true);
         });
     });
 
@@ -212,55 +208,8 @@ describe('List test', function() {
             listB._addFileItems(fileItem);
             $columns = listB.$list.find('td');
             expect($columns.eq(1).html()).toBe(fileItem.type);
-            expect($columns.eq(2).html()).toBe(fileItem.name);
+            expect($columns.eq(2).html()).toBe(utils.getPlainFileName(fileItem.name));
             expect($columns.eq(3).html()).toBe(utils.getFileSizeWithUnit(fileItem.size));
-        });
-    });
-
-    describe('checkbox action', function() {
-        beforeEach(function() {
-            listB._addFileItems([
-                {
-                    name: 'filename1.jpg',
-                    type: 'jpg',
-                    id: 'A',
-                    size: 10
-                },
-                {
-                    name: 'filename2.png',
-                    type: 'jpg',
-                    id: 'B',
-                    size: 10
-                },
-                {
-                    name: 'filename2.png',
-                    type: 'jpg',
-                    id: 'C',
-                    size: 10
-                }
-            ]);
-        });
-
-        it('when checked item, index number add on list.', function() {
-            listB._setCheckedItemsIndex('A', true);
-            listB._setCheckedItemsIndex('C', true);
-            expect(listB.checkedIndexList).toEqual([0, 2]);
-        });
-
-        it('when unchecked item, index number is removed on list.', function() {
-            listB._setCheckedItemsIndex('B', true);
-            listB._setCheckedItemsIndex('C', true);
-            expect(listB.checkedIndexList).toEqual([1, 2]);
-            listB._setCheckedItemsIndex('B', false);
-            expect(listB.checkedIndexList).toEqual([2]);
-        });
-
-        it('when all items are checked, checkbox in header is checked.', function() {
-            var checkedClassName = consts.className.IS_CHECKED;
-            spyOn(utils, 'getLabelElement').and.returnValue(listB.$checkbox);
-
-            listB._changeCheckboxInHeader(true);
-            expect(listB.$checkbox.hasClass(checkedClassName)).toBe(true);
         });
     });
 });

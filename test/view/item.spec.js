@@ -54,9 +54,7 @@ describe('Item test -', function() {
 
         itemA._onClickEvent();
 
-        expect(itemA.fire).toHaveBeenCalledWith('remove', {
-            name: itemA.name,
-            id: itemA.id
+        expect(itemA.fire).toHaveBeenCalledWith('remove', {'1': true});
         });
     });
 
