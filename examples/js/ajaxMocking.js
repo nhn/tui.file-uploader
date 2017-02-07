@@ -10,19 +10,7 @@
                 message: 'success',
                 name: 'mockImage01.jpg',
                 size: 812852,
-                id: '1486184836133mockImage01.jpg'
-            },
-            {
-                message: 'success',
-                name: 'mockImage01.jpg',
-                size: 812852,
-                id: '1486184836133mockImage01.jpg'
-            },
-            {
-                message: 'success',
-                name: 'mockImage01.jpg',
-                size: 812852,
-                id: '1486184836133mockImage01.jpg'
+                id: '148618483613mockImage01.jpg'
             }
         ],
         success: 1,
@@ -30,13 +18,10 @@
         count: 1
     });
     var removeResponseText = {
-        message: 'success',
-        filelist: [
-            {
-                id: '1486184836133mockImage01.jpg',
-                state: true
-            }
-        ]
+        '148618483613mockImage01.jpg': {
+            name: '148618483613mockImage01.jpg',
+            size: '10'
+        }
     };
 
     /**

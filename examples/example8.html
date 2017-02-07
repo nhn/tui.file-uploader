@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>FileUploader local test</title>
+        <link rel="stylesheet" href="css/docs.css" />
+        <link rel="stylesheet" href="../dist/tui-component-file-uploader.css" />
+        <link rel="stylesheet" href="css/service.css" />
+    </head>
+
+    <body>
+        <div class="code-html">
+            <div class="explain">
+                This example can test all feature in local enviroment. (using node.js)<br>
+                Please refer to the following link.
+            </div>
+            <div id="uploader" class="tui-file-uploader">
+                <div class="tui-file-uploader-header">
+    				<span class="tui-file-uploader-tit">파일 업로드</span>
+    				<span class="tui-file-upload-msg"><span id="uploadedTotalCount">0</span>개 파일 업로드 완료</span>
+                    <div class="tui-btn-area">
+                        <button type="button" class="tui-btn tui-btn-cancel">삭제</button>
+                        <label class="tui-btn tui-btn-upload">
+                			<span class="tui-btn-txt">파일추가</span>
+                			<input type="file" name="userfile[]" class="tui-input-file">
+                		</label>
+                    </div>
+    			</div>
+                <div class="tui-js-file-uploader-list tui-js-file-uploader-dropzone tui-file-uploader-area tui-has-scroll">
+                    <div class="tui-dropzone-contents">업로드할 파일을 내려놓으세요.</div>
+                </div>
+                <div class="tui-file-uploader-info">
+    				<span class="tui-info-txt"><em class="tui-spec"><span id="checkedTotalCount">0</span>개</em> 항목 선택 (<span id="checkedTotalSize">0 KB</span>)</span>
+    				<span class="tui-info-txt">총 <span id="itemTotalSize">0 KB</span></span>
+    			</div>
+                <div class="tui-btn-submit">
+    				<button type="submit" class="tui-btn tui-btn-large">업로드</button>
+    			</div>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
+        <script type="text/javascript" src="../dist/tui-component-file-uploader.js"></script>
+        <script type="text/javascript" class="code-js">
+
+        var uploader = new tui.component.FileUploader($('#uploader'), {
+            url: {
+                send: 'http://10.77.24.22:3000/upload',
+                remove: 'http://10.77.24.22:3000/remove'
+            },
+            isMultiple: true,
+            isBatchTransfer: true,
+            listUI: {
+                type: 'table',
+                columnList: [
+                    {
+                        header: '{{checkbox}}',
+                        body: '{{checkbox}}',
+                        width: 32
+                    },
+                    {
+                        header: '파일명',
+                        body: '{{filename}}.{{filetype}}',
+                        width: 500
+                    },
+                    {
+                        header: '크기',
+                        body: '{{filesize}}'
+                    }
+                ]
+            }
+        });
+
+        var $uploadedTotalCount = $('#uploadedTotalCount');
+        var $itemTotalSize = $('#itemTotalSize');
+        var $checkedTotalCount = $('#checkedTotalCount');
+        var $checkedTotalSize = $('#checkedTotalSize');
+
+        uploader.on('success', function(evt) {
+            var totalCount = evt.filelist.length;
+            $uploadedTotalCount.html(totalCount);
+            $itemTotalSize.html('0 B');
+            $checkedTotalCount.html('0');
+            $checkedTotalSize.html('0 B');
+        });
+
+        uploader.on('update', function() {
+            var totalSize = uploader.getUploadedTotalSize();
+            $itemTotalSize.html(totalSize);
+        });
+
+        uploader.on('check', function() {
+            var totalCount = uploader.getCheckedTotalCount();
+            var totalSize = uploader.getCheckedTotalSize();
+            $checkedTotalCount.html(totalCount);
+            $checkedTotalSize.html(totalSize);
+        });
+
+        uploader.on('remove', function() {
+            $uploadedTotalCount.html('0');
+            $itemTotalSize.html('0 B');
+            $checkedTotalCount.html('0');
+            $checkedTotalSize.html('0 B');
+        });
+
+        $('.tui-btn-cancel').on('click', function() {
+            uploader.removeCheckedList();
+        });
+
+        </script>
+    </body>
+</html>
