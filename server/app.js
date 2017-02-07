@@ -19,7 +19,7 @@ var PORT = 3000,
             cb(null, __dirname + '/files');
         },
         filename: function (req, file, cb) {
-            cb(null, Date.now() + file.originalname);
+            cb(null, Date.now().toString());
         }
     }),
     upload = multer({
@@ -116,26 +116,18 @@ app.post('/upload', upload, function(req, res) { // Let us suppose that all the 
  */
 app.get('/remove', function(req, res) { // Suppose that the file was removed successfully.
     var callbackName = req.query.callback;
-    var filelist = [];
-    var result;
+    var files = req.query.idList;
+    var result = {};
 
-    req.query.filelist.forEach(function(file) {
-        filelist.push({
-            id: file.id,
-            state: true
-        });
-    });
-
-    result = JSON.stringify({
-        message: 'success',
-        filelist: filelist
+    files.forEach(function(id) {
+        result[id] = true;
     });
 
     log('remove', req.query);
     log('remove', result);
 
     if (callbackName) { // for x-domain jsonp
-        res.send(callbackName + '(' + result + ')');
+        res.send(callbackName + '(' + JSON.stringify(result) + ')');
     } else { // for same domain
         res.send(result);
     }
