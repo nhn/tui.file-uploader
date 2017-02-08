@@ -11,16 +11,16 @@
     "example4": {
         "title": "4. Simple list UI"
     },
-    "exmampl5": {
+    "example5": {
         "title": "5. Table list UI"
     },
     "example6": {
-        "title": "6. Using dropzone"
+        "title": "6. Use dropzone"
     },
     "example7": {
-        "title": "7. Customizing"
+        "title": "7. Customize view"
     },
     "example8": {
-        "title": "8. Test all feature in local"
+        "title": "8. Test all features in local"
     }
 }

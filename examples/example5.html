@@ -8,11 +8,11 @@
     </head>
 
     <body>
-        <div class="code-html">
-            <div class="explain">
-                This example just show a list style.<br>
-                So, don't include submit button despite of using batch transfer.
-            </div>
+        <div class="explain">
+            This example just show a list style.<br>
+            So, don't include submit button despite of using batch transfer.
+        </div>
+        <div class="code-html" style="width:698px;">
             <div id="uploader" class="tui-file-uploader">
                 <div class="tui-file-uploader-header">
                     <div class="tui-btn-area">
@@ -33,8 +33,7 @@
 
         var uploader = new tui.component.FileUploader($('#uploader'), {
             url: {
-                send: 'http://localhost:3000/upload',
-                remove: 'http://localhost:3000/remove'
+                send: 'http://localhost:3000/upload'
             },
             isMultiple: true,
             isBatchTransfer: true,

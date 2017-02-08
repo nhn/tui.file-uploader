@@ -12,8 +12,8 @@
             This example just show a list style.<br>
             So, don't include submit button despite of using batch transfer.
         </div>
-        <div class="code-html">
-            <div id="uploader" class="tui-file-uploader" style="width:240px;">
+        <div class="code-html" style="width:240px;">
+            <div id="uploader" class="tui-file-uploader">
                 <label class="tui-btn tui-btn-upload">
         			<span class="tui-btn-txt">Add files</span>
         			<input type="file" name="userfile[]" class="tui-input-file">
@@ -28,8 +28,7 @@
 
         var uploader = new tui.component.FileUploader($('#uploader'), {
             url: {
-                send: 'http://localhost:3000/upload',
-                remove: 'http://localhost:3000/remove'
+                send: 'http://localhost:3000/upload'
             },
             isMultiple: true,
             isBatchTransfer: true,
