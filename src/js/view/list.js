@@ -447,7 +447,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
             this._addFileItems(data);
         }
 
-        if (this.columnList) {
+        if (this.listType === 'table') {
             this._setHasItemsClassName();
             this._setCheckedAll();
             this._setLastColumnWidth();
