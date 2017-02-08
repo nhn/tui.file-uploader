@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>FileUploader with selecting folder</title>
+        <link rel="stylesheet" href="css/docs.css" />
+        <link rel="stylesheet" href="../dist/tui-component-file-uploader.css" />
+    </head>
+
+    <body>
+        <div class="explain">
+            This example just show selecting folder.<br>
+            Each server request and response data is a mocking data. (not real)<br>
+            So, the information of the selected file is not the same as in the list view.
+        </div>
+        <div class="code-html" style="width:240px;">
+            <div id="uploader" class="tui-file-uploader">
+                <label class="tui-btn tui-btn-upload">
+        			<span class="tui-btn-txt">Add files</span>
+        			<input type="file" name="userfile[]" class="tui-input-file">
+        		</label>
+                <div class="tui-js-file-uploader-list"></div>
+                <div class="tui-btn-submit">
+                    <button type="submit" class="tui-btn tui-btn-large">Upload</button>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mockjax/1.6.2/jquery.mockjax.min.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
+        <script type="text/javascript" src="js/ajaxMocking.js"></script>
+        <script type="text/javascript" src="../dist/tui-component-file-uploader.js"></script>
+        <script type="text/javascript" class="code-js">
+
+            var uploader = new tui.component.FileUploader($('#uploader'), {
+                url: {
+                    send: 'http://localhost:3000/upload'
+                },
+                isMultiple: true,
+                isBatchTransfer: true,
+                useFolder: true,
+                listUI: {
+                    type: 'simple'
+                }
+            });
+
+        </script>
+    </body>
+</html>
