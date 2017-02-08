@@ -107,7 +107,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{
         var template = this.template;
         var map = {
             filetype: this.type,
-            filename: utils.getPlainFileName(this.name),
+            filename: this.name,
             filesize: this.size ? utils.getFileSizeWithUnit(this.size) : '',
             checkbox: htmls.CHECKBOX,
             removeButton: htmls.REMOVE_BUTTON

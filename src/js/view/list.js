@@ -292,6 +292,19 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
     },
 
     /**
+     * Set last column's width value
+     */
+    _setLastColumnWidth: function() {
+        var lastTheadWidth = this.$el.find('th').last()[0].width;
+        var scrollWidth = this.$list.width() - this.$list[0].scrollWidth;
+        var lastColumWidth = lastTheadWidth - scrollWidth;
+
+        forEach(this.items, function(item) {
+            item.$el.find('td').last().attr('width', lastColumWidth);
+        });
+    },
+
+    /**
      * Add file items
      * @param {object} files - Added file list
      * @private
@@ -433,8 +446,12 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
         } else {
             this._addFileItems(data);
         }
-        this._setHasItemsClassName();
-        this._setCheckedAll();
+
+        if (this.columnList) {
+            this._setHasItemsClassName();
+            this._setCheckedAll();
+            this._setLastColumnWidth();
+        }
     },
 
     /**

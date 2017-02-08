@@ -62,8 +62,7 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  * //
  * var fileUploader = new tui.component.FileUploader($('#uploader'), {
  *     url: {
- *         send: 'http://localhost:3000/upload',
- *         remove: 'http://localhost:3000/remove'
+ *         send: 'http://localhost:3000/upload'
  *     },
  *     isBatchTransfer: true,
  *     listUI: {
@@ -387,6 +386,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
 
     /**
      * Clear uploader
+     * @private
      */
     clear: function() {
         this._requester.clear();
@@ -467,7 +467,6 @@ module.exports = Uploader;
  * @event FileUploader#remove
  * @param {object} evt - Remove event data
  *     @param {Array.<string>} evt.idList - Removed item's id list
- * @example
  * @example
  * fileUploader.on('remove', function(evt) {
  *     console.log(evt.idList);

@@ -60,7 +60,7 @@ module.exports.listTemplate = {
         '<li class="tui-upload-item">',
             '<span class="tui-filename-area">',
                 '<span class="tui-file-name">{{filename}}</span>',
-                '<span class="tui-file-tail">.{{filetype}} ({{filesize}})</span>',
+                '<span class="tui-file-tail"> ({{filesize}})</span>',
             '</span>',
             '<button type="button" class="tui-btn-delete">remove</button>',
         '</li>'
@@ -108,7 +108,6 @@ module.exports.tableTemplate = {
             '<td width="362">',
                 '<span class="tui-filename-area">',
                     '<span class="tui-file-name">{{filename}}</span>',
-                    '<span class="tui-file-tail">.{{filetype}}</span>',
                 '</span>',
             '</td>',
             '<td width="146">{{filesize}}</td>',

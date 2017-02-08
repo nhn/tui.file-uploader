@@ -15,7 +15,7 @@ var IS_SUPPORT_FORM_DATA = !!(window.FormData || null);
  * Parse url
  * @param {string} url - url for parsing
  * @returns {Object} URL information
- * @ignore
+ * @memberof utils
  */
 function parseURL(url) {
     var a = document.createElement('a');
@@ -103,6 +103,7 @@ function isCrossDomain(url) {
  * Remove first specified item from array, if it exists
  * @param {*} item Item to look for
  * @param {Array} arr Array to query
+ * @memberof utils
  */
 function removeItemFromArray(item, arr) {
     var index = arr.length - 1;
@@ -119,6 +120,7 @@ function removeItemFromArray(item, arr) {
  * Get label element
  * @param {jQuery} $target - Target element
  * @returns {jQuery|null} Label element
+ * @memberof utils
  */
 function getLabelElement($target) {
     var $labels = $target.parents('label');
@@ -135,6 +137,7 @@ function getLabelElement($target) {
  * Get plain file name
  * @param {string} filename - File name including extension
  * @returns {string} Plain file name
+ * @memberof utils
  */
 function getPlainFileName(filename) {
     return filename.replace(/\.[^.$]+$/, '');
