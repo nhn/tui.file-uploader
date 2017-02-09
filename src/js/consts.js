@@ -62,7 +62,7 @@ module.exports.listTemplate = {
                 '<span class="tui-file-name">{{filename}}</span>',
                 '<span class="tui-file-tail"> ({{filesize}})</span>',
             '</span>',
-            '<button type="button" class="tui-btn-delete">remove</button>',
+            '{{removeButton}}',
         '</li>'
     ].join('')
 };
@@ -84,11 +84,7 @@ module.exports.tableTemplate = {
             '</colgroup>',
             '<thead class="tui-form-header">',
                 '<tr>',
-                    '<th scope="col" width="32" style="border-right:0;">',
-                        '<label class="tui-checkbox">',
-                            '<span class="tui-ico-check"><input type="checkbox"></span>',
-                        '</label>',
-                    '</th>',
+                    '<th scope="col" width="32" style="border-right:0;">{{checkbox}}</th>',
                     '<th scope="col" width="156">File Type</th>',
                     '<th scope="col" width="362">File Name</th>',
                     '<th scope="col" width="146" style="border-right:0">File Size</th>',
@@ -100,10 +96,7 @@ module.exports.tableTemplate = {
     LIST_ITEM: [
         '<tr>',
             '<td width="32">',
-                '<label class="tui-checkbox">',
-                    '<span class="tui-ico-check"><input type="checkbox"></span>',
-                '</label>',
-            '</td>',
+                '<label class="tui-checkbox">{{checkbox}}</td>',
             '<td width="156">{{filetype}}</td>',
             '<td width="362">',
                 '<span class="tui-filename-area">',

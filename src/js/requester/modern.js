@@ -127,7 +127,7 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
     /**
      * Remove file (ajax-jsonp)
      * It is not used for batch transfer.
-     * @param {Object} params - Removed items id list (removeIdList: [])
+     * @param {Object} params - Removed item's id list (idList: [])
      */
     remove: function(params) {
         $.ajax({

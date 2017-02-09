@@ -144,8 +144,9 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{
         this.fire('check', {
             id: this.id,
             name: this.name,
-            size: this.size
-        }, state);
+            size: this.size,
+            state: state
+        });
     },
 
     /**
@@ -182,7 +183,7 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{
      */
     changeCheckboxState: function(state) {
         this.$checkbox.prop('checked', state);
-        this._onChange();
+        this._changeCheckbox(state);
     },
 
     /**
