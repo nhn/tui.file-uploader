@@ -1,0 +1,26 @@
+{
+    "example1": {
+        "title": "1. Normal transfer"
+    },
+    "example2": {
+        "title": "2. Batch transfer"
+    },
+    "example3": {
+        "title": "3. Select folder"
+    },
+    "example4": {
+        "title": "4. Simple list UI"
+    },
+    "example5": {
+        "title": "5. Table list UI"
+    },
+    "example6": {
+        "title": "6. Use dropzone"
+    },
+    "example7": {
+        "title": "7. Customize view"
+    },
+    "example8": {
+        "title": "8. Test all features in local"
+    }
+}
