@@ -208,7 +208,7 @@ describe('List test', function() {
             listB._addFileItems(fileItem);
             $columns = listB.$list.find('td');
             expect($columns.eq(1).html()).toBe(fileItem.type);
-            expect($columns.eq(2).html()).toBe(utils.getPlainFileName(fileItem.name));
+            expect($columns.eq(2).html()).toBe(fileItem.name);
             expect($columns.eq(3).html()).toBe(utils.getFileSizeWithUnit(fileItem.size));
         });
     });

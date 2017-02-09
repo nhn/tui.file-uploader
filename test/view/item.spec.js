@@ -55,7 +55,6 @@ describe('Item test -', function() {
         itemA._onClickEvent();
 
         expect(itemA.fire).toHaveBeenCalledWith('remove', {'1': true});
-        });
     });
 
     describe('checkbox is changed,', function() {
@@ -71,8 +70,9 @@ describe('Item test -', function() {
             expect(itemA.fire).toHaveBeenCalledWith('check', {
                 id: itemA.id,
                 name: itemA.name,
-                size: itemA.size
-            }, true);
+                size: itemA.size,
+                state: true
+            });
         });
 
         it('this element set checked state.', function() {

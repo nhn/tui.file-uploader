@@ -14,6 +14,7 @@ var OldRequester = require('./requester/old');
 var ModernRequester = require('./requester/modern');
 
 var keys = tui.util.keys;
+var forEach = tui.util.forEach;
 var classNames = consts.className;
 var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
 
@@ -70,7 +71,7 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  *     }
  * });
  */
-var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
+var Uploader = tui.util.defineClass(/** @lends Uploader.prototype */{
     init: function($container, options) {
         var $dropzone = $container.find('.' + classNames.DROPZONE);
 
@@ -244,7 +245,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
             check: function(data) {
                 /**
                  * Check event
-                 * @event FileUploader#check
+                 * @event Uploader#check
                  * @param {object} evt - Check event data
                  *     @param {string} evt.id - File id
                  *     @param {string} evt.name - File name
@@ -260,7 +261,8 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
             checkAll: function(data) {
                 /**
                  * Check event
-                 * @event FileUploader#checkAll
+                 * @api
+                 * @event Uploader#checkAll
                  * @param {object} evt - Check event data
                  *     @param {string} evt.filelist - Checked file list
                  * @example
@@ -407,13 +409,21 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
     },
 
     /**
+     * Get checked list items
+     * @returns {object} Checked items
+     */
+    getCheckedList: function() {
+        return this.listView.getCheckedItems();
+    },
+
+    /**
      * Remove file list
      * @param {object} items - Removed file's data
      */
     removeList: function(items) {
         var checkedItems = {};
 
-        tui.util.forEach(items, function(item) {
+        forEach(items, function(item) {
             checkedItems[item.id] = true;
         });
 
@@ -428,7 +438,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
     getTotalSize: function(items) {
         var totalSize = 0;
 
-        tui.util.forEach(items, function(item) {
+        forEach(items, function(item) {
             totalSize += parseFloat(item.size);
         });
 
@@ -441,8 +451,8 @@ module.exports = Uploader;
 
 /**
  * Remove event
- * @event FileUploader#remove
- * @param {object} evt - Removed item's data
+ * @event Uploader#remove
+ * @param {object} evt - Removed item's data (ex: {id: state})
  * @example
  * fileUploader.on('remove', function(evt) {
  *     console.log('state: ' + evt['fileId']);
@@ -451,7 +461,7 @@ module.exports = Uploader;
 
 /**
  * Error event
- * @event FileUploader#error
+ * @event Uploader#error
  * @param {Error} evt - Error data
  *     @param {string} evt.status - Error status
  *     @param {string} evt.message - Error message
@@ -463,7 +473,7 @@ module.exports = Uploader;
 
 /**
  * Success event
- * @event FileUploader#success
+ * @event Uploader#success
  * @param {object} evt - Server response data
  *     @param {Array} evt.filelist - Uploaded file list
  *     @param {number} [evt.success] - Uploaded file count
@@ -477,7 +487,7 @@ module.exports = Uploader;
 
 /**
  * Update event when using batch transfer
- * @event FileUploader#update
+ * @event Uploader#update
  * @param {object} evt - Updated file list
  *     @param {Array} evt.filelist - Updated file list
  * @example

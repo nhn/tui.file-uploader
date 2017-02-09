@@ -18,9 +18,9 @@
             <div id="uploader" class="tui-file-uploader">
                 <div class="tui-file-uploader-header">
                     <span class="tui-file-uploader-tit">File Uploader</span>
-                    <span class="tui-file-upload-msg"><span id="uploadedTotalCount">0</span> files uploaded success</span>
+                    <span class="tui-file-upload-msg"><span id="uploadedCount">0</span> files successfully uploaded</span>
                     <div class="tui-btn-area">
-                        <button type="button" class="tui-btn tui-btn-cancel">Remove</button>
+                        <button type="button" class="tui-btn tui-btn-cancel tui-is-disabled" disabled>Remove</button>
                         <label class="tui-btn tui-btn-upload">
                             <span class="tui-btn-txt">Add files</span>
                             <input type="file" name="userfile[]" class="tui-input-file">
@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="tui-file-uploader-info">
-                    <span class="tui-info-txt">Selected <em class="tui-spec"><span id="checkedTotalCount">0</span> files</em> (<span id="checkedTotalSize">0 KB</span>)</span>
+                    <span class="tui-info-txt">Selected <em class="tui-spec"><span id="checkedItemCount">0</span> files</em> (<span id="checkedItemSize">0 KB</span>)</span>
                     <span class="tui-info-txt">Total <span id="itemTotalSize">0 KB</span></span>
                 </div>
                 <div class="tui-btn-submit">
@@ -64,7 +64,7 @@
                     },
                     {
                         header: 'File Name',
-                        body: '{{filename}}',
+                        body: '<span class="tui-filename-area"><span class="tui-file-name" style="max-width:480px;">{{filename}}</span></span>',
                         width: 500
                     },
                     {
@@ -75,40 +75,91 @@
             }
         });
 
-        var $uploadedTotalCount = $('#uploadedTotalCount');
+        var $uploadedCount = $('#uploadedCount');
         var $itemTotalSize = $('#itemTotalSize');
-        var $checkedTotalCount = $('#checkedTotalCount');
-        var $checkedTotalSize = $('#checkedTotalSize');
+        var $checkedItemCount = $('#checkedItemCount');
+        var $checkedItemSize = $('#checkedItemSize');
+        var $removeButton = $('.tui-btn-cancel');
 
-        uploader.on('success', function(evt) {
-            var totalCount = evt.filelist.length;
-            $uploadedTotalCount.html(totalCount);
+        // below service code
+        function disableRemoveButton(state) {
+            var className = 'tui-is-disabled';
+
+            if (state) {
+                $removeButton.addClass(className);
+            } else {
+                $removeButton.removeClass(className);
+            }
+
+            $removeButton.prop('disabled', state);
+        }
+
+        function updateCheckedInfo(size, count) {
+            $checkedItemSize.html(size);
+            $checkedItemCount.html(count);
+        }
+
+        function setUploadedCountInfo(count) {
+            $uploadedCount.html(count);
+        }
+
+        function resetInfo() {
             $itemTotalSize.html('0 KB');
-            $checkedTotalCount.html('0');
-            $checkedTotalSize.html('0 KB');
-        });
+            $checkedItemSize.html('0 KB');
+            $checkedItemCount.html('0');
+        }
 
-        uploader.on('update', function() {
-            var totalSize = uploader.getUploadedTotalSize();
+        uploader.on('update', function(evt) { // This event is only fired when using batch transfer
+            var items = evt.filelist;
+            var totalSize = uploader.getTotalSize(items);
+
             $itemTotalSize.html(totalSize);
         });
 
-        uploader.on('check', function() {
-            var totalCount = uploader.getCheckedTotalCount();
-            var totalSize = uploader.getCheckedTotalSize();
-            $checkedTotalCount.html(totalCount);
-            $checkedTotalSize.html(totalSize);
+        uploader.on('check', function(evt) {
+            var checkedItems = uploader.getCheckedList();
+            var checkedItemSize = uploader.getTotalSize(checkedItems);
+            var checkedItemCount = checkedItems.length;
+            var removeButtonState = (checkedItemCount === 0);
+
+            disableRemoveButton(removeButtonState);
+            updateCheckedInfo(checkedItemSize, checkedItemCount);
         });
 
-        uploader.on('remove', function() {
-            $uploadedTotalCount.html('0');
-            $itemTotalSize.html('0 KB');
-            $checkedTotalCount.html('0');
-            $checkedTotalSize.html('0 KB');
+        uploader.on('checkAll', function(evt) {
+            var checkedItems = uploader.getCheckedList();
+            var checkedItemSize = uploader.getTotalSize(checkedItems);
+            var checkedItemCount = checkedItems.length;
+            var removeButtonState = (checkedItemCount === 0);
+
+            disableRemoveButton(removeButtonState);
+            updateCheckedInfo(checkedItemSize, checkedItemCount);
         });
 
-        $('.tui-btn-cancel').on('click', function() {
-            uploader.removeCheckedList();
+        uploader.on('remove', function(evt) {
+            var checkedItems = uploader.getCheckedList();
+            var removeButtonState = (checkedItems.length === 0);
+
+            disableRemoveButton(removeButtonState);
+            setUploadedCountInfo(0);
+            resetInfo();
+        });
+
+        uploader.on('success', function(evt) {
+            var successCount = evt.success;
+            var removeButtonState = (successCount > 0);
+
+            $uploadedCount.html(successCount);
+
+            disableRemoveButton(removeButtonState);
+            setUploadedCountInfo(successCount);
+            resetInfo();
+        });
+
+        $removeButton.on('click', function() {
+            var checkedItems = uploader.getCheckedList();
+
+            uploader.removeList(checkedItems);
         });
 
         </script>

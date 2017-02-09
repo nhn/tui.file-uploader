@@ -31,6 +31,8 @@
         <script type="text/javascript" src="../dist/tui-component-file-uploader.js"></script>
         <script type="text/javascript" class="code-js">
 
+        var $removeButton = $('.tui-btn-cancel');
+
         var uploader = new tui.component.FileUploader($('#uploader'), {
             url: {
                 send: 'http://localhost:3000/upload'
@@ -42,8 +44,10 @@
             }
         });
 
-        $('.tui-btn-cancel').on('click', function() {
-            uploader.removeCheckedList();
+        $removeButton.on('click', function() {
+            var checkedItems = uploader.getCheckedList();
+
+            uploader.removeList(checkedItems);
         });
 
         </script>

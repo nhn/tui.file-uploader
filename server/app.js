@@ -112,7 +112,7 @@ app.post('/upload', upload, function(req, res) { // Let us suppose that all the 
  * API - get
  *  /remove
  *      req.query.callback - Callback name for jsonp
- *      req.query.filelist - Removed files list
+ *      req.query.idList - Removed file's id list
  */
 app.get('/remove', function(req, res) { // Suppose that the file was removed successfully.
     var callbackName = req.query.callback;
@@ -123,7 +123,6 @@ app.get('/remove', function(req, res) { // Suppose that the file was removed suc
         result[id] = true;
     });
 
-    log('remove', req.query);
     log('remove', result);
 
     if (callbackName) { // for x-domain jsonp

@@ -25,5 +25,5 @@ describe('Util test', function() {
     it('isCrossDomain', function() {
         var url = 'http://fakeURL';
         expect(utils.isCrossDomain(url)).toBe(true);
-    })
+    });
 });

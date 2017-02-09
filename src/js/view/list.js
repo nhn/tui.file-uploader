@@ -122,7 +122,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
         this._changeCheckboxInHeader(state);
 
         this.fire('checkAll', {
-            filelist: this._getCheckedItems()
+            filelist: this.getCheckedItems()
         });
     },
 
@@ -381,8 +381,8 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
      * @private
      */
     _setCheckedAll: function() {
-        var checkedItemsId = this.getCheckedItemsId();
-        var isCheckedAll = (checkedItemsId.length === this.items.length) &&
+        var checkedItems = this.getCheckedItems();
+        var isCheckedAll = (checkedItems.length === this.items.length) &&
                             !!(this.items.length);
 
         this.$checkbox.prop('checked', isCheckedAll);
@@ -422,7 +422,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
      * Get checked items
      * @returns {Array.<object>} Checked item data
      */
-    _getCheckedItems: function() {
+    getCheckedItems: function() {
         var checkedItems = [];
 
         tui.util.forEach(this.items, function(item) {
@@ -436,22 +436,6 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
         });
 
         return checkedItems;
-    },
-
-    /**
-     * Get checkbox items;
-     * @returns {array.<Item>} Checked items
-     */
-    getCheckedItemsId: function() {
-        var checkedIds = [];
-
-        forEach(this.items, function(item) {
-            if (item.getCheckedState()) {
-                checkedIds.push(item.id);
-            }
-        });
-
-        return checkedIds;
     },
 
     /**

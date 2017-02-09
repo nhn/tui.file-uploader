@@ -10,7 +10,7 @@
                 message: 'success',
                 name: 'mockImage01.jpg',
                 size: 812852,
-                id: '148618483613mockImage01.jpg'
+                id: '148618483613'
             }
         ],
         success: 1,
@@ -18,10 +18,7 @@
         count: 1
     });
     var removeResponseText = {
-        '148618483613mockImage01.jpg': {
-            name: '148618483613mockImage01.jpg',
-            size: '10'
-        }
+        '148618483613': true
     };
 
     /**

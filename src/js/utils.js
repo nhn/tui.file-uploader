@@ -133,16 +133,6 @@ function getLabelElement($target) {
     return null;
 }
 
-/**
- * Get plain file name
- * @param {string} filename - File name including extension
- * @returns {string} Plain file name
- * @memberof utils
- */
-function getPlainFileName(filename) {
-    return filename.replace(/\.[^.$]+$/, '');
-}
-
 module.exports = {
     getFileSizeWithUnit: getFileSizeWithUnit,
     isSupportFileSystem: isSupportFileSystem,
@@ -150,6 +140,5 @@ module.exports = {
     template: template,
     isCrossDomain: isCrossDomain,
     removeItemFromArray: removeItemFromArray,
-    getLabelElement: getLabelElement,
-    getPlainFileName: getPlainFileName
+    getLabelElement: getLabelElement
 };

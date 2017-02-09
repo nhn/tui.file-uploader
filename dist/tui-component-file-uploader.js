@@ -76,6 +76,8 @@
 	var OldRequester = __webpack_require__(8);
 	var ModernRequester = __webpack_require__(10);
 
+	var keys = tui.util.keys;
+	var forEach = tui.util.forEach;
 	var classNames = consts.className;
 	var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
 
@@ -89,11 +91,10 @@
 	 *         @param {string} options.url.remove - Remove files url
 	 *     @param {boolean} [options.isMultiple] Use multiple files upload
 	 *     @param {boolean} [options.useFolder] - Use directory upload. If ture, 'isMultiple' option will be ignored
-	 *     @param {boolean} [options.useDropzone] - Use file drag and drop
 	 *     @param {object} options.listUI - List area preset
 	 *         @param {object} options.listUI.type - List type ('simple' or 'table')
 	 *         @param {string} [options.listUI.item] - To customize item contents when list type is 'simple'
-	 *         @param {array.<object>} [options.listUI.columnList] - To customize row contents when list type is 'table'
+	 *         @param {Array.<object>} [options.listUI.columnList] - To customize row contents when list type is 'table'
 	 * @example
 	 * // Case 1: Using normal transfer & simple list
 	 * //
@@ -103,7 +104,7 @@
 	 * //     <div class="tui-js-file-uploader-list"></div>
 	 * // </div>
 	 * //
-	 * var uploader = new tui.component.FileUploader($('#uploader'), {
+	 * var fileUploader = new tui.component.FileUploader($('#uploader'), {
 	 *     url: {
 	 *         send: 'http://localhost:3000/upload',
 	 *         remove: 'http://localhost:3000/remove'
@@ -123,20 +124,20 @@
 	 * //     <button type="submit">Upload</button>
 	 * // </div>
 	 * //
-	 * var uploader = new tui.component.FileUploader($('#uploader'), {
+	 * var fileUploader = new tui.component.FileUploader($('#uploader'), {
 	 *     url: {
-	 *         send: 'http://localhost:3000/upload',
-	 *         remove: 'http://localhost:3000/remove'
+	 *         send: 'http://localhost:3000/upload'
 	 *     },
 	 *     isBatchTransfer: true,
-	 *     useDropzone: true,
 	 *     listUI: {
 	 *         type: 'table'
 	 *     }
 	 * });
 	 */
-	var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{
+	var Uploader = tui.util.defineClass(/** @lends Uploader.prototype */{
 	    init: function($container, options) {
+	        var $dropzone = $container.find('.' + classNames.DROPZONE);
+
 	        /**
 	         * Uploader element
 	         * @type {jQuery}
@@ -202,18 +203,18 @@
 	        this.isMultiple = !!(options.isMultiple);
 
 	        /**
-	         * Whether the user uses drag&drop upload
-	         * @private
-	         * @type {boolean}
-	         */
-	        this.useDropzone = !!(options.useDropzone);
-
-	        /**
 	         * Whether the user uses folder upload
 	         * @private
 	         * @type {boolean}
 	         */
 	        this.useFolder = !!(options.useFolder);
+
+	        /**
+	         * Whether the user uses drag&drop upload
+	         * @private
+	         * @type {boolean}
+	         */
+	        this.useDropzone = !!($dropzone);
 
 	        /**
 	         * From View
@@ -235,7 +236,7 @@
 	             * @private
 	             * @type {DragAndDrop}
 	             */
-	            this.dragView = new DragAndDrop(this.$container.find('.' + classNames.DROPZONE));
+	            this.dragView = new DragAndDrop($dropzone);
 	        }
 
 	        this._setRequester();
@@ -302,19 +303,40 @@
 	     * @private
 	     */
 	    _addEvent: function() {
-	        this.listView.on('remove', this.removeFile, this);
-	        this.listView.on('check', function(data) {
-	            /**
-	             * Check event
-	             * @event Uploader#check
-	             * @param {object} evt - Event object
-	             *  @param {string} evt.id - File id
-	             *  @param {string} evt.name - File name
-	             *  @param {string} evt.size - File size
-	             *  @param {boolean} evt.isChecked - Checked state
-	             */
-	            this.fire('check', data);
+	        this.listView.on({
+	            remove: this.removeFile,
+	            check: function(data) {
+	                /**
+	                 * Check event
+	                 * @event Uploader#check
+	                 * @param {object} evt - Check event data
+	                 *     @param {string} evt.id - File id
+	                 *     @param {string} evt.name - File name
+	                 *     @param {string} evt.size - File size
+	                 *     @param {boolean} evt.state - Checked state
+	                 * @example
+	                 * FileUploader.on('check', function(evt) {
+	                 *     console.log(evt.id + ' checked state is ' + evt.state);
+	                 * });
+	                 */
+	                this.fire('check', data);
+	            },
+	            checkAll: function(data) {
+	                /**
+	                 * Check event
+	                 * @api
+	                 * @event Uploader#checkAll
+	                 * @param {object} evt - Check event data
+	                 *     @param {string} evt.filelist - Checked file list
+	                 * @example
+	                 * FileUploader.on('checkAll', function(evt) {
+	                 *     console.log(evt.filelist);
+	                 * });
+	                 */
+	                this.fire('checkAll', data);
+	            }
 	        }, this);
+
 	        if (this.isBatchTransfer) {
 	            this._addEventWhenBatchTransfer();
 	        } else {
@@ -334,7 +356,7 @@
 
 	        this._requester.on({
 	            removed: function(data) {
-	                this.updateList(data.filelist, 'remove');
+	                this.updateList(data, 'remove');
 	                this.fire('remove', data);
 	            },
 	            error: function(data) {
@@ -346,7 +368,7 @@
 	            },
 	            stored: function(data) {
 	                this.updateList(data);
-	                this.fire('update', data);
+	                this.fire('update', {filelist: data});
 	            }
 	        }, this);
 
@@ -364,7 +386,7 @@
 
 	        this._requester.on({
 	            removed: function(data) {
-	                this.updateList(data.filelist, 'remove');
+	                this.updateList(data, 'remove');
 	                this.fire('remove', data);
 	            },
 	            error: function(data) {
@@ -406,10 +428,15 @@
 
 	    /**
 	     * Callback for custom remove event
-	     * @param {object} data The data for remove file.
+	     * @param {object} data The data for remove files.
 	     * @private
 	     */
 	    removeFile: function(data) {
+	        if (!this.isBatchTransfer) {
+	            data = {
+	                idList: keys(data)
+	            };
+	        }
 	        this._requester.remove(data);
 	    },
 
@@ -436,6 +463,7 @@
 
 	    /**
 	     * Clear uploader
+	     * @private
 	     */
 	    clear: function() {
 	        this._requester.clear();
@@ -444,71 +472,36 @@
 	    },
 
 	    /**
-	     * Remove checked file list
+	     * Get checked list items
+	     * @returns {object} Checked items
 	     */
-	    removeCheckedList: function() {
-	        var listView = this.listView;
-	        var chekcedIndexList = listView.checkedIndexList;
-	        var files = listView.items;
-	        var checkedFiles, file;
+	    getCheckedList: function() {
+	        return this.listView.getCheckedItems();
+	    },
 
-	        checkedFiles = tui.util.map(chekcedIndexList, function(index) {
-	            file = files[index];
+	    /**
+	     * Remove file list
+	     * @param {object} items - Removed file's data
+	     */
+	    removeList: function(items) {
+	        var checkedItems = {};
 
-	            return {
-	                id: file.id,
-	                name: file.name
-	            };
+	        forEach(items, function(item) {
+	            checkedItems[item.id] = true;
 	        });
 
-	        if (checkedFiles.length) {
-	            this.removeFile({filelist: checkedFiles});
-	        }
+	        this.removeFile(checkedItems);
 	    },
 
 	    /**
-	     * Get uploaded file's total count
-	     * @returns {number} Total count
-	     */
-	    getUploadedTotalCount: function() {
-	        return this.listView.items.length;
-	    },
-
-	    /**
-	     * Get uploaded file's total size
+	     * Get file's total size
+	     * @param {object} items - File data list to get total size
 	     * @returns {string} Total size with unit
 	     */
-	    getUploadedTotalSize: function() {
-	        var items = this.listView.items;
+	    getTotalSize: function(items) {
 	        var totalSize = 0;
 
-	        tui.util.forEach(items, function(item) {
-	            totalSize += parseFloat(item.size);
-	        });
-
-	        return utils.getFileSizeWithUnit(totalSize);
-	    },
-
-	    /**
-	     * Get checked file's total count
-	     * @returns {number} Total count
-	     */
-	    getCheckedTotalCount: function() {
-	        return this.listView.checkedIndexList.length;
-	    },
-
-	    /**
-	     * Get checked file's total size
-	     * @returns {string} Total size with unit
-	     */
-	    getCheckedTotalSize: function() {
-	        var listView = this.listView;
-	        var checkedItemsIndex = listView.checkedIndexList;
-	        var totalSize = 0;
-	        var item;
-
-	        tui.util.forEach(checkedItemsIndex, function(index) {
-	            item = listView.items[index];
+	        forEach(items, function(item) {
 	            totalSize += parseFloat(item.size);
 	        });
 
@@ -522,35 +515,48 @@
 	/**
 	 * Remove event
 	 * @event Uploader#remove
-	 * @param {object} data.filelist - Remove data from this component
-	 *  @param {string} data.message - 'success' or 'fail'
-	 *  @param {string} data.name - file name
-	 *  @param {string} data.id - file id
+	 * @param {object} evt - Removed item's data (ex: {id: state})
+	 * @example
+	 * fileUploader.on('remove', function(evt) {
+	 *     console.log('state: ' + evt['fileId']);
+	 * });
 	 */
 
 	/**
 	 * Error event
 	 * @event Uploader#error
-	 * @param {Error} data - Error data
-	 *  @param {string} data.status - Error status
-	 *  @param {string} data.message - Error message
+	 * @param {Error} evt - Error data
+	 *     @param {string} evt.status - Error status
+	 *     @param {string} evt.message - Error message
+	 * @example
+	 * fileUploader.on('error', function(evt) {
+	 *     console.log(evt.status);
+	 * });
 	 */
 
 	/**
 	 * Success event
 	 * @event Uploader#success
-	 * @param {object} data - Server response data
-	 *  @param {Array} data.filelist - Uploaded file list
-	 *  @param {number} [data.success] - Uploaded file count
-	 *  @param {number} [data.failed] - Failed file count
-	 *  @param {number} [data.count] - Total count
+	 * @param {object} evt - Server response data
+	 *     @param {Array} evt.filelist - Uploaded file list
+	 *     @param {number} [evt.success] - Uploaded file count
+	 *     @param {number} [evt.failed] - Failed file count
+	 *     @param {number} [evt.count] - Total count
+	 * @example
+	 * fileUploader.on('success', function(evt) {
+	 *     console.log(evt.filelist);
+	 * });
 	 */
 
 	/**
-	 * Update event
+	 * Update event when using batch transfer
 	 * @event Uploader#update
-	 * @param {Array.<object>} data - File list data
-	 * Array having objects<br>{id: string, name: string, size: number}
+	 * @param {object} evt - Updated file list
+	 *     @param {Array} evt.filelist - Updated file list
+	 * @example
+	 * fileUploader.on('update', function(evt) {
+	 *     console.log(evt.filelist);
+	 * });
 	 */
 
 
@@ -585,11 +591,11 @@
 	    LIST_CONTAINER: 'tui-js-file-uploader-list',
 	    LIST_ITEMS_CONTAINER: 'tui-js-file-uploader-list-items',
 	    DROPZONE: 'tui-js-file-uploader-dropzone',
-	    USE_DROPZONE: 'tui-dropzone-using',
+	    SUPPORT_DROPZONE: 'tui-dropzone-support',
 	    DROP_ENABLED: 'tui-dropzone-enabled',
 	    HAS_ITEMS: 'tui-has-items',
-	    IS_CHECKED: 'tui-is-checked',
-	    THEAD_STYLE: 'tui-col-name'
+	    HAS_SCROLL: 'tui-has-scroll',
+	    IS_CHECKED: 'tui-is-checked'
 	};
 
 	/*eslint-disable*/
@@ -599,7 +605,7 @@
 	 * @ignore
 	 */
 	module.exports.html = {
-	    FORM: '<form enctype="multipart/form-data" id="tui-uploader-form" method="post" style="position:absolute;"></form>',
+	    FORM: '<form enctype="multipart/form-data" id="tui-uploader-form" method="post"></form>',
 	    HIDDEN_INPUT: '<input type="hidden" name="{{name}}" value="{{value}}">',
 	    CHECKBOX: [
 	        '<label class="tui-checkbox">',
@@ -619,9 +625,10 @@
 	    LIST_ITEM: [
 	        '<li class="tui-upload-item">',
 	            '<span class="tui-filename-area">',
-	                '<span class="tui-file-name">{{filename}} ({{filesize}})</span>',
+	                '<span class="tui-file-name">{{filename}}</span>',
+	                '<span class="tui-file-tail"> ({{filesize}})</span>',
 	            '</span>',
-	            '<button type="button" class="tui-btn-delete">remove</button>',
+	            '{{removeButton}}',
 	        '</li>'
 	    ].join('')
 	};
@@ -643,14 +650,10 @@
 	            '</colgroup>',
 	            '<thead class="tui-form-header">',
 	                '<tr>',
-	                    '<th scope="col">',
-	                        '<label class="tui-checkbox">',
-	                            '<span class="tui-ico-check"><input type="checkbox"></span>',
-	                        '</label>',
-	                    '</th>',
-	                    '<th scope="col">File Type</th>',
-	                    '<th scope="col">File Name</th>',
-	                    '<th scope="col">File Size</th>',
+	                    '<th scope="col" width="32" style="border-right:0;">{{checkbox}}</th>',
+	                    '<th scope="col" width="156">File Type</th>',
+	                    '<th scope="col" width="362">File Name</th>',
+	                    '<th scope="col" width="146" style="border-right:0">File Size</th>',
 	                '</tr>',
 	            '</thead>',
 	            '<tbody class="tui-form-body {{listItemsClassName}}"></tbody>',
@@ -658,14 +661,15 @@
 	    ].join(''),
 	    LIST_ITEM: [
 	        '<tr>',
-	            '<td>',
-	                '<label class="tui-checkbox">',
-	                    '<span class="tui-ico-check"><input type="checkbox"></span>',
-	                '</label>',
+	            '<td width="32">',
+	                '<label class="tui-checkbox">{{checkbox}}</td>',
+	            '<td width="156">{{filetype}}</td>',
+	            '<td width="362">',
+	                '<span class="tui-filename-area">',
+	                    '<span class="tui-file-name">{{filename}}</span>',
+	                '</span>',
 	            '</td>',
-	            '<td>{{filetype}}</td>',
-	            '<td>{{filename}}</td>',
-	            '<td>{{filesize}}</td>',
+	            '<td width="146">{{filesize}}</td>',
 	        '</tr>'
 	    ].join('')
 	};
@@ -692,7 +696,7 @@
 	 * Parse url
 	 * @param {string} url - url for parsing
 	 * @returns {Object} URL information
-	 * @ignore
+	 * @memberof utils
 	 */
 	function parseURL(url) {
 	    var a = document.createElement('a');
@@ -768,8 +772,8 @@
 	 * @memberof utils
 	 */
 	function isCrossDomain(url) {
-	    var here = parseURL(window.location.href),
-	        target = parseURL(url);
+	    var here = parseURL(window.location.href);
+	    var target = parseURL(url);
 
 	    return target.hostname !== here.hostname
 	        || target.port !== here.port
@@ -780,6 +784,7 @@
 	 * Remove first specified item from array, if it exists
 	 * @param {*} item Item to look for
 	 * @param {Array} arr Array to query
+	 * @memberof utils
 	 */
 	function removeItemFromArray(item, arr) {
 	    var index = arr.length - 1;
@@ -796,6 +801,7 @@
 	 * Get label element
 	 * @param {jQuery} $target - Target element
 	 * @returns {jQuery|null} Label element
+	 * @memberof utils
 	 */
 	function getLabelElement($target) {
 	    var $labels = $target.parents('label');
@@ -1122,12 +1128,6 @@
 	         */
 	        this.items = [];
 
-	        /**
-	         * List of checked item's index
-	         * @type {Array.<number>}
-	         */
-	        this.checkedIndexList = [];
-
 	        this._render();
 	        this._addEvent();
 	    },
@@ -1143,6 +1143,7 @@
 	        this.$el.append($listContainer);
 
 	        if (isTableList) {
+	            this._setTableWidth($listContainer);
 	            this._setColumnGroup();
 	            this._setTableHeader();
 	            this._setTableRowTemplate();
@@ -1173,6 +1174,10 @@
 
 	        this._changeCheckboxInItem(state);
 	        this._changeCheckboxInHeader(state);
+
+	        this.fire('checkAll', {
+	            filelist: this.getCheckedItems()
+	        });
 	    },
 
 	    /**
@@ -1185,8 +1190,51 @@
 	        var template = isTableList ? consts.tableTemplate : consts.listTemplate;
 
 	        return $(utils.template({
-	            listItemsClassName: classNames.LIST_ITEMS_CONTAINER
+	            listItemsClassName: classNames.LIST_ITEMS_CONTAINER,
+	            checkbox: consts.html.CHECKBOX
 	        }, template.CONTAINER));
+	    },
+
+	    /**
+	     * Set width of table
+	     * @param {jQuery} $listContainer - List container element
+	     * @private
+	     */
+	    _setTableWidth: function($listContainer) {
+	        var columns = this.columnList;
+	        var totalWidth = parseInt($listContainer.width(), 10);
+	        var sumWidth = 0;
+	        var emptyCount = 0;
+
+	        forEach(columns, function(column) {
+	            if (column.width) {
+	                sumWidth += column.width;
+	            } else {
+	                emptyCount += 1;
+	            }
+	        });
+
+	        if (columns) {
+	            this._setEmptyWidth(totalWidth - sumWidth, emptyCount);
+	        }
+	    },
+
+	    /**
+	     * Set empty width value
+	     * @param {number} extraWidth - Extra width value
+	     * @param {number} emptyCount - Empty width count
+	     * @private
+	     */
+	    _setEmptyWidth: function(extraWidth, emptyCount) {
+	        var columns = this.columnList;
+	        var eachWidth = Math.floor(extraWidth / emptyCount);
+	        var lastWidth = eachWidth + (extraWidth % emptyCount);
+
+	        forEach(columns, function(column, index) {
+	            if (!column.width) {
+	                column.width = ((columns.length - 1) === index) ? lastWidth : eachWidth;
+	            }
+	        });
 	    },
 
 	    /**
@@ -1197,16 +1245,9 @@
 	        var $colgroup = this.$el.find('colgroup');
 	        var columns = this.columnList;
 	        var html = '';
-	        var width;
 
 	        forEach(columns, function(column) {
-	            width = column.width;
-
-	            if (width) {
-	                html += '<col width="' + column.width + '">';
-	            } else {
-	                html += '<col>';
-	            }
+	            html += '<col width="' + column.width + '">';
 	        });
 
 	        if (columns) {
@@ -1221,36 +1262,39 @@
 	    _setTableHeader: function() {
 	        var columns = this.columnList;
 	        var html = '';
-	        var header;
+	        var headerCount = 0;
 
 	        forEach(columns, function(column) {
-	            header = column.header;
-
-	            if (!isUndefined(header)) {
-	                html += '<th scope="col">' + header + '</th>';
+	            if (!isUndefined(column.header)) {
+	                html += '<th scope="col" width="' + column.width + '">' + column.header + '</th>';
+	                headerCount += 1;
 	            }
 	        });
 
-	        this._setHeaderElement(html);
+	        if (columns) {
+	            this._setHeaderElement(html, (headerCount === columns.length));
+	        }
 	    },
 
 	    /**
 	     * Set header element
 	     * @param {string} html - Template of header
+	     * @param {boolean} hasHeader - Whether has header or not
 	     * @private
 	     */
-	    _setHeaderElement: function(html) {
+	    _setHeaderElement: function(html, hasHeader) {
 	        var $thead = this.$el.find('thead');
-	        var theadClassName = classNames.THEAD_STYLE;
 
-	        if (html) {
+	        if (hasHeader) {
 	            html = utils.template({
 	                checkbox: consts.html.CHECKBOX
 	            }, html);
 	            $thead.html('<tr>' + html + '</tr>');
+	            $thead.find('th').first().css('border-right', 0);
+	            $thead.find('th').last().css('border-right', 0);
+	        } else {
+	            $thead.hide();
 	        }
-	        $thead.find('th').first().addClass(theadClassName);
-	        $thead.find('th').last().addClass(theadClassName);
 	    },
 
 	    /**
@@ -1262,7 +1306,7 @@
 	        var html = '';
 
 	        forEach(columns, function(column) {
-	            html += '<td>' + column.body + '</td>';
+	            html += '<td width="' + column.width + '">' + column.body + '</td>';
 	        });
 
 	        if (html) {
@@ -1307,6 +1351,19 @@
 	    },
 
 	    /**
+	     * Set last column's width value
+	     */
+	    _setLastColumnWidth: function() {
+	        var lastTheadWidth = this.$el.find('th').last()[0].width;
+	        var scrollWidth = this.$list.width() - this.$list[0].scrollWidth;
+	        var lastColumWidth = lastTheadWidth - scrollWidth;
+
+	        forEach(this.items, function(item) {
+	            item.$el.find('td').last().attr('width', lastColumWidth);
+	        });
+	    },
+
+	    /**
 	     * Add file items
 	     * @param {object} files - Added file list
 	     * @private
@@ -1322,46 +1379,22 @@
 
 	    /**
 	     * Remove file items
-	     * @param {Array.<object>} files - Removed file list
+	     * @param {object} data - Removed item's
 	     * @private
 	     */
-	    _removeFileItems: function(files) {
-	        var index;
+	    _removeFileItems: function(data) {
+	        var removedItem;
 
-	        this.checkedIndexList.length = 0;
+	        this.items = tui.util.filter(this.items, function(item) {
+	            removedItem = data[item.id];
 
-	        forEach(files, function(file) {
-	            index = this._findIndexOfItem(file.id);
-	            if (file.state) {
-	                this.items[index].destroy();
-	                this.items.splice(index, 1);
-	            } else {
-	                this.checkedIndexList.push(index);
+	            if (removedItem) {
+	                item.destroy();
 	            }
+
+	            return !removedItem;
 	        }, this);
 	    },
-
-	    /**
-	     * Find index of checked item
-	     * @param {string} id - Item's id to find
-	     * @returns {number} item's index
-	     * @private
-	     */
-	    /*eslint-disable consistent-return*/
-	    _findIndexOfItem: function(id) {
-	        var itemIndex;
-
-	        forEach(this.items, function(item, index) {
-	            if (item.id === id) {
-	                itemIndex = index;
-
-	                return false;
-	            }
-	        });
-
-	        return itemIndex;
-	    },
-	    /*eslint-enable consistent-return*/
 
 	    /**
 	     * Create item By Data
@@ -1378,49 +1411,23 @@
 	    },
 
 	    /**
-	     * Remove event handler
-	     * @param {Item} item - Item
+	     * Remove event handler on each item
+	     * @param {Item} data - Remove item's data
 	     * @private
 	     */
-	    _onRemove: function(item) {
-	        this.fire('remove', {
-	            filelist: [item]
-	        });
+	    _onRemove: function(data) {
+	        this.fire('remove', data);
 	    },
 
 	    /**
-	     * Check event handler
+	     * Check event handler fired on each list item
 	     * @param {string} data - Current selected item's data
-	     * @param {boolean} isChecked - Checked state
 	     * @private
 	     */
-	    _onCheck: function(data, isChecked) {
-	        this._setCheckedItemsIndex(data.id, isChecked);
+	    _onCheck: function(data) {
 	        this._setCheckedAll();
 
-	        this.fire('check', {
-	            id: data.id,
-	            name: data.name,
-	            size: data.size,
-	            isChecked: isChecked
-	        });
-	    },
-
-	    /**
-	     * Set list of checked item's index
-	     * @param {string} id - File id
-	     * @param {boolean} isChecked - Checked state
-	     * @private
-	     */
-	    _setCheckedItemsIndex: function(id, isChecked) {
-	        var checkedIndexList = this.checkedIndexList;
-	        var checkedIndex = this._findIndexOfItem(id);
-
-	        if (isChecked) {
-	            checkedIndexList.push(checkedIndex);
-	        } else {
-	            utils.removeItemFromArray(checkedIndex, checkedIndexList);
-	        }
+	        this.fire('check', data);
 	    },
 
 	    /**
@@ -1428,8 +1435,9 @@
 	     * @private
 	     */
 	    _setCheckedAll: function() {
-	        var isCheckedAll = (this.checkedIndexList.length === this.items.length) &&
-	                            !!this.checkedIndexList.length;
+	        var checkedItems = this.getCheckedItems();
+	        var isCheckedAll = (checkedItems.length === this.items.length) &&
+	                            !!(this.items.length);
 
 	        this.$checkbox.prop('checked', isCheckedAll);
 	        this._changeCheckboxInHeader(isCheckedAll);
@@ -1443,7 +1451,7 @@
 	    _changeCheckboxInHeader: function(state) {
 	        var $checkbox = this.$checkbox;
 	        var $label = utils.getLabelElement($checkbox);
-	        var $target = ($label) ? $label : $checkbox;
+	        var $target = $label ? $label : $checkbox;
 	        var className = classNames.IS_CHECKED;
 
 	        if (state) {
@@ -1459,12 +1467,29 @@
 	     * @private
 	     */
 	    _changeCheckboxInItem: function(state) {
-	        this.checkedIndexList = [];
-
 	        forEach(this.items, function(item) {
-	            item.$checkbox.prop('checked', state);
-	            item.onChange();
+	            item.changeCheckboxState(state);
 	        });
+	    },
+
+	    /**
+	     * Get checked items
+	     * @returns {Array.<object>} Checked item data
+	     */
+	    getCheckedItems: function() {
+	        var checkedItems = [];
+
+	        tui.util.forEach(this.items, function(item) {
+	            if (item.getCheckedState()) {
+	                checkedItems.push({
+	                    id: item.id,
+	                    name: item.name,
+	                    size: item.size
+	                });
+	            }
+	        });
+
+	        return checkedItems;
 	    },
 
 	    /**
@@ -1478,8 +1503,12 @@
 	        } else {
 	            this._addFileItems(data);
 	        }
-	        this._setHasItemsClassName();
-	        this._setCheckedAll();
+
+	        if (this.listType === 'table') {
+	            this._setHasItemsClassName();
+	            this._setCheckedAll();
+	            this._setLastColumnWidth();
+	        }
 	    },
 
 	    /**
@@ -1490,7 +1519,6 @@
 	            item.destroy();
 	        });
 	        this.items.length = 0;
-	        this.checkedIndexList.length = 0;
 	        this._setHasItemsClassName();
 	        this._setCheckedAll();
 	    }
@@ -1564,7 +1592,7 @@
 	         * @type {string}
 	         * @private
 	         */
-	        this.id = data.id || data.name;
+	        this.id = data.id;
 
 	        /**
 	         * Item size
@@ -1637,8 +1665,23 @@
 	     * @private
 	     */
 	    _addEvent: function() {
-	        this.$checkbox.on('change', $.proxy(this.onChange, this));
+	        this.$checkbox.on('change', $.proxy(this._onChange, this));
 	        this.$removeButton.on('click', $.proxy(this._onClickEvent, this));
+	    },
+
+	    /**
+	     * Change event handler
+	     * @private
+	     */
+	    _onChange: function() {
+	        var state = !!this.$checkbox.prop('checked');
+	        this._changeCheckbox(state);
+	        this.fire('check', {
+	            id: this.id,
+	            name: this.name,
+	            size: this.size,
+	            state: state
+	        });
 	    },
 
 	    /**
@@ -1646,10 +1689,9 @@
 	     * @private
 	     */
 	    _onClickEvent: function() {
-	        this.fire('remove', {
-	            name: this.name,
-	            id: this.id
-	        });
+	        var data = {};
+	        data[this.id] = true;
+	        this.fire('remove', data);
 	    },
 
 	    /**
@@ -1671,16 +1713,20 @@
 	    },
 
 	    /**
-	     * Change event handler
+	     * Change checkbox state
+	     * @param {boolean} state - Checked state
 	     */
-	    onChange: function() {
-	        var state = !!this.$checkbox.prop('checked');
+	    changeCheckboxState: function(state) {
+	        this.$checkbox.prop('checked', state);
 	        this._changeCheckbox(state);
-	        this.fire('check', {
-	            id: this.id,
-	            name: this.name,
-	            size: this.size
-	        }, state);
+	    },
+
+	    /**
+	     * Get state of checkbox
+	     * @returns {boolean} Checkbox state
+	     */
+	    getCheckedState: function() {
+	        return this.$checkbox.prop('checked');
 	    },
 
 	    /**
@@ -1707,7 +1753,7 @@
 
 	var consts = __webpack_require__(2);
 
-	var USE_DROPZONE_CLASS = consts.className.USE_DROPZONE;
+	var SUPPORT_DROPZONE_CLASS = consts.className.SUPPORT_DROPZONE;
 	var DROP_ENABLED_CLASS = consts.className.DROP_ENABLED;
 
 	/**
@@ -1722,7 +1768,7 @@
 	         * Drop zone jQuery-element
 	         * @type {jQuery}
 	         */
-	        this.$el = $el.addClass(USE_DROPZONE_CLASS);
+	        this.$el = $el.addClass(SUPPORT_DROPZONE_CLASS);
 
 	        /**
 	         * Class for drop enabled
@@ -1945,12 +1991,11 @@
 	    /**
 	     * Remove file (ajax-jsonp)
 	     * It is not used for batch transfer.
-	     * @param {Object} params - Parameters to remove file
+	     * @param {Object} params - Removed item's id list (idList: [])
 	     */
 	    remove: function(params) {
-	        var uploader = this.uploader;
 	        $.ajax({
-	            url: uploader.url.remove,
+	            url: this.uploader.url.remove,
 	            dataType: 'jsonp',
 	            data: params,
 	            success: $.proxy(function(data) {
@@ -1960,22 +2005,17 @@
 	    },
 
 	    /**
-	     * Remove file (ajax-jsonp)
+	     * Remove file
 	     * It is used for batch transfer.
-	     * @param {Object} params - Parameters to remove file
+	     * @param {Object} removedItems - Removed items info
 	     * @private
 	     */
-	    _removeWhenBatch: function(params) {
-	        var result = false;
-
-	        tui.util.forEach(params.filelist, function(file) {
-	            result = this.pool.remove(file.id, file.name);
-	            file.state = result;
+	    _removeWhenBatch: function(removedItems) {
+	        tui.util.forEach(removedItems, function(id, name) {
+	            this.pool.remove(id, name);
 	        }, this);
 
-	        this.fire('removed', tui.util.extend({
-	            message: result ? 'success' : 'fail'
-	        }, params));
+	        this.fire('removed', removedItems);
 	    },
 
 	    /**
@@ -2039,32 +2079,27 @@
 	     */
 	    store: function(inputFileEl) {
 	        var id = hasStamp(inputFileEl) && stamp(inputFileEl);
-	        var filename, key;
 
 	        if (!id) {
 	            return;
 	        }
-	        filename = inputFileEl.value;
-	        key = id + filename;
 
-	        this.files[key] = inputFileEl;
+	        this.files[id] = inputFileEl;
 	    },
 
 	    /**
 	     * Remove a input element[type=file] from pool.
 	     * @param {string} id - File's id
-	     * @param {string} name - File's name
 	     * @returns {boolean} result
 	     */
-	    remove: function(id, name) {
-	        var key = id + name;
-	        var element = this.files[key];
+	    remove: function(id) {
+	        var element = this.files[id];
 
 	        if (!element) {
 	            return false;
 	        }
 
-	        delete this.files[key];
+	        delete this.files[id];
 
 	        return true;
 	    },
@@ -2226,7 +2261,7 @@
 	    /**
 	     * Remove file (ajax-jsonp)
 	     * It is not used for batch transfer.
-	     * @param {Object} params - Parameters to remove file
+	     * @param {Object} params - Removed item's id list (idList: [])
 	     */
 	    remove: function(params) {
 	        $.ajax({
@@ -2240,46 +2275,17 @@
 	    },
 
 	    /**
-	     * Remove file (ajax-jsonp)
+	     * Remove file
 	     * It is used for batch transfer.
-	     * @param {Object} params - Parameters to remove file
+	     * @param {Object} removedItems - Removed items info
 	     * @private
 	     */
-	    _removeWhenBatch: function(params) {
-	        var result = false;
+	    _removeWhenBatch: function(removedItems) {
+	        this.pool = tui.util.filter(this.pool, function(file) {
+	            return (removedItems[file.id]);
+	        });
 
-	        forEach(params.filelist, function(file) {
-	            result = this._removeFileInPool(file.id);
-	            file.state = result;
-	        }, this);
-
-	        this.fire('removed', tui.util.extend({
-	            message: result ? 'success' : 'fail'
-	        }, params));
-	    },
-
-	    /**
-	     * Remove file in pool
-	     * @param {string} id - File's id to find
-	     * @returns {boolean} Removed state
-	     * @private
-	     */
-	    _removeFileInPool: function(id) {
-	        var pool = this.pool;
-	        var stamp = tui.util.stamp;
-	        var result = false;
-	        var i = 0;
-	        var len = pool.length;
-
-	        for (; i < len; i += 1) {
-	            if (stamp(pool[i]) === id) {
-	                pool.splice(i, 1);
-	                result = true;
-	                break;
-	            }
-	        }
-
-	        return result;
+	        this.fire('removed', removedItems);
 	    },
 
 	    /**
