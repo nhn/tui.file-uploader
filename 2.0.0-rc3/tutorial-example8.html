@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Tutorial: 8. Test all features in local | Tree</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px">
+        <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Tree</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example1.html">1. Normal transfer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example1_sub"></div></li><li><a href="tutorial-example2.html">2. Batch transfer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example2_sub"></div></li><li><a href="tutorial-example3.html">3. Select folder</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example3_sub"></div></li><li><a href="tutorial-example4.html">4. Simple list UI</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example4_sub"></div></li><li><a href="tutorial-example5.html">5. Table list UI</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example5_sub"></div></li><li><a href="tutorial-example6.html">6. Use dropzone</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example6_sub"></div></li><li><a href="tutorial-example7.html">7. Customize view</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example7_sub"></div></li><li><a href="tutorial-example8.html">8. Test all features in local</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example8_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Uploader.html">Uploader</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Uploader_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Uploader.html#getTotalSize">getTotalSize</a></li><li><a href="Uploader.html#removeList">removeList</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+<section>
+    <header>
+        
+
+        <h2>8. Test all features in local</h2>
+    </header>
+
+    
+        
+
+        <ul id="example-nav" class="nav nav-tabs">
+            <li role="presentation" id="example-result-btn" class="active" onclick="showResult()">
+                <a href="#">Result</a>
+            </li>
+            <li role="presentation" id="example-js-btn" class="" onclick="showJs()">
+                <a href="#">JS</a>
+            </li>
+            <li role="presentation" id="example-html-btn" class="" onclick="showHtml()">
+                <a href="#">HTML</a>
+            </li>
+        </ul>
+        <article>
+            
+            <iframe id="example-result" width="100%" height="800" frameborder="0" src=tutorials/example8.html></iframe>
+            <div id="example-js" class="hidden"><pre class="prettyprint source">
+
+        var checkedItems = [];
+
+        var uploader = new tui.component.FileUploader($('#uploader'), {
+            url: {
+                send: 'http://localhost:3000/upload'
+            },
+            isMultiple: true,
+            isBatchTransfer: true,
+            listUI: {
+                type: 'table',
+                columnList: [
+                    {
+                        header: '{{checkbox}}',
+                        body: '{{checkbox}}',
+                        width: 32
+                    },
+                    {
+                        header: 'File Name',
+                        body: '&lt;span class="tui-filename-area">&lt;span class="tui-file-name" style="max-width:480px;">{{filename}}&lt;/span>&lt;/span>',
+                        width: 500
+                    },
+                    {
+                        header: 'File Size',
+                        body: '{{filesize}}'
+                    }
+                ]
+            }
+        });
+
+        var $uploadedCount = $('#uploadedCount');
+        var $itemTotalSize = $('#itemTotalSize');
+        var $checkedItemCount = $('#checkedItemCount');
+        var $checkedItemSize = $('#checkedItemSize');
+        var $removeButton = $('.tui-btn-cancel');
+
+        // below service code
+        function disableRemoveButton(state) {
+            var className = 'tui-is-disabled';
+
+            if (state) {
+                $removeButton.addClass(className);
+            } else {
+                $removeButton.removeClass(className);
+            }
+
+            $removeButton.prop('disabled', state);
+        }
+
+        function updateCheckedInfo(size, count) {
+            $checkedItemSize.html(size);
+            $checkedItemCount.html(count);
+        }
+
+        function setUploadedCountInfo(count) {
+            $uploadedCount.html(count);
+        }
+
+        function resetInfo() {
+            $itemTotalSize.html('0 KB');
+            $checkedItemSize.html('0 KB');
+            $checkedItemCount.html('0');
+        }
+
+        uploader.on('update', function(evt) { // This event is only fired when using batch transfer
+            var items = evt.filelist;
+            var totalSize = uploader.getTotalSize(items);
+
+            $itemTotalSize.html(totalSize);
+        });
+
+        uploader.on('check', function(evt) {
+            var checkedItemCount, checkedItemSize, removeButtonState;
+
+            if (evt.state) {
+                checkedItems.push(evt);
+            } else {
+                checkedItems = tui.util.filter(checkedItems, function(item) {
+                    return !(item.id === evt.id);
+                });
+            }
+
+            checkedItemSize = uploader.getTotalSize(checkedItems);
+            checkedItemCount = checkedItems.length;
+            removeButtonState = (checkedItemCount === 0);
+
+            disableRemoveButton(removeButtonState);
+            updateCheckedInfo(checkedItemSize, checkedItemCount);
+        });
+
+        uploader.on('checkAll', function(evt) {
+            var checkedItemCount, checkedItemSize, removeButtonState;
+
+            checkedItems = evt.filelist;
+
+            checkedItemSize = uploader.getTotalSize(checkedItems);
+            checkedItemCount = checkedItems.length;
+            removeButtonState = (checkedItemCount === 0);
+
+            disableRemoveButton(removeButtonState);
+            updateCheckedInfo(checkedItemSize, checkedItemCount);
+        });
+
+        uploader.on('remove', function(evt) {
+            var removeButtonState;
+
+            checkedItems = tui.util.filter(checkedItems, function(item) {
+                return !(evt[item.id]);
+            });
+
+            removeButtonState = (checkedItems.length === 0);
+
+            disableRemoveButton(removeButtonState);
+            setUploadedCountInfo(0);
+            resetInfo();
+        });
+
+        uploader.on('success', function(evt) {
+            var successCount = evt.success;
+            var removeButtonState = (successCount > 0);
+
+            $uploadedCount.html(successCount);
+
+            disableRemoveButton(removeButtonState);
+            setUploadedCountInfo(successCount);
+            resetInfo();
+        });
+
+        $removeButton.on('click', function() {
+            uploader.removeList(checkedItems);
+        });
+
+        </pre></div>
+            <div id="example-html" class="hidden"><pre class="prettyprint source">
+            &lt;div id="uploader" class="tui-file-uploader">
+                &lt;div class="tui-file-uploader-header">
+                    &lt;span class="tui-file-uploader-tit">File Uploader&lt;/span>
+                    &lt;span class="tui-file-upload-msg">&lt;span id="uploadedCount">0&lt;/span> files successfully uploaded&lt;/span>
+                    &lt;div class="tui-btn-area">
+                        &lt;button type="button" class="tui-btn tui-btn-cancel tui-is-disabled" disabled>Remove&lt;/button>
+                        &lt;label class="tui-btn tui-btn-upload">
+                            &lt;span class="tui-btn-txt">Add files&lt;/span>
+                            &lt;input type="file" name="userfile[]" class="tui-input-file">
+                        &lt;/label>
+                    &lt;/div>
+                &lt;/div>
+                &lt;div class="tui-js-file-uploader-list tui-js-file-uploader-dropzone tui-file-uploader-area tui-has-scroll">
+                    &lt;div class="tui-dropzone-contents">
+                        &lt;span class="tui-dropzone-msg">Drop files here.&lt;/span>
+                    &lt;/div>
+                &lt;/div>
+                &lt;div class="tui-file-uploader-info">
+                    &lt;span class="tui-info-txt">Selected &lt;em class="tui-spec">&lt;span id="checkedItemCount">0&lt;/span> files&lt;/em> (&lt;span id="checkedItemSize">0 KB&lt;/span>)&lt;/span>
+                    &lt;span class="tui-info-txt">Total &lt;span id="itemTotalSize">0 KB&lt;/span>&lt;/span>
+                &lt;/div>
+                &lt;div class="tui-btn-submit">
+                    &lt;button type="submit" class="tui-btn tui-btn-large">Upload&lt;/button>
+                &lt;/div>
+            &lt;/div>
+        </pre></div>
+        </article>
+    
+</section>
+
+
+    <script>
+        var exampleResult = document.getElementById('example-result');
+        var exampleJs = document.getElementById('example-js');
+        var exampleHtml = document.getElementById('example-html');
+        var exampleResultBtn = document.getElementById('example-result-btn');
+        var exampleJsBtn = document.getElementById('example-js-btn');
+        var exampleHtmlBtn = document.getElementById('example-html-btn');
+
+        function setActive(el) {
+            el.className += ' active';
+        }
+
+        function setInactive(el) {
+            el.className = el.className.replace(/\s*active\s*/g, '');
+        }
+
+        function show(el) {
+            el.className = el.className.replace(/\s*hidden\s*/g, '');
+        }
+
+        function hide(el) {
+            el.className += ' hidden';
+        }
+
+        function showJs() {
+            hide(exampleHtml);
+            hide(exampleResult);
+            setInactive(exampleHtmlBtn);
+            setInactive(exampleResultBtn);
+
+            show(exampleJs);
+            setActive(exampleJsBtn);
+        }
+
+        function showHtml() {
+            hide(exampleJs);
+            hide(exampleResult);
+            setInactive(exampleJsBtn);
+            setInactive(exampleResultBtn);
+
+            show(exampleHtml);
+            setActive(exampleHtmlBtn);
+        }
+
+        function showResult() {
+            hide(exampleJs);
+            hide(exampleHtml);
+            setInactive(exampleJsBtn);
+            setInactive(exampleHtmlBtn);
+
+            show(exampleResult);
+            setActive(exampleResultBtn);
+        }
+    </script>
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        showLnbExamples();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>FileUploader with table list</title>
+        <link rel="stylesheet" href="css/docs.css" />
+        <link rel="stylesheet" href="../dist/tui-component-file-uploader.css" />
+    </head>
+
+    <body>
+        <div class="explain">
+            This example just show a list style.<br>
+            So, don't include submit button despite of using batch transfer.
+        </div>
+        <div class="code-html" style="width:698px;">
+            <div id="uploader" class="tui-file-uploader">
+                <div class="tui-file-uploader-header">
+                    <div class="tui-btn-area">
+                        <button type="button" class="tui-btn tui-btn-cancel">Remove</button>
+                        <label class="tui-btn tui-btn-upload">
+                			<span class="tui-btn-txt">Add files</span>
+                			<input type="file" name="userfile[]" class="tui-input-file">
+                		</label>
+                    </div>
+                </div>
+                <div class="tui-js-file-uploader-list tui-file-uploader-area tui-has-scroll"></div>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
+        <script type="text/javascript" src="../dist/tui-component-file-uploader.js"></script>
+        <script type="text/javascript" class="code-js">
+
+        var checkedItems = [];
+        var $removeButton = $('.tui-btn-cancel');
+
+        var uploader = new tui.component.FileUploader($('#uploader'), {
+            url: {
+                send: 'http://localhost:3000/upload'
+            },
+            isMultiple: true,
+            isBatchTransfer: true,
+            listUI: {
+                type: 'table'
+            }
+        });
+
+        uploader.on('check', function(evt) {
+            if (evt.state) {
+                checkedItems.push(evt);
+            } else {
+                checkedItems = tui.util.filter(checkedItems, function(item) {
+                    return !(item.id === evt.id);
+                });
+            }
+        });
+
+        uploader.on('checkAll', function(evt) {
+            checkedItems = evt.filelist;
+        });
+
+        $removeButton.on('click', function() {
+            uploader.removeList(checkedItems);
+        });
+
+        </script>
+    </body>
+</html>
