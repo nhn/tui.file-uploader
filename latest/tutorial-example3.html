@@ -1,10 +1,8 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: utils.js | Tree</title>
+    <title>Tutorial: 3. Select folder | Tree</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -48,160 +46,116 @@
 <div class="main" id="main">
     
 
+<section>
+    <header>
+        
 
+        <h2>3. Select folder</h2>
+    </header>
 
     
-    <section>
+        
+
+        <ul id="example-nav" class="nav nav-tabs">
+            <li role="presentation" id="example-result-btn" class="active" onclick="showResult()">
+                <a href="#">Result</a>
+            </li>
+            <li role="presentation" id="example-js-btn" class="" onclick="showJs()">
+                <a href="#">JS</a>
+            </li>
+            <li role="presentation" id="example-html-btn" class="" onclick="showHtml()">
+                <a href="#">HTML</a>
+            </li>
+        </ul>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @fileoverview This file contain utility methods for uploader.
- * @author NHN Ent. FE Development Lab &lt;dl_javascript@nhnent.com>
- */
-'use strict';
+            
+            <iframe id="example-result" width="100%" height="800" frameborder="0" src=tutorials/example3.html></iframe>
+            <div id="example-js" class="hidden"><pre class="prettyprint source">
 
-/**
- * @namespace utils
- * @ignore
- */
-var IS_SUPPORT_FILE_SYSTEM = !!(window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob);
-var IS_SUPPORT_FORM_DATA = !!(window.FormData || null);
+            var uploader = new tui.component.FileUploader($('#uploader'), {
+                url: {
+                    send: 'http://localhost:3000/upload'
+                },
+                isMultiple: true,
+                isBatchTransfer: true,
+                useFolder: true,
+                listUI: {
+                    type: 'simple'
+                }
+            });
 
-/**
- * Parse url
- * @param {string} url - url for parsing
- * @returns {Object} URL information
- * @memberof utils
- */
-function parseURL(url) {
-    var a = document.createElement('a');
-    a.href = url;
-
-    return {
-        href: a.href,
-        host: a.host,
-        port: a.port,
-        hash: a.hash,
-        hostname: a.hostname,
-        pathname: a.pathname,
-        protocol: a.protocol,
-        search: a.search,
-        query: a.search.slice(1)
-    };
-}
-
-/**
- * Extract unit for file size
- * @param {number} bytes A usage of file
- * @returns {string} Size-string
- * @memberof utils
- */
-function getFileSizeWithUnit(bytes) {
-    var units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    var exp, result;
-
-    bytes = parseInt(bytes, 10);
-    exp = Math.log(bytes) / Math.log(1024) | 0;
-    result = (bytes / Math.pow(1024, exp)).toFixed(2);
-
-    return result + ' ' + units[exp];
-}
-
-/**
- * Whether the browser supports FormData or not
- * @memberof utils
- * @returns {boolean} whether the browser supports FormData
- */
-function isSupportFormData() {
-    return IS_SUPPORT_FORM_DATA;
-}
-
-/**
- * Get item elements HTML
- * @param {Object} map - Properties for template
- * @param {string} html HTML template
- * @returns {string} HTML
- * @memberof utils
- */
-function template(map, html) {
-    html = html.replace(/\{\{([^\}]+)\}\}/g, function(mstr, name) {
-        return map[name];
-    });
-
-    return html;
-}
-
-/**
- * Check whether the browser supports file api.
- * @returns {boolean} whether the browser supports FileAPI
- * @memberof utils
- */
-function isSupportFileSystem() {
-    return IS_SUPPORT_FILE_SYSTEM;
-}
-
-/**
- * Check whether the url is x-domain
- * @param {string} url - URL
- * @returns {boolean} Whether the url is x-domain
- * @memberof utils
- */
-function isCrossDomain(url) {
-    var here = parseURL(window.location.href);
-    var target = parseURL(url);
-
-    return target.hostname !== here.hostname
-        || target.port !== here.port
-        || target.protocol !== here.protocol;
-}
-
-/**
- * Remove first specified item from array, if it exists
- * @param {*} item Item to look for
- * @param {Array} arr Array to query
- * @memberof utils
- */
-function removeItemFromArray(item, arr) {
-    var index = arr.length - 1;
-
-    while (index > -1) {
-        if (item === arr[index]) {
-            arr.splice(index, 1);
-        }
-        index -= 1;
-    }
-}
-
-/**
- * Get label element
- * @param {jQuery} $target - Target element
- * @returns {jQuery|null} Label element
- * @memberof utils
- */
-function getLabelElement($target) {
-    var $labels = $target.parents('label');
-    var hasLabel = $labels.length;
-
-    if (hasLabel) {
-        return $labels.eq(0);
-    }
-
-    return null;
-}
-
-module.exports = {
-    getFileSizeWithUnit: getFileSizeWithUnit,
-    isSupportFileSystem: isSupportFileSystem,
-    isSupportFormData: isSupportFormData,
-    template: template,
-    isCrossDomain: isCrossDomain,
-    removeItemFromArray: removeItemFromArray,
-    getLabelElement: getLabelElement
-};
-</code></pre>
+        </pre></div>
+            <div id="example-html" class="hidden"><pre class="prettyprint source">
+            &lt;div id="uploader" class="tui-file-uploader">
+                &lt;label class="tui-btn tui-btn-upload">
+        			&lt;span class="tui-btn-txt">Add files&lt;/span>
+        			&lt;input type="file" name="userfile[]" class="tui-input-file">
+        		&lt;/label>
+                &lt;div class="tui-js-file-uploader-list">&lt;/div>
+                &lt;div class="tui-btn-submit">
+                    &lt;button type="submit" class="tui-btn tui-btn-large">Upload&lt;/button>
+                &lt;/div>
+            &lt;/div>
+        </pre></div>
         </article>
-    </section>
+    
+</section>
 
 
+    <script>
+        var exampleResult = document.getElementById('example-result');
+        var exampleJs = document.getElementById('example-js');
+        var exampleHtml = document.getElementById('example-html');
+        var exampleResultBtn = document.getElementById('example-result-btn');
+        var exampleJsBtn = document.getElementById('example-js-btn');
+        var exampleHtmlBtn = document.getElementById('example-html-btn');
+
+        function setActive(el) {
+            el.className += ' active';
+        }
+
+        function setInactive(el) {
+            el.className = el.className.replace(/\s*active\s*/g, '');
+        }
+
+        function show(el) {
+            el.className = el.className.replace(/\s*hidden\s*/g, '');
+        }
+
+        function hide(el) {
+            el.className += ' hidden';
+        }
+
+        function showJs() {
+            hide(exampleHtml);
+            hide(exampleResult);
+            setInactive(exampleHtmlBtn);
+            setInactive(exampleResultBtn);
+
+            show(exampleJs);
+            setActive(exampleJsBtn);
+        }
+
+        function showHtml() {
+            hide(exampleJs);
+            hide(exampleResult);
+            setInactive(exampleJsBtn);
+            setInactive(exampleResultBtn);
+
+            show(exampleHtml);
+            setActive(exampleHtmlBtn);
+        }
+
+        function showResult() {
+            hide(exampleJs);
+            hide(exampleHtml);
+            setInactive(exampleJsBtn);
+            setInactive(exampleHtmlBtn);
+
+            show(exampleResult);
+            setActive(exampleResultBtn);
+        }
+    </script>
 
 
 </div>
@@ -216,13 +170,7 @@ module.exports = {
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = '_sub'.replace(/"/g, '_');
-        var selectedApi = document.getElementById(id); // do not use jquery selector
-        var $selectedApi = $(selectedApi);
-
-        $selectedApi.removeClass('hidden');
-        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
-        showLnbApi();
+        showLnbExamples();
     </script>
 
 </body>

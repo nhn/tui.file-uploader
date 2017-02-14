@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: utils.js | Tree</title>
+    <title>Source: view/item.js | Tree</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -54,149 +54,211 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview This file contain utility methods for uploader.
+ * @fileoverview ItemView make element to display added file information. It has attached file ID to request for remove.
  * @author NHN Ent. FE Development Lab &lt;dl_javascript@nhnent.com>
  */
 'use strict';
 
-/**
- * @namespace utils
- * @ignore
- */
-var IS_SUPPORT_FILE_SYSTEM = !!(window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob);
-var IS_SUPPORT_FORM_DATA = !!(window.FormData || null);
+var consts = require('../consts');
+var utils = require('../utils');
+
+var classNames = consts.className;
+var htmls = consts.html;
 
 /**
- * Parse url
- * @param {string} url - url for parsing
- * @returns {Object} URL information
- * @memberof utils
+ * List item view
+ * @class Item
+ * @param {jQuery} $root - List element to append item view
+ * @param {object} data - Item's data (file info)
+ *     @param {string} data.name - File name
+ *     @param {string} data.type - File type
+ *     @param {string} [data.id] - Unique key, what if the key is not exist id will be the file name
+ *     @param {(string|number)} [options.size] File size (but ie low browser, x-domain)
+ *  @param {string} options.template - Item template
+ *  @ignore
  */
-function parseURL(url) {
-    var a = document.createElement('a');
-    a.href = url;
+var Item = tui.util.defineClass(/** @lends Item.prototype **/{
+    init: function($root, data, template) {
+        /**
+         * Item: LI element
+         * @type {jQuery}
+         * @private
+         */
+        this.$el = null;
 
-    return {
-        href: a.href,
-        host: a.host,
-        port: a.port,
-        hash: a.hash,
-        hostname: a.hostname,
-        pathname: a.pathname,
-        protocol: a.protocol,
-        search: a.search,
-        query: a.search.slice(1)
-    };
-}
+        /**
+         * Item: checkbox
+         * @type {jQuery}
+         * @private
+         */
+        this.$checkbox = null;
 
-/**
- * Extract unit for file size
- * @param {number} bytes A usage of file
- * @returns {string} Size-string
- * @memberof utils
- */
-function getFileSizeWithUnit(bytes) {
-    var units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    var exp, result;
+        /**
+         * Item: remove button
+         * @type {jQuery}
+         * @private
+         */
+        this.$removeButton = null;
 
-    bytes = parseInt(bytes, 10);
-    exp = Math.log(bytes) / Math.log(1024) | 0;
-    result = (bytes / Math.pow(1024, exp)).toFixed(2);
+        /**
+         * Item name
+         * @type {string}
+         * @private
+         */
+        this.name = data.name;
 
-    return result + ' ' + units[exp];
-}
+        /**
+         * Item id
+         * @type {string}
+         * @private
+         */
+        this.id = data.id;
 
-/**
- * Whether the browser supports FormData or not
- * @memberof utils
- * @returns {boolean} whether the browser supports FormData
- */
-function isSupportFormData() {
-    return IS_SUPPORT_FORM_DATA;
-}
+        /**
+         * Item size
+         * @type {number|string}
+         * @private
+         */
+        this.size = data.size || '';
 
-/**
- * Get item elements HTML
- * @param {Object} map - Properties for template
- * @param {string} html HTML template
- * @returns {string} HTML
- * @memberof utils
- */
-function template(map, html) {
-    html = html.replace(/\{\{([^\}]+)\}\}/g, function(mstr, name) {
-        return map[name];
-    });
+        /**
+         * Item type
+         * @type {string}
+         * @private
+         */
+        this.type = this._extractExtension();
 
-    return html;
-}
+        /**
+         * Template to create list item
+         * @type {object}
+         * @private
+         */
+        this.template = template;
 
-/**
- * Check whether the browser supports file api.
- * @returns {boolean} whether the browser supports FileAPI
- * @memberof utils
- */
-function isSupportFileSystem() {
-    return IS_SUPPORT_FILE_SYSTEM;
-}
+        this._render($root);
+    },
 
-/**
- * Check whether the url is x-domain
- * @param {string} url - URL
- * @returns {boolean} Whether the url is x-domain
- * @memberof utils
- */
-function isCrossDomain(url) {
-    var here = parseURL(window.location.href);
-    var target = parseURL(url);
+    /**
+     * Render item
+     * @param {jQuery} $root - List area view
+     * @private
+     */
+    _render: function($root) {
+        var html = this._getHTML();
 
-    return target.hostname !== here.hostname
-        || target.port !== here.port
-        || target.protocol !== here.protocol;
-}
+        this.$el = $(html).appendTo($root);
+        this.$checkbox = this.$el.find(':checkbox');
+        this.$removeButton = this.$el.find('button');
 
-/**
- * Remove first specified item from array, if it exists
- * @param {*} item Item to look for
- * @param {Array} arr Array to query
- * @memberof utils
- */
-function removeItemFromArray(item, arr) {
-    var index = arr.length - 1;
+        this._addEvent();
+    },
 
-    while (index > -1) {
-        if (item === arr[index]) {
-            arr.splice(index, 1);
+    /**
+     * Get html string of item
+     * @returns {string} Html string
+     * @private
+     */
+    _getHTML: function() {
+        var template = this.template;
+        var map = {
+            filetype: this.type,
+            filename: this.name,
+            filesize: this.size ? utils.getFileSizeWithUnit(this.size) : '',
+            checkbox: htmls.CHECKBOX,
+            removeButton: htmls.REMOVE_BUTTON
+        };
+
+        return utils.template(map, template);
+    },
+
+    /**
+     * Extract file extension by name
+     * @returns {string} File extension
+     * @private
+     */
+    _extractExtension: function() {
+        return this.name.split('.').pop();
+    },
+
+    /**
+     * Add event handler on delete button.
+     * @private
+     */
+    _addEvent: function() {
+        this.$checkbox.on('change', $.proxy(this._onChange, this));
+        this.$removeButton.on('click', $.proxy(this._onClickEvent, this));
+    },
+
+    /**
+     * Change event handler
+     * @private
+     */
+    _onChange: function() {
+        var state = !!this.$checkbox.prop('checked');
+        this._changeCheckbox(state);
+        this.fire('check', {
+            id: this.id,
+            name: this.name,
+            size: this.size,
+            state: state
+        });
+    },
+
+    /**
+     * Event-handle for delete button clicked.
+     * @private
+     */
+    _onClickEvent: function() {
+        var data = {};
+        data[this.id] = true;
+        this.fire('remove', data);
+    },
+
+    /**
+     * Change checkbox view state
+     * @param {boolean} state - Checked state
+     * @private
+     */
+    _changeCheckbox: function(state) {
+        var $checkbox = this.$checkbox;
+        var $label = utils.getLabelElement($checkbox);
+        var $target = $label ? $label : $checkbox;
+        var className = classNames.IS_CHECKED;
+
+        if (state) {
+            $target.addClass(className);
+        } else {
+            $target.removeClass(className);
         }
-        index -= 1;
+    },
+
+    /**
+     * Change checkbox state
+     * @param {boolean} state - Checked state
+     */
+    changeCheckboxState: function(state) {
+        this.$checkbox.prop('checked', state);
+        this._changeCheckbox(state);
+    },
+
+    /**
+     * Get state of checkbox
+     * @returns {boolean} Checkbox state
+     */
+    getCheckedState: function() {
+        return this.$checkbox.prop('checked');
+    },
+
+    /**
+     * Destroy item
+     */
+    destroy: function() {
+        this.$el.remove();
     }
-}
+});
 
-/**
- * Get label element
- * @param {jQuery} $target - Target element
- * @returns {jQuery|null} Label element
- * @memberof utils
- */
-function getLabelElement($target) {
-    var $labels = $target.parents('label');
-    var hasLabel = $labels.length;
-
-    if (hasLabel) {
-        return $labels.eq(0);
-    }
-
-    return null;
-}
-
-module.exports = {
-    getFileSizeWithUnit: getFileSizeWithUnit,
-    isSupportFileSystem: isSupportFileSystem,
-    isSupportFormData: isSupportFormData,
-    template: template,
-    isCrossDomain: isCrossDomain,
-    removeItemFromArray: removeItemFromArray,
-    getLabelElement: getLabelElement
-};
+tui.util.CustomEvents.mixin(Item);
+module.exports = Item;
 </code></pre>
         </article>
     </section>

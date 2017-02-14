@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: pool.js | Tree</title>
+    <title>Source: view/form.js | Tree</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -54,97 +54,225 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview This is manager of input elements that act like file pool.
+ * @fileoverview From-view makes a form by template. Add events for file upload.
  * @author NHN Ent. FE Development Lab &lt;dl_javascript@nhnent.com>
  */
 'use strict';
 
-var consts = require('./consts');
+var consts = require('../consts');
+var utils = require('../utils');
 
-var snippet = tui.util;
-var forEach = snippet.forEach;
-var hasStamp = snippet.hasStamp;
-var stamp = snippet.stamp;
-
+var isSupportFormData = utils.isSupportFormData();
 var HIDDEN_FILE_INPUT_CLASS = consts.className.HIDDEN_FILE_INPUT;
+var STAMP_ID = '__fe_id';
 
 /**
- * The pool for save files.
- * It's only for input[file] element save at browser that does not support file api.
- * @param {HTMLElement} planet - Form element
- * @class Pool
+ * This view control input element typed file.
+ * @class Form
+ * @param {Uploader} uploader - Uploader instance
  * @ignore
  */
-var Pool = tui.util.defineClass(/** @lends Pool.prototype */{
-    init: function(planet) {
+var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
+    init: function(uploader) {
         /**
-         * Submitter for file element to server
-         * Form element
-         * @type {HTMLElement}
+         * File uploader
+         * @type {Uploader}
+         * @private
          */
-        this.planet = planet;
+        this._uploader = uploader;
 
         /**
-         * File data structure object
-         *  key=name : value=iuput[type=file](Element)
-         * @type {object}
+         * Html templates
+         * @type {Object.&lt;string, string>}
          */
-        this.files = {};
+        this._html = this._setTemplate(uploader.template);
+
+        /**
+         * Form element
+         * @type {jQuery}
+         */
+        this.$el = null;
+
+        /**
+         * File input element
+         * @type {jQuery}
+         */
+        this.$fileInput = null;
+
+        /**
+         * Submit element
+         * @type {jQuery}
+         */
+        this.$submit = null;
+
+        if (isSupportFormData) {
+            /**
+             * Whether the file input is multiple
+             * @type {boolean}
+             * @private
+             */
+            this._isMultiple = uploader.isMultiple;
+
+            /**
+             * Whether the file input accepts folder
+             * @type {boolean}
+             * @private
+             */
+            this._useFolder = uploader.useFolder;
+        }
+
+        this._render({
+            action: uploader.url.send,
+            method: 'post',
+            enctype: 'multipart/form-data',
+            target: isSupportFormData ? '' : uploader.formTarget
+        });
     },
 
     /**
-     * Save a input element[type=file], as value of file name.
-     * @param {HTMLInputElement} inputFileEl A input element that have to be saved
+     * Render form element
+     * @param {object} attributes - Form attributes
+     * @private
      */
-    store: function(inputFileEl) {
-        var id = hasStamp(inputFileEl) &amp;&amp; stamp(inputFileEl);
+    _render: function(attributes) {
+        var uploader = this._uploader;
+        var $fileInput = uploader.$container.find(':file');
+        var $el = $(this._html.FORM)
+                    .append(uploader.$container.children())
+                    .attr(attributes);
 
-        if (!id) {
+        this.$el = $el;
+        this.$fileInput = $fileInput;
+
+        this._setFileInput();
+
+        if (uploader.isBatchTransfer) {
+            this.$submit = uploader.$container.find(':submit');
+        }
+
+        if (uploader.isCrossDomain &amp;&amp; !isSupportFormData) {
+            this._setHiddenInputForCORS();
+        }
+
+        uploader.$container.append(this.$el);
+
+        this._addEvent();
+    },
+
+    /**
+     * Set hidden input element for CORS.
+     *  Hidden input of PostMessage or RedirectURL.
+     * @private
+     */
+    _setHiddenInputForCORS: function() {
+        var props, $hiddenInput;
+        var uploader = this._uploader;
+        var redirectURL = uploader.redirectURL;
+
+        if (uploader.isSupportPostMessage) { // for IE8, 9
+            props = {
+                name: 'messageTarget',
+                value: location.protocol + '//' + location.host
+            };
+        } else if (redirectURL) { // for IE7
+            props = {
+                name: 'redirectURL',
+                value: redirectURL
+            };
+        }
+
+        if (props) {
+            $hiddenInput = $(utils.template(props, this._html.HIDDEN_INPUT));
+            $hiddenInput.appendTo(this.$el);
+        }
+    },
+
+    /**
+     * Set all of input elements html strings.
+     * @private
+     * @param {object} [template] The template is set form customer.
+     * @returns {Object.&lt;string, string>} The html template string set for form.
+     */
+    _setTemplate: function(template) {
+        return tui.util.extend({}, consts.html, template);
+    },
+
+    /**
+     * Set property value to file input element
+     * @private
+     */
+    _setFileInput: function() {
+        var isMultiple = this._isMultiple;
+        var useFolder = this._useFolder;
+
+        this.$fileInput.attr('multiple', isMultiple);
+
+        this.$fileInput.prop({
+            // multiple: isMultiple,
+            directory: useFolder,
+            mozdirectory: useFolder,
+            webkitdirectory: useFolder
+        });
+    },
+
+    /**
+     * Add event
+     * @private
+     */
+    _addEvent: function() {
+        if (this._uploader.isBatchTransfer) {
+            this.$el.on('submit', $.proxy(this.fire, this, 'submit'));
+        }
+
+        this._addInputEvent();
+    },
+
+    /**
+     * Add change event to file input
+     * @private
+     */
+    _addInputEvent: function() {
+        this.$fileInput.on('change', $.proxy(this.onChange, this));
+    },
+
+    /**
+     * Event-Handle for input element change
+     */
+    onChange: function() {
+        if (!this.$fileInput[0].value) {
             return;
         }
-
-        this.files[id] = inputFileEl;
+        this.fire('change');
     },
 
     /**
-     * Remove a input element[type=file] from pool.
-     * @param {string} id - File's id
-     * @returns {boolean} result
+     * Reset Input element to save whole input=file element.
      */
-    remove: function(id) {
-        var element = this.files[id];
+    resetFileInput: function() {
+        var $newFileInput = $(this.$fileInput[0].outerHTML);
 
-        if (!element) {
-            return false;
+        this.$fileInput.after($newFileInput);
+        this.$fileInput.remove();
+        this.$fileInput = $newFileInput;
+
+        if (tui.util.hasStamp(this.$fileInput[0])) { // for old browser
+            delete this.$fileInput[0][STAMP_ID];
         }
 
-        delete this.files[id];
-
-        return true;
+        this._addInputEvent();
     },
 
     /**
-     * Empty pool
+     * Clear file input elements
      */
-    empty: function() {
-        this.files = {};
-    },
-
-    /**
-     * Plant files on pool to form input
-     */
-    plant: function() {
-        var planet = this.planet;
-        forEach(this.files, function(element, key) {
-            element.className = HIDDEN_FILE_INPUT_CLASS;
-            element.style.display = 'none';
-            planet.appendChild(element);
-            delete this.files[key];
-        }, this);
+    clear: function() {
+        this.$el.find('.' + HIDDEN_FILE_INPUT_CLASS).remove();
+        this.resetFileInput();
     }
 });
 
-module.exports = Pool;
+tui.util.CustomEvents.mixin(Form);
+module.exports = Form;
 </code></pre>
         </article>
     </section>

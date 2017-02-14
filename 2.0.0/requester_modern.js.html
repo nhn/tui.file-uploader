@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: utils.js | Tree</title>
+    <title>Source: requester/modern.js | Tree</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -54,149 +54,171 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview This file contain utility methods for uploader.
+ * @fileoverview Requester for modern browsers.
  * @author NHN Ent. FE Development Lab &lt;dl_javascript@nhnent.com>
  */
 'use strict';
 
+var consts = require('../consts');
+
+var TYPE = consts.conf.REQUESTER_TYPE_MODERN;
+var forEach = tui.util.forEach;
+
 /**
- * @namespace utils
+ * Modern requester
+ * @param {Uploader} uploader - Uploader
+ * @class
  * @ignore
  */
-var IS_SUPPORT_FILE_SYSTEM = !!(window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob);
-var IS_SUPPORT_FORM_DATA = !!(window.FormData || null);
+var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
+    init: function(uploader) {
+        /**
+         * Uploader
+         * @type {Uploader}
+         */
+        this.uploader = uploader;
 
-/**
- * Parse url
- * @param {string} url - url for parsing
- * @returns {Object} URL information
- * @memberof utils
- */
-function parseURL(url) {
-    var a = document.createElement('a');
-    a.href = url;
+        /**
+         * From view
+         * @type {Form}
+         */
+        this.formView = uploader.formView;
 
-    return {
-        href: a.href,
-        host: a.host,
-        port: a.port,
-        hash: a.hash,
-        hostname: a.hostname,
-        pathname: a.pathname,
-        protocol: a.protocol,
-        search: a.search,
-        query: a.search.slice(1)
-    };
-}
+        /**
+         * Local pool for files
+         * @type {Array.&lt;File>}
+         */
+        this.pool = [];
 
-/**
- * Extract unit for file size
- * @param {number} bytes A usage of file
- * @returns {string} Size-string
- * @memberof utils
- */
-function getFileSizeWithUnit(bytes) {
-    var units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    var exp, result;
-
-    bytes = parseInt(bytes, 10);
-    exp = Math.log(bytes) / Math.log(1024) | 0;
-    result = (bytes / Math.pow(1024, exp)).toFixed(2);
-
-    return result + ' ' + units[exp];
-}
-
-/**
- * Whether the browser supports FormData or not
- * @memberof utils
- * @returns {boolean} whether the browser supports FormData
- */
-function isSupportFormData() {
-    return IS_SUPPORT_FORM_DATA;
-}
-
-/**
- * Get item elements HTML
- * @param {Object} map - Properties for template
- * @param {string} html HTML template
- * @returns {string} HTML
- * @memberof utils
- */
-function template(map, html) {
-    html = html.replace(/\{\{([^\}]+)\}\}/g, function(mstr, name) {
-        return map[name];
-    });
-
-    return html;
-}
-
-/**
- * Check whether the browser supports file api.
- * @returns {boolean} whether the browser supports FileAPI
- * @memberof utils
- */
-function isSupportFileSystem() {
-    return IS_SUPPORT_FILE_SYSTEM;
-}
-
-/**
- * Check whether the url is x-domain
- * @param {string} url - URL
- * @returns {boolean} Whether the url is x-domain
- * @memberof utils
- */
-function isCrossDomain(url) {
-    var here = parseURL(window.location.href);
-    var target = parseURL(url);
-
-    return target.hostname !== here.hostname
-        || target.port !== here.port
-        || target.protocol !== here.protocol;
-}
-
-/**
- * Remove first specified item from array, if it exists
- * @param {*} item Item to look for
- * @param {Array} arr Array to query
- * @memberof utils
- */
-function removeItemFromArray(item, arr) {
-    var index = arr.length - 1;
-
-    while (index > -1) {
-        if (item === arr[index]) {
-            arr.splice(index, 1);
+        if (uploader.isBatchTransfer) {
+            /**
+             * Override remove function for batch transfer
+             * @type {Old._removeWhenBatch}
+             */
+            this.remove = this._removeWhenBatch;
         }
-        index -= 1;
+    },
+
+    /**
+     * Requester type
+     * @type {string}
+     */
+    TYPE: TYPE,
+
+    /**
+     * Event handler for upload error
+     * @param {Object} jqXHR - jQuery XHR
+     * @param {string} status - Ajax Status
+     * @param {string} msgThrown - Error message
+     * @private
+     */
+    _uploadError: function(jqXHR, status, msgThrown) {
+        this.fire('error', {
+            status: status,
+            message: msgThrown
+        });
+    },
+
+    /**
+     * Event handler for upload success
+     * @param {Object} data - Upload success data
+     * @private
+     */
+    _uploadSuccess: function(data) {
+        this.fire('uploaded', JSON.parse(data));
+    },
+
+    /**
+     * Store files to local pool
+     * @param {Array.&lt;File> | File} [files] - A file or files
+     */
+    store: function(files) {
+        var pool = this.pool;
+        var stamp = tui.util.stamp;
+        var data = [];
+
+        files = tui.util.toArray(files || this.formView.$fileInput[0].files);
+        forEach(files, function(file) {
+            var id = stamp(file);
+            pool.push(file);
+            data.push({
+                id: id,
+                name: file.name,
+                size: file.size
+            });
+        });
+
+        this.formView.resetFileInput();
+        this.fire('stored', data);
+    },
+
+    /**
+     * Upload ajax
+     */
+    upload: function() {
+        var field = this.formView.$fileInput.attr('name');
+        var $form = this.formView.$el.clone();
+        var formData;
+
+        $form.find('input[type="file"]').remove();
+        formData = new FormData($form[0]);
+
+        forEach(this.pool, function(file) {
+            formData.append(field, file);
+        });
+
+        $.ajax({
+            url: this.uploader.url.send,
+            type: 'POST',
+            data: formData,
+            success: $.proxy(this._uploadSuccess, this),
+            error: $.proxy(this._uploadError, this),
+            processData: false,
+            contentType: false
+        });
+        this.clear();
+    },
+
+    /**
+     * Remove file (ajax-jsonp)
+     * It is not used for batch transfer.
+     * @param {Object} params - Removed item's id list (idList: [])
+     */
+    remove: function(params) {
+        $.ajax({
+            url: this.uploader.url.remove,
+            dataType: 'jsonp',
+            data: params,
+            success: $.proxy(function(data) {
+                this.fire('removed', data);
+            }, this)
+        });
+    },
+
+    /**
+     * Remove file
+     * It is used for batch transfer.
+     * @param {Object} removedItems - Removed items info
+     * @private
+     */
+    _removeWhenBatch: function(removedItems) {
+        this.pool = tui.util.filter(this.pool, function(file) {
+            return (removedItems[file.id]);
+        });
+
+        this.fire('removed', removedItems);
+    },
+
+    /**
+     * Clear the pool
+     */
+    clear: function() {
+        this.pool.length = 0;
     }
-}
+});
 
-/**
- * Get label element
- * @param {jQuery} $target - Target element
- * @returns {jQuery|null} Label element
- * @memberof utils
- */
-function getLabelElement($target) {
-    var $labels = $target.parents('label');
-    var hasLabel = $labels.length;
-
-    if (hasLabel) {
-        return $labels.eq(0);
-    }
-
-    return null;
-}
-
-module.exports = {
-    getFileSizeWithUnit: getFileSizeWithUnit,
-    isSupportFileSystem: isSupportFileSystem,
-    isSupportFormData: isSupportFormData,
-    template: template,
-    isCrossDomain: isCrossDomain,
-    removeItemFromArray: removeItemFromArray,
-    getLabelElement: getLabelElement
-};
+tui.util.CustomEvents.mixin(Modern);
+module.exports = Modern;
 </code></pre>
         </article>
     </section>

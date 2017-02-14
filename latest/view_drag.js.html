@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: utils.js | Tree</title>
+    <title>Source: view/drag.js | Tree</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -54,149 +54,117 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @fileoverview This file contain utility methods for uploader.
+ * @fileoverview This file is about drag and drop file to send. Drag and drop is running via file api.
  * @author NHN Ent. FE Development Lab &lt;dl_javascript@nhnent.com>
  */
 'use strict';
 
+var consts = require('../consts');
+
+var SUPPORT_DROPZONE_CLASS = consts.className.SUPPORT_DROPZONE;
+var DROP_ENABLED_CLASS = consts.className.DROP_ENABLED;
+
 /**
- * @namespace utils
+ * Makes drag and drop area, the dropped file is added via event drop event.
+ * @class DragAndDrop
+ * @param {jQuery} $el - Dropzone element
  * @ignore
  */
-var IS_SUPPORT_FILE_SYSTEM = !!(window.File &amp;&amp; window.FileReader &amp;&amp; window.FileList &amp;&amp; window.Blob);
-var IS_SUPPORT_FORM_DATA = !!(window.FormData || null);
+var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{
+    init: function($el) {
+        /**
+         * Drop zone jQuery-element
+         * @type {jQuery}
+         */
+        this.$el = $el.addClass(SUPPORT_DROPZONE_CLASS);
 
-/**
- * Parse url
- * @param {string} url - url for parsing
- * @returns {Object} URL information
- * @memberof utils
- */
-function parseURL(url) {
-    var a = document.createElement('a');
-    a.href = url;
+        /**
+         * Class for drop enabled
+         * @type {string}
+         * @private
+         */
+        this._enableClass = DROP_ENABLED_CLASS;
 
-    return {
-        href: a.href,
-        host: a.host,
-        port: a.port,
-        hash: a.hash,
-        hostname: a.hostname,
-        pathname: a.pathname,
-        protocol: a.protocol,
-        search: a.search,
-        query: a.search.slice(1)
-    };
-}
+        this._addEvent();
+    },
 
-/**
- * Extract unit for file size
- * @param {number} bytes A usage of file
- * @returns {string} Size-string
- * @memberof utils
- */
-function getFileSizeWithUnit(bytes) {
-    var units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    var exp, result;
+    /**
+     * Adds drag and drop event
+     * @private
+     */
+    _addEvent: function() {
+        this.$el.on({
+            dragenter: $.proxy(this.onDragEnter, this),
+            dragover: $.proxy(this.onDragOver, this),
+            drop: $.proxy(this.onDrop, this),
+            dragleave: $.proxy(this.onDragLeave, this)
+        });
+    },
 
-    bytes = parseInt(bytes, 10);
-    exp = Math.log(bytes) / Math.log(1024) | 0;
-    result = (bytes / Math.pow(1024, exp)).toFixed(2);
+    /**
+     * Handles dragenter event
+     * @param {Event} e - Event
+     */
+    onDragEnter: function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this._enable();
+    },
 
-    return result + ' ' + units[exp];
-}
+    /**
+     * Handles dragover event
+     * @param {Event} e - Event
+     */
+    onDragOver: function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    },
 
-/**
- * Whether the browser supports FormData or not
- * @memberof utils
- * @returns {boolean} whether the browser supports FormData
- */
-function isSupportFormData() {
-    return IS_SUPPORT_FORM_DATA;
-}
+    /**
+     * Handles dragleave event
+     * @param {Event} e - Event
+     */
+    onDragLeave: function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this._disable();
+    },
 
-/**
- * Get item elements HTML
- * @param {Object} map - Properties for template
- * @param {string} html HTML template
- * @returns {string} HTML
- * @memberof utils
- */
-function template(map, html) {
-    html = html.replace(/\{\{([^\}]+)\}\}/g, function(mstr, name) {
-        return map[name];
-    });
+    /**
+     * Handles drop event
+     * @param {Event} e - Event
+     * @returns {boolean} False
+     */
+    onDrop: function(e) {
+        var files = tui.util.pick(e, 'originalEvent', 'dataTransfer', 'files');
 
-    return html;
-}
+        e.preventDefault();
+        this._disable();
+        this.fire('drop', files);
 
-/**
- * Check whether the browser supports file api.
- * @returns {boolean} whether the browser supports FileAPI
- * @memberof utils
- */
-function isSupportFileSystem() {
-    return IS_SUPPORT_FILE_SYSTEM;
-}
+        return false;
+    },
 
-/**
- * Check whether the url is x-domain
- * @param {string} url - URL
- * @returns {boolean} Whether the url is x-domain
- * @memberof utils
- */
-function isCrossDomain(url) {
-    var here = parseURL(window.location.href);
-    var target = parseURL(url);
+    /**
+     * Enable dropzone
+     * @private
+     */
+    _enable: function() {
+        this.$el.addClass(this._enableClass);
+    },
 
-    return target.hostname !== here.hostname
-        || target.port !== here.port
-        || target.protocol !== here.protocol;
-}
-
-/**
- * Remove first specified item from array, if it exists
- * @param {*} item Item to look for
- * @param {Array} arr Array to query
- * @memberof utils
- */
-function removeItemFromArray(item, arr) {
-    var index = arr.length - 1;
-
-    while (index > -1) {
-        if (item === arr[index]) {
-            arr.splice(index, 1);
-        }
-        index -= 1;
+    /**
+     * Disable droponze
+     * @private
+     */
+    _disable: function() {
+        this.$el.removeClass(this._enableClass);
     }
-}
+});
 
-/**
- * Get label element
- * @param {jQuery} $target - Target element
- * @returns {jQuery|null} Label element
- * @memberof utils
- */
-function getLabelElement($target) {
-    var $labels = $target.parents('label');
-    var hasLabel = $labels.length;
+tui.util.CustomEvents.mixin(DragAndDrop);
 
-    if (hasLabel) {
-        return $labels.eq(0);
-    }
-
-    return null;
-}
-
-module.exports = {
-    getFileSizeWithUnit: getFileSizeWithUnit,
-    isSupportFileSystem: isSupportFileSystem,
-    isSupportFormData: isSupportFormData,
-    template: template,
-    isCrossDomain: isCrossDomain,
-    removeItemFromArray: removeItemFromArray,
-    getLabelElement: getLabelElement
-};
+module.exports = DragAndDrop;
 </code></pre>
         </article>
     </section>
