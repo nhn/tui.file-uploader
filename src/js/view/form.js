@@ -150,8 +150,10 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
         var isMultiple = this._isMultiple;
         var useFolder = this._useFolder;
 
+        this.$fileInput.attr('multiple', isMultiple);
+
         this.$fileInput.prop({
-            multiple: isMultiple,
+            // multiple: isMultiple,
             directory: useFolder,
             mozdirectory: useFolder,
             webkitdirectory: useFolder
@@ -192,10 +194,11 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
      * Reset Input element to save whole input=file element.
      */
     resetFileInput: function() {
-        var $clonedFileInput = this.$fileInput.clone();
-        this.$fileInput.after($clonedFileInput);
+        var $newFileInput = $(this.$fileInput[0].outerHTML);
+
+        this.$fileInput.after($newFileInput);
         this.$fileInput.remove();
-        this.$fileInput = $clonedFileInput;
+        this.$fileInput = $newFileInput;
 
         if (tui.util.hasStamp(this.$fileInput[0])) { // for old browser
             delete this.$fileInput[0][STAMP_ID];
