@@ -12,7 +12,7 @@ It supports uploading files to server.
 ## Documentation
 * API: [https://nhnent.github.io/tui.component.file-uploader/latest](https://nhnent.github.io/tui.component.file-uploader/latest)
 * Tutorial: [https://github.com/nhnent/tui.component.file-uploader/wiki/Tutorial](https://github.com/nhnent/tui.component.file-uploader/wiki/Tutorial)
-* Examples: [http://nhnent.github.io/tui.component.file-uploader/latest/example1.html](http://nhnent.github.io/tui.component.file-uploader/latest/example1.html)
+* Examples: [http://nhnent.github.io/tui.component.file-uploader/latest/tutorial-example1.html](http://nhnent.github.io/tui.component.file-uploader/latest/tutorial-example1.html)
 
 ## Dependency
 * tui-code-snippet: ~1.2.0
