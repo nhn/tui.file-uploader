@@ -1,45 +1,36 @@
 /**
  * @fileoverview This file is about drag and drop file to send. Drag and drop is running via file api.
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 'use strict';
+
 var consts = require('../consts');
+
+var SUPPORT_DROPZONE_CLASS = consts.className.SUPPORT_DROPZONE;
+var DROP_ENABLED_CLASS = consts.className.DROP_ENABLED;
 
 /**
  * Makes drag and drop area, the dropped file is added via event drop event.
  * @class DragAndDrop
- * @param {Uploader} uploader - Uploader
+ * @param {jQuery} $el - Dropzone element
+ * @ignore
  */
-var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{/*eslint-disable*/
-    init: function(uploader) {/*eslint-enable*/
-        var html = consts.HTML.dragAndDrop;
-
+var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{
+    init: function($el) {
         /**
          * Drop zone jQuery-element
          * @type {jQuery}
          */
-        this.$el = null;
+        this.$el = $el.addClass(SUPPORT_DROPZONE_CLASS);
 
         /**
          * Class for drop enabled
          * @type {string}
          * @private
          */
-        this._enableClass = consts.CONF.DROP_ENABLED_CLASS;
+        this._enableClass = DROP_ENABLED_CLASS;
 
-        this._render(html, uploader);
         this._addEvent();
-    },
-
-    /**
-     * Renders drag and drop area
-     * @param {string} html The html string to make darg zone
-     * @param {object} uploader The core instance of this component
-     * @private
-     */
-    _render: function(html, uploader) {
-        this.$el = $(html)
-            .appendTo(uploader.$el);
     },
 
     /**
@@ -95,6 +86,7 @@ var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{/*esl
         e.preventDefault();
         this._disable();
         this.fire('drop', files);
+
         return false;
     },
 

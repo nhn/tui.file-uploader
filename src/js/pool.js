@@ -1,15 +1,17 @@
 /**
  * @fileoverview This is manager of input elements that act like file pool.
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 'use strict';
 
 var consts = require('./consts');
 
-var HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS,
-    forEach = tui.util.forEach,
-    hasStamp = tui.util.hasStamp,
-    stamp = tui.util.stamp;
+var snippet = tui.util;
+var forEach = snippet.forEach;
+var hasStamp = snippet.hasStamp;
+var stamp = snippet.stamp;
+
+var HIDDEN_FILE_INPUT_CLASS = consts.className.HIDDEN_FILE_INPUT;
 
 /**
  * The pool for save files.
@@ -18,8 +20,8 @@ var HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS,
  * @class Pool
  * @ignore
  */
-var Pool = tui.util.defineClass(/** @lends Pool.prototype */{/*eslint-disable*/
-    init: function(planet) {/*eslint-enable*/
+var Pool = tui.util.defineClass(/** @lends Pool.prototype */{
+    init: function(planet) {
         /**
          * Submitter for file element to server
          * Form element
@@ -40,31 +42,29 @@ var Pool = tui.util.defineClass(/** @lends Pool.prototype */{/*eslint-disable*/
      * @param {HTMLInputElement} inputFileEl A input element that have to be saved
      */
     store: function(inputFileEl) {
-        var id = hasStamp(inputFileEl) && stamp(inputFileEl),
-            filename, key;
+        var id = hasStamp(inputFileEl) && stamp(inputFileEl);
 
         if (!id) {
             return;
         }
-        filename = inputFileEl.value;
-        key = id + filename;
-        this.files[key] = inputFileEl;
+
+        this.files[id] = inputFileEl;
     },
 
     /**
      * Remove a input element[type=file] from pool.
-     * @param {object} params - A file name that have to be removed.
-     * @return {boolean} result
+     * @param {string} id - File's id
+     * @returns {boolean} result
      */
-    remove: function(params) {
-        var key = params.id + params.name,
-            element = this.files[key];
+    remove: function(id) {
+        var element = this.files[id];
 
         if (!element) {
             return false;
         }
 
-        delete this.files[key];
+        delete this.files[id];
+
         return true;
     },
 

@@ -1,22 +1,24 @@
 /**
  * @fileoverview From-view makes a form by template. Add events for file upload.
- * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 'use strict';
-var consts = require('../consts'),
-    utils = require('../utils');
 
-var isSupportFormData = utils.isSupportFormData(),
-    HIDDEN_FILE_INPUT_CLASS = consts.CONF.HIDDEN_FILE_INPUT_CLASS;
+var consts = require('../consts');
+var utils = require('../utils');
+
+var isSupportFormData = utils.isSupportFormData();
+var HIDDEN_FILE_INPUT_CLASS = consts.className.HIDDEN_FILE_INPUT;
+var STAMP_ID = '__fe_id';
 
 /**
  * This view control input element typed file.
+ * @class Form
  * @param {Uploader} uploader - Uploader instance
- * @constructor View.Form
+ * @ignore
  */
-var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{/*eslint-disable*/
-    init: function(uploader) {/*eslint-enable*/
+var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
+    init: function(uploader) {
         /**
          * File uploader
          * @type {Uploader}
@@ -78,34 +80,28 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{/*eslint-disab
      * @private
      */
     _render: function(attributes) {
-        var uploader = this._uploader,
-            $fileInput = this._createFileInput(),
-            $el = $(this._html.form)
-                .append($fileInput)
-                .attr(attributes);
+        var uploader = this._uploader;
+        var $fileInput = uploader.$container.find(':file');
+        var $el = $(this._html.FORM)
+                    .append(uploader.$container.children())
+                    .attr(attributes);
 
-        this.$fileInput = $fileInput;
         this.$el = $el;
+        this.$fileInput = $fileInput;
+
+        this._setFileInput();
 
         if (uploader.isBatchTransfer) {
-            this._setSubmitElement();
+            this.$submit = uploader.$container.find(':submit');
         }
 
         if (uploader.isCrossDomain && !isSupportFormData) {
             this._setHiddenInputForCORS();
         }
-        uploader.$el.append(this.$el);
+
+        uploader.$container.append(this.$el);
 
         this._addEvent();
-    },
-
-    /**
-     * Set submit element
-     * @private
-     */
-    _setSubmitElement: function() {
-        this.$submit = $(this._html.submit);
-        this.$submit.appendTo(this.$el);
     },
 
     /**
@@ -114,9 +110,9 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{/*eslint-disab
      * @private
      */
     _setHiddenInputForCORS: function() {
-        var props, $hiddenInput,
-            uploader = this._uploader,
-            redirectURL = uploader.redirectURL;
+        var props, $hiddenInput;
+        var uploader = this._uploader;
+        var redirectURL = uploader.redirectURL;
 
         if (uploader.isSupportPostMessage) { // for IE8, 9
             props = {
@@ -131,7 +127,7 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{/*eslint-disab
         }
 
         if (props) {
-            $hiddenInput = $(utils.template(props, this._html.hiddenInput));
+            $hiddenInput = $(utils.template(props, this._html.HIDDEN_INPUT));
             $hiddenInput.appendTo(this.$el);
         }
     },
@@ -140,25 +136,26 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{/*eslint-disab
      * Set all of input elements html strings.
      * @private
      * @param {object} [template] The template is set form customer.
-     * @return {Object.<string, string>} The html template string set for form.
+     * @returns {Object.<string, string>} The html template string set for form.
      */
     _setTemplate: function(template) {
-        return tui.util.extend({}, consts.HTML, template);
+        return tui.util.extend({}, consts.html, template);
     },
 
     /**
-     * Makes and returns jquery element
+     * Set property value to file input element
      * @private
-     * @return {jQuery} The jquery object wrapping original input element
      */
-    _createFileInput: function() {
-        var map = {
-            multiple: this._isMultiple ? 'multiple' : '',
-            fileField: this._uploader.fileField,
-            directory: this._useFolder ? 'directory mozdirectory webkitdirectory' : ''
-        };
+    _setFileInput: function() {
+        var isMultiple = this._isMultiple;
+        var useFolder = this._useFolder;
 
-        return $(utils.template(map, this._html.fileInput));
+        this.$fileInput.prop({
+            multiple: isMultiple,
+            directory: useFolder,
+            mozdirectory: useFolder,
+            webkitdirectory: useFolder
+        });
     },
 
     /**
@@ -169,6 +166,7 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{/*eslint-disab
         if (this._uploader.isBatchTransfer) {
             this.$el.on('submit', $.proxy(this.fire, this, 'submit'));
         }
+
         this._addInputEvent();
     },
 
@@ -178,7 +176,6 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{/*eslint-disab
      */
     _addInputEvent: function() {
         this.$fileInput.on('change', $.proxy(this.onChange, this));
-        this.$fileInput.attr('title', ' ');
     },
 
     /**
@@ -195,13 +192,15 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{/*eslint-disab
      * Reset Input element to save whole input=file element.
      */
     resetFileInput: function() {
+        var $clonedFileInput = this.$fileInput.clone();
+        this.$fileInput.after($clonedFileInput);
         this.$fileInput.remove();
-        this.$fileInput = this._createFileInput();
-        if (this.$submit) {
-            this.$submit.before(this.$fileInput);
-        } else {
-            this.$el.append(this.$fileInput);
+        this.$fileInput = $clonedFileInput;
+
+        if (tui.util.hasStamp(this.$fileInput[0])) { // for old browser
+            delete this.$fileInput[0][STAMP_ID];
         }
+
         this._addInputEvent();
     },
 

@@ -1,151 +1,344 @@
 /**
  * @fileoverview FileListView listing files and display states(like size, count).
- * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 'use strict';
+
 var utils = require('../utils');
 var Item = require('./item');
+var consts = require('../consts');
+
+var classNames = consts.className;
+var snippet = tui.util;
+var forEach = snippet.forEach;
+var isUndefined = snippet.isUndefined;
+var isArraySafe = snippet.isArraySafe;
 
 /**
- * List has items. It can add and remove item, and get total usage.
- * @param {Uploader} uploader - Uploader
- * @param {Object.<string, jQuery>} listInfo
- *  @param {jQuery} listInfo.list - List jquery-element
- *  @param {jQuery} listInfo.count - Count jquery-element
- *  @param {jQuery} listInfo.size - Size jquery-element
+ * List view
  * @class List
+ * @param {jQuery} $el - Container element to generate list view
+ * @param {object} options - Options to set list view
+ *     @param {object} options.listType - List type ('simple' or 'table')
+ *     @param {string} [options.item] - To customize item contents when list type is 'simple'
+ *     @param {array.<object>} [options.columnList] - To customize row contents when list type is 'table'
+ * @ignore
  */
-var List = tui.util.defineClass(/** @lends List.prototype */{/*eslint-disable*/
-    init : function(listInfo) {/*eslint-enable*/
+var List = tui.util.defineClass(/** @lends List.prototype */{
+    init: function($el, options) {
+        /**
+         * jQuery-element of list container
+         * @type {jQuery}
+         */
+        this.$el = $el;
+
+        /**
+         * jQuery-element of list
+         * @type {jQuery}
+         */
+        this.$list = null;
+
+        /**
+         * jQuery-element of checkbox in header
+         * @type {jQuery}
+         */
+        this.$checkbox = null;
+
+        /**
+         * List type
+         * @type {string}
+         */
+        this.listType = options.type;
+
+        /**
+         * Item template preset of simple list
+         * @type {string}
+         */
+        this.item = options.item;
+
+        /**
+         * Item template preset of table
+         * @type {Array.<Object>}
+         */
+        this.columnList = options.columnList;
+
+        /**
+         * Item's template in list
+         * @type {string}
+         */
+        this.itemTemplate = null;
+
         /**
          * Items
          * @type {Array.<Item>}
          */
         this.items = [];
 
-        /**
-         * jQuery-element of List
-         * @type {jQuery}
-         */
-        this.$el = listInfo.list;
-
-        /**
-         * jQuery-element of count
-         * @type {jQuery}
-         */
-        this.$counter = listInfo.count;
-
-        /**
-         * jQuery-element of total size
-         * @type {jQuery}
-         */
-        this.$size = listInfo.size;
+        this._render();
+        this._addEvent();
     },
 
     /**
-     * Update item list
-     * @param {object} data - File information(s) with type
-     * @param {object} [data.type] - 'remove' or not.
-     */
-    update: function(data) {
-        if (data.type === 'remove') {
-            this._removeFileItem(data.id);
-        } else {
-            this._addFileItems(data);
-        }
-    },
-
-    /**
-     * Update items total count, total size information.
-     * @param {object} [info] A information to update list.
-     *  @param {array} info.items The list of file information.
-     *  @param {string} info.size The total size.
-     *  @param {string} info.count The count of files.
-     */
-    updateTotalInfo: function(info) {
-        if (info) {
-            this._updateTotalCount(info.count);
-            this._updateTotalUsage(info.size);
-        } else {
-            this._updateTotalCount();
-            this._updateTotalUsage();
-        }
-    },
-
-    /**
-     * Update items total count and refresh element
-     * @param {(number|string)} [count] Total file count
+     * Render list view
      * @private
      */
-    _updateTotalCount: function(count) {
-        if (!tui.util.isExisty(count)) {
-            count = this.items.length;
-        }
+    _render: function() {
+        var isTableList = (this.listType === 'table');
+        var $listContainer = this._getListContainer(isTableList);
 
-        this.$counter.html(count);
-    },
+        this.$el.append($listContainer);
 
-    /**
-     * Update items total size and refresh element
-     * @param {(number|string)} [size] Total files sizes
-     * @private
-     */
-    _updateTotalUsage: function(size) {
-        if (!tui.util.isExisty(size)) {
-            size = this._getSumAllItemUsage();
-        }
-        if (tui.util.isNumber(size) && !isNaN(size)) {
-            size = utils.getFileSizeWithUnit(size);
-            this.$size.html(size);
-            this.$size.show();
+        if (isTableList) {
+            this._setTableWidth($listContainer);
+            this._setColumnGroup();
+            this._setTableHeader();
+            this._setTableRowTemplate();
         } else {
-            this.$size.hide();
+            this._setListItemTemplate();
+        }
+
+        this.$list = this.$el.find('.' + classNames.LIST_ITEMS_CONTAINER);
+        this.$checkbox = this.$el.find(':checkbox');
+    },
+
+    /**
+     * Add event on checkbox
+     * @private
+     */
+    _addEvent: function() {
+        if (this.$checkbox) {
+            this.$checkbox.on('change', $.proxy(this._onChange, this));
         }
     },
 
     /**
-     * Sum sizes of all items.
-     * @returns {number} totalSize
+     * Change event handler
      * @private
      */
-    _getSumAllItemUsage: function() {
-        var items = this.items,
-            totalUsage = 0;
+    _onChange: function() {
+        var state = !!this.$checkbox.prop('checked');
 
-        tui.util.forEach(items, function(item) {
-            totalUsage += parseFloat(item.size);
+        this._changeCheckboxInItem(state);
+        this._changeCheckboxInHeader(state);
+
+        this.fire('checkAll', {
+            filelist: this.getCheckedItems()
+        });
+    },
+
+    /**
+     * Get container element of list
+     * @param {boolean} isTableList - Whether list type is "table" or not
+     * @returns {jQuery} List container
+     * @private
+     */
+    _getListContainer: function(isTableList) {
+        var template = isTableList ? consts.tableTemplate : consts.listTemplate;
+
+        return $(utils.template({
+            listItemsClassName: classNames.LIST_ITEMS_CONTAINER,
+            checkbox: consts.html.CHECKBOX
+        }, template.CONTAINER));
+    },
+
+    /**
+     * Set width of table
+     * @param {jQuery} $listContainer - List container element
+     * @private
+     */
+    _setTableWidth: function($listContainer) {
+        var columns = this.columnList;
+        var totalWidth = parseInt($listContainer.width(), 10);
+        var sumWidth = 0;
+        var emptyCount = 0;
+
+        forEach(columns, function(column) {
+            if (column.width) {
+                sumWidth += column.width;
+            } else {
+                emptyCount += 1;
+            }
         });
 
-        return totalUsage;
+        if (columns) {
+            this._setEmptyWidth(totalWidth - sumWidth, emptyCount);
+        }
+    },
+
+    /**
+     * Set empty width value
+     * @param {number} extraWidth - Extra width value
+     * @param {number} emptyCount - Empty width count
+     * @private
+     */
+    _setEmptyWidth: function(extraWidth, emptyCount) {
+        var columns = this.columnList;
+        var eachWidth = Math.floor(extraWidth / emptyCount);
+        var lastWidth = eachWidth + (extraWidth % emptyCount);
+
+        forEach(columns, function(column, index) {
+            if (!column.width) {
+                column.width = ((columns.length - 1) === index) ? lastWidth : eachWidth;
+            }
+        });
+    },
+
+    /**
+     * Set column group in table
+     * @private
+     */
+    _setColumnGroup: function() {
+        var $colgroup = this.$el.find('colgroup');
+        var columns = this.columnList;
+        var html = '';
+
+        forEach(columns, function(column) {
+            html += '<col width="' + column.width + '">';
+        });
+
+        if (columns) {
+            $colgroup.html(html);
+        }
+    },
+
+    /**
+     * Set table header
+     * @private
+     */
+    _setTableHeader: function() {
+        var columns = this.columnList;
+        var html = '';
+        var headerCount = 0;
+
+        forEach(columns, function(column) {
+            if (!isUndefined(column.header)) {
+                html += '<th scope="col" width="' + column.width + '">' + column.header + '</th>';
+                headerCount += 1;
+            }
+        });
+
+        if (columns) {
+            this._setHeaderElement(html, (headerCount === columns.length));
+        }
+    },
+
+    /**
+     * Set header element
+     * @param {string} html - Template of header
+     * @param {boolean} hasHeader - Whether has header or not
+     * @private
+     */
+    _setHeaderElement: function(html, hasHeader) {
+        var $thead = this.$el.find('thead');
+
+        if (hasHeader) {
+            html = utils.template({
+                checkbox: consts.html.CHECKBOX
+            }, html);
+            $thead.html('<tr>' + html + '</tr>');
+            $thead.find('th').first().css('border-right', 0);
+            $thead.find('th').last().css('border-right', 0);
+        } else {
+            $thead.hide();
+        }
+    },
+
+    /**
+     * Set row's template of table
+     * @private
+     */
+    _setTableRowTemplate: function() {
+        var columns = this.columnList;
+        var html = '';
+
+        forEach(columns, function(column) {
+            html += '<td width="' + column.width + '">' + column.body + '</td>';
+        });
+
+        if (html) {
+            html = '<tr>' + html + '</tr>';
+        } else {
+            html = consts.tableTemplate.LIST_ITEM;
+        }
+
+        this.itemTemplate = html;
+    },
+
+    /**
+     * Set item's template of list
+     * @private
+     */
+    _setListItemTemplate: function() {
+        var item = this.item;
+        var html;
+
+        if (item) {
+            html = '<li>' + item + '</li>';
+        } else {
+            html = consts.listTemplate.LIST_ITEM;
+        }
+
+        this.itemTemplate = html;
+    },
+
+    /**
+     * Set class name to list
+     * @private
+     */
+    _setHasItemsClassName: function() {
+        var className = classNames.HAS_ITEMS;
+        var hasItems = !!this.items.length;
+
+        if (hasItems) {
+            this.$el.addClass(className);
+        } else {
+            this.$el.removeClass(className);
+        }
+    },
+
+    /**
+     * Set last column's width value
+     */
+    _setLastColumnWidth: function() {
+        var lastTheadWidth = this.$el.find('th').last()[0].width;
+        var scrollWidth = this.$list.width() - this.$list[0].scrollWidth;
+        var lastColumWidth = lastTheadWidth - scrollWidth;
+
+        forEach(this.items, function(item) {
+            item.$el.find('td').last().attr('width', lastColumWidth);
+        });
     },
 
     /**
      * Add file items
-     * @param {object} target Target item information.
+     * @param {object} files - Added file list
      * @private
      */
-    _addFileItems: function(target) {
-        if (!tui.util.isArraySafe(target)) { // for target from iframe, use "isArraySafe"
-            target = [target];
+    _addFileItems: function(files) {
+        if (!isArraySafe(files)) { // for target from iframe, use "isArraySafe"
+            files = [files];
         }
-        tui.util.forEach(target, function(data) {
-            this.items.push(this._createItem(data));
+        forEach(files, function(file) {
+            this.items.push(this._createItem(file));
         }, this);
     },
 
     /**
-     * Remove file item
-     * @param {string} id - The item id to remove
+     * Remove file items
+     * @param {object} data - Removed item's
      * @private
      */
-    _removeFileItem: function(id) {
-        tui.util.forEach(this.items, function(item, index) {
-            if (id === item.id) {
+    _removeFileItems: function(data) {
+        var removedItem;
+
+        this.items = tui.util.filter(this.items, function(item) {
+            removedItem = data[item.id];
+
+            if (removedItem) {
                 item.destroy();
-                this.items.splice(index, 1);
-                return false;
             }
+
+            return !removedItem;
         }, this);
     },
 
@@ -156,34 +349,124 @@ var List = tui.util.defineClass(/** @lends List.prototype */{/*eslint-disable*/
      * @private
      */
     _createItem: function(data) {
-        var item = new Item({
-            root: this,
-            name: data.name,
-            size: data.size,
-            id: data.id
-        });
-        item.on('remove', this._removeFile, this);
+        var item = new Item(this.$list, data, this.itemTemplate);
+        item.on('remove', this._onRemove, this);
+        item.on('check', this._onCheck, this);
+
         return item;
     },
 
     /**
-     * Callback Remove File
-     * @param {Item} item - Item
+     * Remove event handler on each item
+     * @param {Item} data - Remove item's data
      * @private
      */
-    _removeFile: function(item) {
-        this.fire('remove', item);
+    _onRemove: function(data) {
+        this.fire('remove', data);
+    },
+
+    /**
+     * Check event handler fired on each list item
+     * @param {string} data - Current selected item's data
+     * @private
+     */
+    _onCheck: function(data) {
+        this._setCheckedAll();
+
+        this.fire('check', data);
+    },
+
+    /**
+     * Set checked all state
+     * @private
+     */
+    _setCheckedAll: function() {
+        var checkedItems = this.getCheckedItems();
+        var isCheckedAll = (checkedItems.length === this.items.length) &&
+                            !!(this.items.length);
+
+        this.$checkbox.prop('checked', isCheckedAll);
+        this._changeCheckboxInHeader(isCheckedAll);
+    },
+
+    /**
+     * Change checkbox in table header
+     * @param {boolean} state - Checked state
+     * @private
+     */
+    _changeCheckboxInHeader: function(state) {
+        var $checkbox = this.$checkbox;
+        var $label = utils.getLabelElement($checkbox);
+        var $target = $label ? $label : $checkbox;
+        var className = classNames.IS_CHECKED;
+
+        if (state) {
+            $target.addClass(className);
+        } else {
+            $target.removeClass(className);
+        }
+    },
+
+    /**
+     * Change checkbox in list item
+     * @param {boolean} state - Checked state
+     * @private
+     */
+    _changeCheckboxInItem: function(state) {
+        forEach(this.items, function(item) {
+            item.changeCheckboxState(state);
+        });
+    },
+
+    /**
+     * Get checked items
+     * @returns {Array.<object>} Checked item data
+     */
+    getCheckedItems: function() {
+        var checkedItems = [];
+
+        tui.util.forEach(this.items, function(item) {
+            if (item.getCheckedState()) {
+                checkedItems.push({
+                    id: item.id,
+                    name: item.name,
+                    size: item.size
+                });
+            }
+        });
+
+        return checkedItems;
+    },
+
+    /**
+     * Update item list
+     * @param {object} data - File information(s) with type
+     * @param {*} type - Update type
+     */
+    update: function(data, type) {
+        if (type === 'remove') {
+            this._removeFileItems(data);
+        } else {
+            this._addFileItems(data);
+        }
+
+        if (this.listType === 'table') {
+            this._setHasItemsClassName();
+            this._setCheckedAll();
+            this._setLastColumnWidth();
+        }
     },
 
     /**
      * Clear list
      */
     clear: function() {
-        tui.util.forEach(this.items, function(item) {
+        forEach(this.items, function(item) {
             item.destroy();
         });
         this.items.length = 0;
-        this.updateTotalInfo();
+        this._setHasItemsClassName();
+        this._setCheckedAll();
     }
 });
 

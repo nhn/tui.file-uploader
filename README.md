@@ -10,14 +10,15 @@ It supports uploading files to server.
 * Add/Remove
 
 ## Documentation
-* **API** : https://nhnent.github.io/tui.component.file-uploader/latest
-* **Tutorial** : https://github.com/nhnent/tui.component.file-uploader/wiki/File-Uploader-Tutorial
+* API: [https://nhnent.github.io/tui.component.file-uploader/latest](https://nhnent.github.io/tui.component.file-uploader/latest)
+* Tutorial: [https://github.com/nhnent/tui.component.file-uploader/wiki/Tutorial](https://github.com/nhnent/tui.component.file-uploader/wiki/Tutorial)
+* Examples: [http://nhnent.github.io/tui.component.file-uploader/latest/example1.html](http://nhnent.github.io/tui.component.file-uploader/latest/example1.html)
 
 ## Dependency
-* tui-code-snippet: ~1.1.0
-* jquery: ~1.8.3
+* tui-code-snippet: ~1.2.0
+* jQuery: ~1.8.3
 
-## Test environment
+## Test Environment
 * PC
 	* IE8~11
     * Chrome
@@ -25,8 +26,8 @@ It supports uploading files to server.
 
 ## Download/Install
 * Bower:
-   * latest : `bower install tui-component-file-uploader`
-   * each version : `bower install tui-component-file-uploader[#tag]`
+   * Latest: `bower install tui-component-file-uploader`
+   * Each Version : `bower install tui-component-file-uploader[#tag]`
 * Download: https://github.com/nhnent/tui.component.file-uploader
 
 ## LICENSE

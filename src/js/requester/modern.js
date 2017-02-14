@@ -1,17 +1,22 @@
+/**
+ * @fileoverview Requester for modern browsers.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 var consts = require('../consts');
 
-var TYPE = consts.CONF.REQUESTER_TYPE_MODERN,
-    forEach = tui.util.forEach;
+var TYPE = consts.conf.REQUESTER_TYPE_MODERN;
+var forEach = tui.util.forEach;
 
 /**
  * Modern requester
  * @param {Uploader} uploader - Uploader
  * @class
+ * @ignore
  */
-var Modern = tui.util.defineClass(/** @lends Modern.prototype */{/*eslint-disable*/
-    init: function(uploader) {/*eslint-enable*/
+var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
+    init: function(uploader) {
         /**
          * Uploader
          * @type {Uploader}
@@ -73,9 +78,9 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{/*eslint-disabl
      * @param {Array.<File> | File} [files] - A file or files
      */
     store: function(files) {
-        var pool = this.pool,
-            stamp = tui.util.stamp,
-            data = [];
+        var pool = this.pool;
+        var stamp = tui.util.stamp;
+        var data = [];
 
         files = tui.util.toArray(files || this.formView.$fileInput[0].files);
         forEach(files, function(file) {
@@ -96,9 +101,9 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{/*eslint-disabl
      * Upload ajax
      */
     upload: function() {
-        var field = this.uploader.fileField,
-            $form = this.formView.$el.clone(),
-            formData;
+        var field = this.formView.$fileInput.attr('name');
+        var $form = this.formView.$el.clone();
+        var formData;
 
         $form.find('input[type="file"]').remove();
         formData = new FormData($form[0]);
@@ -122,43 +127,31 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{/*eslint-disabl
     /**
      * Remove file (ajax-jsonp)
      * It is not used for batch transfer.
-     * @param {Object} params - Parameters to remove file
+     * @param {Object} params - Removed item's id list (idList: [])
      */
     remove: function(params) {
         $.ajax({
-            url: uploader.url.remove,
+            url: this.uploader.url.remove,
             dataType: 'jsonp',
             data: params,
             success: $.proxy(function(data) {
-                data.type = 'remove';
                 this.fire('removed', data);
             }, this)
         });
     },
 
     /**
-     * Remove file (ajax-jsonp)
+     * Remove file
      * It is used for batch transfer.
-     * @param {Object} params - Parameters to remove file
+     * @param {Object} removedItems - Removed items info
      * @private
      */
-    _removeWhenBatch: function(params) {
-        var pool = this.pool,
-            hasStamp = tui.util.hasStamp,
-            stamp = tui.util.stamp,
-            result = false;
-
-        forEach(pool, function(file, index) {
-            if (hasStamp(file) && (stamp(file) === params.id)) {
-                pool.splice(index, 1);
-                result = true;
-                return false;
-            }
+    _removeWhenBatch: function(removedItems) {
+        this.pool = tui.util.filter(this.pool, function(file) {
+            return (removedItems[file.id]);
         });
 
-        this.fire('removed', tui.util.extend({
-            message: result ? 'success' : 'fail'
-        }, params));
+        this.fire('removed', removedItems);
     },
 
     /**

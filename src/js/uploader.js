@@ -1,9 +1,10 @@
 /**
- * @fileoverview FileUploader is core of file uploader component.<br>FileManager manage connector to connect server and update FileListView.
- * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview FileUploader is core of file uploader component.
+ *               FileManager manage connector to connect server and update FileListView.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 'use strict';
+
 var consts = require('./consts');
 var utils = require('./utils');
 var Form = require('./view/form');
@@ -12,48 +13,74 @@ var DragAndDrop = require('./view/drag');
 var OldRequester = require('./requester/old');
 var ModernRequester = require('./requester/modern');
 
-var REQUESTER_TYPE_MODERN = consts.CONF.REQUESTER_TYPE_MODERN;
+var keys = tui.util.keys;
+var forEach = tui.util.forEach;
+var classNames = consts.className;
+var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
+
 /**
- * @constructor
- * @param {object} options To set up uploader modules.
- *  @param {object} options.url File server urls.
- *      @param {string} options.url.send Send url.
- *      @param {string} options.url.remove Delete url.
- *  @param {string} [options.formTarget='tuiUploaderHiddenFrame'] The target name(iframe) for CORS.
- *  @param {object} options.listInfo To display files information.
- *  @param {string} [options.fileField='userFile[]'] The field name of input file element.
- *  @param {boolean} options.useFolder Use directory upload. If ture, 'isMultiple' option will be ignored.
- *  @param {boolean} options.isMultiple Use multiple files upload.
- * @param {jQuery} $el Root Element of Uploader
+ * FileUploader component controller
+ * @class Uploader
+ * @param {jQuery} container - Container element to generate component
+ * @param {object} options - Options
+ *     @param {object} options.url - File server urls
+ *         @param {string} options.url.send - Send files url
+ *         @param {string} options.url.remove - Remove files url
+ *     @param {boolean} [options.isMultiple] Use multiple files upload
+ *     @param {boolean} [options.useFolder] - Use directory upload. If ture, 'isMultiple' option will be ignored
+ *     @param {object} options.listUI - List area preset
+ *         @param {object} options.listUI.type - List type ('simple' or 'table')
+ *         @param {string} [options.listUI.item] - To customize item contents when list type is 'simple'
+ *         @param {Array.<object>} [options.listUI.columnList] - To customize row contents when list type is 'table'
  * @example
- * // HTML
- * //  <div id="uploader"></div>
- * //  <div id="list">
- * //    <div class="count">count : <strong id="file_count"></strong></div>
- * //    <div class="size">size : <strong id="size_count"></strong></div>
- * //    <ul id="files"></ul>
- * //  </div>
- *
- * var uploader = new tui.component.Uploader({
+ * // Case 1: Using normal transfer & simple list
+ * //
+ * // <!-- HTML -->
+ * // <div id="uploader">
+ * //     <input type="file" name="userfile[]">
+ * //     <div class="tui-js-file-uploader-list"></div>
+ * // </div>
+ * //
+ * var fileUploader = new tui.component.FileUploader($('#uploader'), {
  *     url: {
- *         send: "http://fe.nhnent.com/etc/etc/uploader/uploader.php",
- *         remove: "http://fe.nhnent.com/etc/etc/uploader/remove.php"
+ *         send: 'http://localhost:3000/upload',
+ *         remove: 'http://localhost:3000/remove'
  *     },
- *     listInfo: {
- *         list: $('#files'),
- *         count: $('#file_count'),
- *         size: $('#size_count')
+ *     isBatchTransfer: false,
+ *     listUI: {
+ *         type: 'simple'
  *     }
- * }, $('#uploader'));
+ * });
+ *
+ * // Case 2: Using batch transfer & table list & make dropzone
+ * //
+ * // <!-- HTML -->
+ * // <div id="uploader">
+ * //     <input type="file" name="userfile[]">
+ * //     <div class="tui-js-file-uploader-list tui-js-file-uploader-dropzone"></div>
+ * //     <button type="submit">Upload</button>
+ * // </div>
+ * //
+ * var fileUploader = new tui.component.FileUploader($('#uploader'), {
+ *     url: {
+ *         send: 'http://localhost:3000/upload'
+ *     },
+ *     isBatchTransfer: true,
+ *     listUI: {
+ *         type: 'table'
+ *     }
+ * });
  */
-var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-disable*/
-    init: function(options, $el) {/*eslint-enable*/
+var Uploader = tui.util.defineClass(/** @lends Uploader.prototype */{
+    init: function($container, options) {
+        var $dropzone = $container.find('.' + classNames.DROPZONE);
+
         /**
          * Uploader element
          * @type {jQuery}
          * @private
          */
-        this.$el = $el;
+        this.$container = $container;
 
         /**
          * Send/Remove url
@@ -74,7 +101,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
          * @private
          * @type {string}
          */
-        this.formTarget = consts.CONF.FORM_TARGET_NAME;
+        this.formTarget = consts.conf.FORM_TARGET_NAME;
 
         /**
          * Target frame for CORS (IE7, 8, 9)
@@ -82,14 +109,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
          * @type {jQuery}
          */
         this.$targetFrame = this._createTargetFrame()
-            .appendTo(this.$el);
-
-        /**
-         * Input file - field name
-         * @private
-         * @type {string}
-         */
-        this.fileField = options.fileField || consts.CONF.FILE_FILED_NAME;
+            .appendTo(this.$container);
 
         /**
          * Whether the uploader uses batch-transfer
@@ -120,27 +140,18 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
         this.isMultiple = !!(options.isMultiple);
 
         /**
-         * Whether the user uses drag&drop upload
-         * @private
-         * @type {boolean}
-         */
-        this.useDrag = !!(options.useDrag);
-
-        /**
          * Whether the user uses folder upload
          * @private
          * @type {boolean}
          */
         this.useFolder = !!(options.useFolder);
 
-        if (this.useDrag && !this.useFolder && utils.isSupportFileSystem()) {
-            /**
-             * Drag & Drop View
-             * @private
-             * @type {DragAndDrop}
-             */
-            this.dragView = new DragAndDrop(this);
-        }
+        /**
+         * Whether the user uses drag&drop upload
+         * @private
+         * @type {boolean}
+         */
+        this.useDropzone = !!($dropzone);
 
         /**
          * From View
@@ -154,10 +165,20 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
          * @private
          * @type {List}
          */
-        this.listView = new List(options.listInfo);
+        this.listView = new List(this.$container.find('.' + classNames.LIST_CONTAINER), options.listUI);
+
+        if (this.useDropzone && !this.useFolder && utils.isSupportFileSystem()) {
+            /**
+             * Drag & Drop View
+             * @private
+             * @type {DragAndDrop}
+             */
+            this.dragView = new DragAndDrop($dropzone);
+        }
 
         this._setRequester();
         this._addEvent();
+
         if (this.isCrossDomain && this.isSupportPostMessage) {
             this._setPostMessageEvent();
         }
@@ -219,7 +240,40 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
      * @private
      */
     _addEvent: function() {
-        this.listView.on('remove', this.removeFile, this);
+        this.listView.on({
+            remove: this.removeFile,
+            check: function(data) {
+                /**
+                 * Check event
+                 * @event Uploader#check
+                 * @param {object} evt - Check event data
+                 *     @param {string} evt.id - File id
+                 *     @param {string} evt.name - File name
+                 *     @param {string} evt.size - File size
+                 *     @param {boolean} evt.state - Checked state
+                 * @example
+                 * FileUploader.on('check', function(evt) {
+                 *     console.log(evt.id + ' checked state is ' + evt.state);
+                 * });
+                 */
+                this.fire('check', data);
+            },
+            checkAll: function(data) {
+                /**
+                 * Check event
+                 * @api
+                 * @event Uploader#checkAll
+                 * @param {object} evt - Check event data
+                 *     @param {string} evt.filelist - Checked file list
+                 * @example
+                 * FileUploader.on('checkAll', function(evt) {
+                 *     console.log(evt.filelist);
+                 * });
+                 */
+                this.fire('checkAll', data);
+            }
+        }, this);
+
         if (this.isBatchTransfer) {
             this._addEventWhenBatchTransfer();
         } else {
@@ -239,7 +293,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
 
         this._requester.on({
             removed: function(data) {
-                this.updateList(data);
+                this.updateList(data, 'remove');
                 this.fire('remove', data);
             },
             error: function(data) {
@@ -251,11 +305,11 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
             },
             stored: function(data) {
                 this.updateList(data);
-                this.fire('update', data);
+                this.fire('update', {filelist: data});
             }
         }, this);
 
-        if (this.useDrag && this.dragView) {
+        if (this.useDropzone && this.dragView) {
             this.dragView.on('drop', this.store, this);
         }
     },
@@ -269,7 +323,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
 
         this._requester.on({
             removed: function(data) {
-                this.updateList(data);
+                this.updateList(data, 'remove');
                 this.fire('remove', data);
             },
             error: function(data) {
@@ -281,7 +335,7 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
             }
         }, this);
 
-        if (this.useDrag && this.dragView) {
+        if (this.useDropzone && this.dragView) {
             this.dragView.on('drop', function(files) {
                 this.store(files);
                 this.submit();
@@ -291,16 +345,12 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
 
     /**
      * Update list view with custom or original data.
-     * @param {object} [info] The data for update list
+     * @param {object} info - The data for update list
+     * @param {*} type - Update type
      * @private
      */
-    updateList: function(info) {
-        this.listView.update(info);
-        if (this.isBatchTransfer) {
-            this.listView.updateTotalInfo(info);
-        } else {
-            this.listView.updateTotalInfo();
-        }
+    updateList: function(info, type) {
+        this.listView.update(info, type);
     },
 
     /**
@@ -315,10 +365,15 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
 
     /**
      * Callback for custom remove event
-     * @param {object} data The data for remove file.
+     * @param {object} data The data for remove files.
      * @private
      */
     removeFile: function(data) {
+        if (!this.isBatchTransfer) {
+            data = {
+                idList: keys(data)
+            };
+        }
         this._requester.remove(data);
     },
 
@@ -335,7 +390,17 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
     },
 
     /**
+     * Store input element to pool.
+     * @param {Array.<File> | File} [files] - A file or files
+     * @private
+     */
+    store: function(files) {
+        this._requester.store(files);
+    },
+
+    /**
      * Clear uploader
+     * @private
      */
     clear: function() {
         this._requester.clear();
@@ -344,12 +409,40 @@ var Uploader = tui.util.defineClass(/**@lends Uploader.prototype */{/*eslint-dis
     },
 
     /**
-     * Store input element to pool.
-     * @param {Array.<File> | File} [files] - A file or files
-     * @private
+     * Get checked list items
+     * @returns {object} Checked items
      */
-    store: function(files) {
-        this._requester.store(files);
+    getCheckedList: function() {
+        return this.listView.getCheckedItems();
+    },
+
+    /**
+     * Remove file list
+     * @param {object} items - Removed file's data
+     */
+    removeList: function(items) {
+        var checkedItems = {};
+
+        forEach(items, function(item) {
+            checkedItems[item.id] = true;
+        });
+
+        this.removeFile(checkedItems);
+    },
+
+    /**
+     * Get file's total size
+     * @param {object} items - File data list to get total size
+     * @returns {string} Total size with unit
+     */
+    getTotalSize: function(items) {
+        var totalSize = 0;
+
+        forEach(items, function(item) {
+            totalSize += parseFloat(item.size);
+        });
+
+        return utils.getFileSizeWithUnit(totalSize);
     }
 });
 
@@ -359,33 +452,46 @@ module.exports = Uploader;
 /**
  * Remove event
  * @event Uploader#remove
- * @param {object} data - Remove data from this component
- *  @param {string} data.message - 'success' or 'fail'
- *  @param {string} data.name - file name
- *  @param {string} data.id - file id
+ * @param {object} evt - Removed item's data (ex: {id: state})
+ * @example
+ * fileUploader.on('remove', function(evt) {
+ *     console.log('state: ' + evt['fileId']);
+ * });
  */
 
 /**
  * Error event
  * @event Uploader#error
- * @param {Error} data - Error data
- *  @param {string} data.status - Error status
- *  @param {string} data.message - Error message
+ * @param {Error} evt - Error data
+ *     @param {string} evt.status - Error status
+ *     @param {string} evt.message - Error message
+ * @example
+ * fileUploader.on('error', function(evt) {
+ *     console.log(evt.status);
+ * });
  */
 
 /**
  * Success event
  * @event Uploader#success
- * @param {object} data - Server response data
- *  @param {Array} data.filelist - Uploaded file list
- *  @param {number} [data.success] - Uploaded file count
- *  @param {number} [data.failed] - Failed file count
- *  @param {number} [data.count] - Total count
+ * @param {object} evt - Server response data
+ *     @param {Array} evt.filelist - Uploaded file list
+ *     @param {number} [evt.success] - Uploaded file count
+ *     @param {number} [evt.failed] - Failed file count
+ *     @param {number} [evt.count] - Total count
+ * @example
+ * fileUploader.on('success', function(evt) {
+ *     console.log(evt.filelist);
+ * });
  */
 
 /**
- * Update event
+ * Update event when using batch transfer
  * @event Uploader#update
- * @param {Array.<object>} data - File list data
- * Array having objects<br>{id: string, name: string, size: number}
+ * @param {object} evt - Updated file list
+ *     @param {Array} evt.filelist - Updated file list
+ * @example
+ * fileUploader.on('update', function(evt) {
+ *     console.log(evt.filelist);
+ * });
  */

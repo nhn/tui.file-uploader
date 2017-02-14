@@ -19,7 +19,7 @@ var PORT = 3000,
             cb(null, __dirname + '/files');
         },
         filename: function (req, file, cb) {
-            cb(null, Date.now() + file.originalname);
+            cb(null, Date.now().toString());
         }
     }),
     upload = multer({
@@ -101,7 +101,6 @@ app.post('/upload', upload, function(req, res) { // Let us suppose that all the 
             '</script>'
         );
     } else if (redirectURL) { // CORS - IE 7
-        console.log('??');
         responseData = encodeURIComponent(responseData);
         res.redirect(redirectURL + '?' + responseData);
     } else {
@@ -113,20 +112,21 @@ app.post('/upload', upload, function(req, res) { // Let us suppose that all the 
  * API - get
  *  /remove
  *      req.query.callback - Callback name for jsonp
- *      req.query.id - File id
- *      req.query.name - File name
+ *      req.query.idList - Removed file's id list
  */
 app.get('/remove', function(req, res) { // Suppose that the file was removed successfully.
-    var callbackName = req.query.callback,
-        result = JSON.stringify({
-            message: 'success',
-            id: req.query.id,
-            name: req.query.name
-        });
-    log('remove', req.query);
+    var callbackName = req.query.callback;
+    var files = req.query.idList;
+    var result = {};
+
+    files.forEach(function(id) {
+        result[id] = true;
+    });
+
+    log('remove', result);
 
     if (callbackName) { // for x-domain jsonp
-        res.send(callbackName + '(' + result + ')');
+        res.send(callbackName + '(' + JSON.stringify(result) + ')');
     } else { // for same domain
         res.send(result);
     }

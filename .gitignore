@@ -1,3 +1,6 @@
+#DS_STORE
+.DS_Store
+
 # Logs
 logs
 *.log
@@ -23,35 +26,20 @@ build/Release
 # Deployed apps should consider commenting this line out:
 # see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
 node_modules
-
-# Bower Components
 bower_components
-lib
 
-# IDEA
+# idea
 .idea
-*.iml
 
-# Window
-Thumbs.db
-Desktop.ini
+# compress
+doc
+latest
 
-# MAC
-.DS_Store
+# sample
+sample
 
-# SVN
-.svn
-
-# eclipse
-.project
-.metadata
+# report
+report
 
 # etc
-temp
-doc
-demo
-report
-*.vim
-*.swp
 server/files
-

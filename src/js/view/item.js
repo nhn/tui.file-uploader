@@ -1,28 +1,29 @@
 /**
  * @fileoverview ItemView make element to display added file information. It has attached file ID to request for remove.
- * @dependency ne-code-snippet 1.0.3, jquery1.8.3
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 'use strict';
-var consts = require('../consts'),
-    utils = require('../utils');
 
-var REMOVE_BUTTON_CLASS = consts.CONF.REMOVE_BUTTON_CLASS;
+var consts = require('../consts');
+var utils = require('../utils');
+
+var classNames = consts.className;
+var htmls = consts.html;
 
 /**
- * Class of item that is member of file list.
+ * List item view
  * @class Item
- * @param {object} options
- *  @param {string} options.name File name
- *  @param {string} options.type File type
- *  @param {object} options.root List instance
- *  @param {string} [options.id] Unique key, what if the key is not exist id will be the file name.
- *  @param {string} [options.deleteButtonClassName='uploader_btn_delete'] The class name is for delete button.
- *  @param {string} [options.template] item template
- *  @param {(string|number)} [options.size] File size (but ie low browser, x-domain)
+ * @param {jQuery} $root - List element to append item view
+ * @param {object} data - Item's data (file info)
+ *     @param {string} data.name - File name
+ *     @param {string} data.type - File type
+ *     @param {string} [data.id] - Unique key, what if the key is not exist id will be the file name
+ *     @param {(string|number)} [options.size] File size (but ie low browser, x-domain)
+ *  @param {string} options.template - Item template
+ *  @ignore
  */
-var Item = tui.util.defineClass(/** @lends Item.prototype **/{/*eslint-disable*/
-    init: function(options) {/*eslint-enable*/
+var Item = tui.util.defineClass(/** @lends Item.prototype **/{
+    init: function($root, data, template) {
         /**
          * Item: LI element
          * @type {jQuery}
@@ -31,28 +32,39 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{/*eslint-disable*/
         this.$el = null;
 
         /**
+         * Item: checkbox
+         * @type {jQuery}
+         * @private
+         */
+        this.$checkbox = null;
+
+        /**
          * Item: remove button
          * @type {jQuery}
+         * @private
          */
-        this.$removeBtn = null;
+        this.$removeButton = null;
 
         /**
          * Item name
          * @type {string}
+         * @private
          */
-        this.name = options.name;
+        this.name = data.name;
 
         /**
          * Item id
          * @type {string}
+         * @private
          */
-        this.id = options.id || options.name;
+        this.id = data.id;
 
         /**
          * Item size
          * @type {number|string}
+         * @private
          */
-        this.size = options.size || '';
+        this.size = data.size || '';
 
         /**
          * Item type
@@ -61,28 +73,47 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{/*eslint-disable*/
          */
         this.type = this._extractExtension();
 
-        this.render(options.root.$el);
+        /**
+         * Template to create list item
+         * @type {object}
+         * @private
+         */
+        this.template = template;
+
+        this._render($root);
     },
 
     /**
-     * Render making form padding with deletable item
-     * @param {jQuery} $target - Target List element
+     * Render item
+     * @param {jQuery} $root - List area view
+     * @private
      */
-    render: function($target) {
-        var html = this._getHtml(),
-            removeButtonHTML = utils.template({
-                text: 'Remove'
-            }, consts.HTML.button),
-            $removeBtn = $(removeButtonHTML);
+    _render: function($root) {
+        var html = this._getHTML();
 
-        this.$removeBtn = $removeBtn
-            .addClass(REMOVE_BUTTON_CLASS);
-
-        this.$el = $(html)
-            .append($removeBtn)
-            .appendTo($target);
+        this.$el = $(html).appendTo($root);
+        this.$checkbox = this.$el.find(':checkbox');
+        this.$removeButton = this.$el.find('button');
 
         this._addEvent();
+    },
+
+    /**
+     * Get html string of item
+     * @returns {string} Html string
+     * @private
+     */
+    _getHTML: function() {
+        var template = this.template;
+        var map = {
+            filetype: this.type,
+            filename: this.name,
+            filesize: this.size ? utils.getFileSizeWithUnit(this.size) : '',
+            checkbox: htmls.CHECKBOX,
+            removeButton: htmls.REMOVE_BUTTON
+        };
+
+        return utils.template(map, template);
     },
 
     /**
@@ -95,26 +126,27 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{/*eslint-disable*/
     },
 
     /**
-     * Get listItem element HTML
-     * @returns {string} HTML
-     * @private
-     */
-    _getHtml: function() {
-        var map = {
-            filetype: this.type,
-            filename: this.name,
-            filesize: this.size ? utils.getFileSizeWithUnit(this.size) : ''
-        };
-
-        return utils.template(map, consts.HTML.listItem);
-    },
-
-    /**
      * Add event handler on delete button.
      * @private
      */
     _addEvent: function() {
-        this.$removeBtn.on('click', $.proxy(this._onClickEvent, this));
+        this.$checkbox.on('change', $.proxy(this._onChange, this));
+        this.$removeButton.on('click', $.proxy(this._onClickEvent, this));
+    },
+
+    /**
+     * Change event handler
+     * @private
+     */
+    _onChange: function() {
+        var state = !!this.$checkbox.prop('checked');
+        this._changeCheckbox(state);
+        this.fire('check', {
+            id: this.id,
+            name: this.name,
+            size: this.size,
+            state: state
+        });
     },
 
     /**
@@ -122,11 +154,44 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{/*eslint-disable*/
      * @private
      */
     _onClickEvent: function() {
-        this.fire('remove', {
-            name : this.name,
-            id : this.id,
-            type: 'remove'
-        });
+        var data = {};
+        data[this.id] = true;
+        this.fire('remove', data);
+    },
+
+    /**
+     * Change checkbox view state
+     * @param {boolean} state - Checked state
+     * @private
+     */
+    _changeCheckbox: function(state) {
+        var $checkbox = this.$checkbox;
+        var $label = utils.getLabelElement($checkbox);
+        var $target = $label ? $label : $checkbox;
+        var className = classNames.IS_CHECKED;
+
+        if (state) {
+            $target.addClass(className);
+        } else {
+            $target.removeClass(className);
+        }
+    },
+
+    /**
+     * Change checkbox state
+     * @param {boolean} state - Checked state
+     */
+    changeCheckboxState: function(state) {
+        this.$checkbox.prop('checked', state);
+        this._changeCheckbox(state);
+    },
+
+    /**
+     * Get state of checkbox
+     * @returns {boolean} Checkbox state
+     */
+    getCheckedState: function() {
+        return this.$checkbox.prop('checked');
     },
 
     /**
