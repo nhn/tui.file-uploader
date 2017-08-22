@@ -4,6 +4,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
+var snippet = require('tui-code-snippet');
+
 var consts = require('../consts');
 
 var SUPPORT_DROPZONE_CLASS = consts.className.SUPPORT_DROPZONE;
@@ -15,7 +18,7 @@ var DROP_ENABLED_CLASS = consts.className.DROP_ENABLED;
  * @param {jQuery} $el - Dropzone element
  * @ignore
  */
-var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{
+var DragAndDrop = snippet.defineClass(/** @lends DragAndDrop.prototype */{
     init: function($el) {
         /**
          * Drop zone jQuery-element
@@ -81,7 +84,7 @@ var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{
      * @returns {boolean} False
      */
     onDrop: function(e) {
-        var files = tui.util.pick(e, 'originalEvent', 'dataTransfer', 'files');
+        var files = snippet.pick(e, 'originalEvent', 'dataTransfer', 'files');
 
         e.preventDefault();
         this._disable();
@@ -107,6 +110,6 @@ var DragAndDrop = tui.util.defineClass(/** @lends DragAndDrop.prototype */{
     }
 });
 
-tui.util.CustomEvents.mixin(DragAndDrop);
+snippet.CustomEvents.mixin(DragAndDrop);
 
 module.exports = DragAndDrop;

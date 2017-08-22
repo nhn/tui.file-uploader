@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var DragAndDrop = require('../../src/js/view/drag.js');
 
 describe('Drag and drop test', function() {

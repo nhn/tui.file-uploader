@@ -5,6 +5,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
+var snippet = require('tui-code-snippet');
+
 var consts = require('./consts');
 var utils = require('./utils');
 var Form = require('./view/form');
@@ -13,8 +16,8 @@ var DragAndDrop = require('./view/drag');
 var OldRequester = require('./requester/old');
 var ModernRequester = require('./requester/modern');
 
-var keys = tui.util.keys;
-var forEach = tui.util.forEach;
+var keys = snippet.keys;
+var forEach = snippet.forEach;
 var classNames = consts.className;
 var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
 
@@ -41,7 +44,8 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  * //     <div class="tui-js-file-uploader-list"></div>
  * // </div>
  * //
- * var fileUploader = new tui.component.FileUploader($('#uploader'), {
+ * var FileUploader = tui.FileUploader; // require('tui-file-uploader');
+ * var instance = new FileUploader($('#uploader'), {
  *     url: {
  *         send: 'http://localhost:3000/upload',
  *         remove: 'http://localhost:3000/remove'
@@ -61,7 +65,8 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  * //     <button type="submit">Upload</button>
  * // </div>
  * //
- * var fileUploader = new tui.component.FileUploader($('#uploader'), {
+ * var FileUploader = tui.FileUploader; // require('tui-file-uploader');
+ * var instance = new FileUploader($('#uploader'), {
  *     url: {
  *         send: 'http://localhost:3000/upload'
  *     },
@@ -71,7 +76,7 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  *     }
  * });
  */
-var Uploader = tui.util.defineClass(/** @lends Uploader.prototype */{
+var Uploader = snippet.defineClass(/** @lends Uploader.prototype */{
     init: function($container, options) {
         var $dropzone = $container.find('.' + classNames.DROPZONE);
 
@@ -130,7 +135,7 @@ var Uploader = tui.util.defineClass(/** @lends Uploader.prototype */{
          * @private
          * @type {boolean}
          */
-        this.isSupportPostMessage = !!(tui.util.pick(this.$targetFrame, '0', 'contentWindow', 'postMessage'));
+        this.isSupportPostMessage = !!(snippet.pick(this.$targetFrame, '0', 'contentWindow', 'postMessage'));
 
         /**
          * Whether the user uses multiple upload
@@ -446,7 +451,7 @@ var Uploader = tui.util.defineClass(/** @lends Uploader.prototype */{
     }
 });
 
-tui.util.CustomEvents.mixin(Uploader);
+snippet.CustomEvents.mixin(Uploader);
 module.exports = Uploader;
 
 /**

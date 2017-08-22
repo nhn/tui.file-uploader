@@ -1,26 +1,26 @@
 {
-    "example1": {
+    "example01-basic": {
         "title": "1. Normal transfer"
     },
-    "example2": {
+    "example02-batch-transfer": {
         "title": "2. Batch transfer"
     },
-    "example3": {
+    "example03-folder": {
         "title": "3. Select folder"
     },
-    "example4": {
+    "example04-simple-ui": {
         "title": "4. Simple list UI"
     },
-    "example5": {
+    "example05-table-ui": {
         "title": "5. Table list UI"
     },
-    "example6": {
+    "example06-dropzone": {
         "title": "6. Use dropzone"
     },
-    "example7": {
+    "example07-customizing": {
         "title": "7. Customize view"
     },
-    "example8": {
+    "example08-local-test": {
         "title": "8. Test all features in local"
     }
 }

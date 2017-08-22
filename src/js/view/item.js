@@ -4,6 +4,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
+var snippet = require('tui-code-snippet');
+
 var consts = require('../consts');
 var utils = require('../utils');
 
@@ -22,7 +25,7 @@ var htmls = consts.html;
  *  @param {string} options.template - Item template
  *  @ignore
  */
-var Item = tui.util.defineClass(/** @lends Item.prototype **/{
+var Item = snippet.defineClass(/** @lends Item.prototype **/{
     init: function($root, data, template) {
         /**
          * Item: LI element
@@ -202,5 +205,5 @@ var Item = tui.util.defineClass(/** @lends Item.prototype **/{
     }
 });
 
-tui.util.CustomEvents.mixin(Item);
+snippet.CustomEvents.mixin(Item);
 module.exports = Item;

@@ -4,6 +4,9 @@
  */
 'use strict';
 
+var $ = require('jquery');
+var snippet = require('tui-code-snippet');
+
 var consts = require('../consts');
 var utils = require('../utils');
 
@@ -17,7 +20,7 @@ var STAMP_ID = '__fe_id';
  * @param {Uploader} uploader - Uploader instance
  * @ignore
  */
-var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
+var Form = snippet.defineClass(/**@lends View.Form.prototype **/{
     init: function(uploader) {
         /**
          * File uploader
@@ -139,7 +142,7 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
      * @returns {Object.<string, string>} The html template string set for form.
      */
     _setTemplate: function(template) {
-        return tui.util.extend({}, consts.html, template);
+        return snippet.extend({}, consts.html, template);
     },
 
     /**
@@ -200,7 +203,7 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
         this.$fileInput.remove();
         this.$fileInput = $newFileInput;
 
-        if (tui.util.hasStamp(this.$fileInput[0])) { // for old browser
+        if (snippet.hasStamp(this.$fileInput[0])) { // for old browser
             delete this.$fileInput[0][STAMP_ID];
         }
 
@@ -216,5 +219,5 @@ var Form = tui.util.defineClass(/**@lends View.Form.prototype **/{
     }
 });
 
-tui.util.CustomEvents.mixin(Form);
+snippet.CustomEvents.mixin(Form);
 module.exports = Form;
