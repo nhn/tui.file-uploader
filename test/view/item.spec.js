@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var Item = require('../../src/js/view/item.js');
 var consts = require('../../src/js/consts.js');
 var utils = require('../../src/js/utils.js');

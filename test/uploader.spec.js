@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var Uploader = require('../src/js/uploader.js');
 
 describe('Uploader test', function() {

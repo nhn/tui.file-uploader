@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var OldRequester = require('../../src/js/requester/old');
 
 describe('Old Requester', function() {

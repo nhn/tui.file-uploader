@@ -1,5 +1,8 @@
 'use strict';
 
+var $ = require('jquery');
+var snippet = require('tui-code-snippet');
+
 var Form = require('../../src/js/view/form.js');
 var consts = require('../../src/js/consts');
 
@@ -23,7 +26,7 @@ describe('Input test', function() {
         };
         normalForm = new Form(uploader);
 
-        batchForm = new Form(tui.util.extend({
+        batchForm = new Form(snippet.extend({
             isBatchTransfer: true
         }, uploader));
     });

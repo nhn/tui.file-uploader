@@ -1,5 +1,7 @@
 'use strict';
 
+var $ = require('jquery');
+
 var ModernRequester = require('../../src/js/requester/modern');
 
 if (window.FormData) {
@@ -38,9 +40,11 @@ if (window.FormData) {
             spyOn(requester, '_uploadSuccess');
 
             requester.upload();
+
+            // refer to http://api.jquery.com/jQuery.ajax/#jqXHR
             jasmine.Ajax.requests.mostRecent().respondWith({
                 status: 200,
-                type: 'text/plain'
+                responseText: '{}'
             });
 
             expect(jasmine.Ajax.requests.mostRecent().url).toEqual(uploader.url.send);
