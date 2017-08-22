@@ -3,6 +3,7 @@
  *               FileManager manage connector to connect server and update FileListView.
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
 
 var $ = require('jquery');

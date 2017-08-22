@@ -2,6 +2,7 @@
  * @fileoverview FileListView listing files and display states(like size, count).
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
 
 var $ = require('jquery');

@@ -82,7 +82,6 @@ function setConfig(defaultConfig, server) {
         };
     } else {
         defaultConfig.browsers = [
-            'PhantomJS',
             'Chrome'
         ];
     }

@@ -2,6 +2,7 @@
  * @fileoverview Requester for modern browsers.
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
 
 var $ = require('jquery');

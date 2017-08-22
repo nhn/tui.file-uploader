@@ -2,6 +2,7 @@
  * @fileoverview This file is about drag and drop file to send. Drag and drop is running via file api.
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
 
 var $ = require('jquery');

@@ -2,6 +2,7 @@
  * @fileoverview From-view makes a form by template. Add events for file upload.
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
 
 var $ = require('jquery');
@@ -20,7 +21,7 @@ var STAMP_ID = '__fe_id';
  * @param {Uploader} uploader - Uploader instance
  * @ignore
  */
-var Form = snippet.defineClass(/**@lends View.Form.prototype **/{
+var Form = snippet.defineClass(/** @lends View.Form.prototype **/{
     init: function(uploader) {
         /**
          * File uploader
