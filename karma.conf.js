@@ -1,10 +1,21 @@
-var pkg = require('./package.json');
+/**
+ * Config file for testing
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
+
+'use strict';
+
 var webdriverConfig = {
     hostname: 'fe.nhnent.com',
     port: 4444,
     remoteHost: true
 };
 
+/**
+ * Set config by environment
+ * @param {object} defaultConfig - default config
+ * @param {string} server - server type ('ne' or local)
+ */
 function setConfig(defaultConfig, server) {
     if (server === 'ne') {
         defaultConfig.customLaunchers = {
@@ -61,7 +72,8 @@ function setConfig(defaultConfig, server) {
         defaultConfig.reporters.push('junit');
         defaultConfig.coverageReporter = {
             dir: 'report/coverage/',
-            reporters: [{
+            reporters: [
+                {
                     type: 'html',
                     subdir: function(browser) {
                         return 'report-html/' + browser;
@@ -82,7 +94,7 @@ function setConfig(defaultConfig, server) {
         };
     } else {
         defaultConfig.browsers = [
-            'Chrome'
+            'ChromeHeadless'
         ];
     }
 }
@@ -105,10 +117,16 @@ module.exports = function(config) {
         webpack: {
             devtool: 'inline-source-map',
             module: {
-                preLoaders: [{
+                preLoaders: [
+                    {
                         test: /\.js$/,
                         exclude: /(test|bower_components|node_modules)/,
-                        loaders: ['istanbul-instrumenter', 'eslint-loader']
+                        loader: 'istanbul-instrumenter'
+                    },
+                    {
+                        test: /\.js$/,
+                        exclude: /(bower_components|node_modules)/,
+                        loader: 'eslint-loader'
                     },
                     {
                         test: /\.css/,
@@ -128,6 +146,7 @@ module.exports = function(config) {
         singleRun: true
     };
 
+    /* eslint-disable */
     setConfig(defaultConfig, process.env.KARMA_SERVER);
     config.set(defaultConfig);
 };
