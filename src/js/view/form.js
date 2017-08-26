@@ -87,8 +87,8 @@ var Form = snippet.defineClass(/** @lends View.Form.prototype **/{
         var uploader = this._uploader;
         var $fileInput = uploader.$container.find(':file');
         var $el = $(this._html.FORM)
-                    .append(uploader.$container.children())
-                    .attr(attributes);
+            .append(uploader.$container.children())
+            .attr(attributes);
 
         this.$el = $el;
         this.$fileInput = $fileInput;
@@ -157,7 +157,7 @@ var Form = snippet.defineClass(/** @lends View.Form.prototype **/{
         this.$fileInput.attr('multiple', isMultiple);
 
         this.$fileInput.prop({
-            // multiple: isMultiple,
+            multiple: isMultiple,
             directory: useFolder,
             mozdirectory: useFolder,
             webkitdirectory: useFolder

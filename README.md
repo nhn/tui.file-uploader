@@ -23,7 +23,6 @@ Component that supports uploading files to server
 * Edge
 * Chrome
 * Firefox
-* Safari
 
 ## Usage
 ### Use `npm`
