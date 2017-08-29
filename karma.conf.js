@@ -23,25 +23,25 @@ function setConfig(defaultConfig, server) {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
-                version: 8
+                version: '8'
             },
             'IE9': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
-                version: 9
+                version: '9'
             },
             'IE10': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
-                version: 10
+                version: '10'
             },
             'IE11': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
-                version: 11
+                version: '11'
             },
             'Edge': {
                 base: 'WebDriver',
@@ -57,6 +57,11 @@ function setConfig(defaultConfig, server) {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'firefox'
+            },
+            'Safari-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'safari'
             }
         };
         defaultConfig.browsers = [
@@ -65,7 +70,9 @@ function setConfig(defaultConfig, server) {
             'IE10',
             'IE11',
             'Edge',
-            'Chrome-WebDriver'
+            'Chrome-WebDriver',
+            'Firefox-WebDriver'
+            // 'Safari-WebDriver' // active only when safari test is needed
         ];
         defaultConfig.reporters.push('coverage');
         defaultConfig.reporters.push('junit');
