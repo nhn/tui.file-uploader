@@ -2,6 +2,7 @@
  * @fileoverview This file contain utility methods for uploader.
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
 
 /**
@@ -68,7 +69,7 @@ function isSupportFormData() {
  * @memberof utils
  */
 function template(map, html) {
-    html = html.replace(/\{\{([^\}]+)\}\}/g, function(mstr, name) {
+    html = html.replace(/{{([^}]+)}}/g, function(mstr, name) {
         return map[name];
     });
 

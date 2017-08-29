@@ -2,11 +2,13 @@
  * @fileoverview This is manager of input elements that act like file pool.
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
+
+var snippet = require('tui-code-snippet');
 
 var consts = require('./consts');
 
-var snippet = tui.util;
 var forEach = snippet.forEach;
 var hasStamp = snippet.hasStamp;
 var stamp = snippet.stamp;
@@ -20,7 +22,7 @@ var HIDDEN_FILE_INPUT_CLASS = consts.className.HIDDEN_FILE_INPUT;
  * @class Pool
  * @ignore
  */
-var Pool = tui.util.defineClass(/** @lends Pool.prototype */{
+var Pool = snippet.defineClass(/** @lends Pool.prototype */{
     init: function(planet) {
         /**
          * Submitter for file element to server

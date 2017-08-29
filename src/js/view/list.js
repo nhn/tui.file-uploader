@@ -2,14 +2,17 @@
  * @fileoverview FileListView listing files and display states(like size, count).
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
+
+var $ = require('jquery');
+var snippet = require('tui-code-snippet');
 
 var utils = require('../utils');
 var Item = require('./item');
 var consts = require('../consts');
 
 var classNames = consts.className;
-var snippet = tui.util;
 var forEach = snippet.forEach;
 var isUndefined = snippet.isUndefined;
 var isArraySafe = snippet.isArraySafe;
@@ -24,7 +27,7 @@ var isArraySafe = snippet.isArraySafe;
  *     @param {array.<object>} [options.columnList] - To customize row contents when list type is 'table'
  * @ignore
  */
-var List = tui.util.defineClass(/** @lends List.prototype */{
+var List = snippet.defineClass(/** @lends List.prototype */{
     init: function($el, options) {
         /**
          * jQuery-element of list container
@@ -331,7 +334,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
     _removeFileItems: function(data) {
         var removedItem;
 
-        this.items = tui.util.filter(this.items, function(item) {
+        this.items = snippet.filter(this.items, function(item) {
             removedItem = data[item.id];
 
             if (removedItem) {
@@ -425,7 +428,7 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
     getCheckedItems: function() {
         var checkedItems = [];
 
-        tui.util.forEach(this.items, function(item) {
+        snippet.forEach(this.items, function(item) {
             if (item.getCheckedState()) {
                 checkedItems.push({
                     id: item.id,
@@ -470,6 +473,6 @@ var List = tui.util.defineClass(/** @lends List.prototype */{
     }
 });
 
-tui.util.CustomEvents.mixin(List);
+snippet.CustomEvents.mixin(List);
 
 module.exports = List;

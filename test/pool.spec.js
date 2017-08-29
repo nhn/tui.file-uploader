@@ -1,12 +1,15 @@
 'use strict';
 
+var $ = require('jquery');
+var snippet = require('tui-code-snippet');
+
 var Pool = require('../src/js/pool.js');
 
 describe('Input elements[type=files] pool behavior test.', function() {
     var inputF1, inputF2, inputF3,
         stampId1, stampId2, stampId3,
         key1, key2, key3,
-        stamp = tui.util.stamp,
+        stamp = snippet.stamp,
         pool,
         planet;
 

@@ -2,6 +2,7 @@
  * @fileoverview Configuration or default values.
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
 
 /**

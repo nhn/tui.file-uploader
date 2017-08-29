@@ -1,16 +1,21 @@
 /**
+ * Config file for testing
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
 
-var pkg = require('./package.json');
-var webpack = require('webpack');
 var webdriverConfig = {
     hostname: 'fe.nhnent.com',
     port: 4444,
     remoteHost: true
 };
 
+/**
+ * Set config by environment
+ * @param {object} defaultConfig - default config
+ * @param {string} server - server type ('ne' or local)
+ */
 function setConfig(defaultConfig, server) {
     if (server === 'ne') {
         defaultConfig.customLaunchers = {
@@ -38,6 +43,11 @@ function setConfig(defaultConfig, server) {
                 browserName: 'internet explorer',
                 version: 11
             },
+            'Edge': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'MicrosoftEdge'
+            },
             'Chrome-WebDriver': {
                 base: 'WebDriver',
                 config: webdriverConfig,
@@ -54,8 +64,8 @@ function setConfig(defaultConfig, server) {
             'IE9',
             'IE10',
             'IE11',
-            'Chrome-WebDriver',
-            'Firefox-WebDriver'
+            'Edge',
+            'Chrome-WebDriver'
         ];
         defaultConfig.reporters.push('coverage');
         defaultConfig.reporters.push('junit');
@@ -81,77 +91,9 @@ function setConfig(defaultConfig, server) {
             outputDir: 'report',
             suite: ''
         };
-    } else if (server === 'bs') {
-        defaultConfig.browserStack = {
-            username: process.env.BROWSER_STACK_USERNAME,
-            accessKey: process.env.BROWSER_STACK_ACCESS_KEY,
-            project: pkg.name
-        };
-
-        defaultConfig.customLaunchers = {
-            bs_ie8: {
-                base: 'BrowserStack',
-                os: 'Windows',
-                os_version: 'XP',
-                browser_version: '8.0',
-                browser: 'ie'
-            },
-            bs_ie9: {
-                base: 'BrowserStack',
-                os: 'Windows',
-                os_version: '7',
-                browser_version: '9.0',
-                browser: 'ie'
-            },
-            bs_ie10: {
-                base: 'BrowserStack',
-                os: 'Windows',
-                os_version: '7',
-                browser_version: '10.0',
-                browser: 'ie'
-            },
-            bs_ie11: {
-                base: 'BrowserStack',
-                os: 'Windows',
-                os_version: '7',
-                browser_version: '11.0',
-                browser: 'ie'
-            },
-            bs_edge: {
-                base: 'BrowserStack',
-                os: 'Windows',
-                os_version: '10',
-                browser: 'edge',
-                browser_version: 'latest'
-            },
-            bs_chrome_mac: {
-                base: 'BrowserStack',
-                os: 'OS X',
-                os_version: 'sierra',
-                browser: 'chrome',
-                browser_version: 'latest'
-            },
-            bs_firefox_mac: {
-                base: 'BrowserStack',
-                os: 'OS X',
-                os_version: 'sierra',
-                browser: 'firefox',
-                browser_version: 'latest'
-            }
-        };
-        defaultConfig.browsers = [
-            'bs_ie8',
-            'bs_ie9',
-            'bs_ie10',
-            'bs_ie11',
-            'bs_edge',
-            'bs_chrome_mac',
-            'bs_firefox_mac'
-        ];
-        defaultConfig.browserNoActivityTimeout = 30000;
     } else {
         defaultConfig.browsers = [
-            'Chrome'
+            'ChromeHeadless'
         ];
     }
 }
@@ -159,13 +101,12 @@ function setConfig(defaultConfig, server) {
 module.exports = function(config) {
     var defaultConfig = {
         basePath: './',
-        frameworks: ['jasmine'],
+        frameworks: [
+            'jasmine-ajax',
+            'jasmine',
+            'es5-shim'
+        ],
         files: [
-            'bower_components/tui-code-snippet/code-snippet.js',
-            'bower_components/jquery/jquery.min.js',
-            'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
-            'node_modules/jasmine-ajax/lib/mock-ajax.js',
-            'node_modules/es5-shim/es5-shim.js',
             'test/index.js'
         ],
         preprocessors: {
@@ -178,15 +119,24 @@ module.exports = function(config) {
                 preLoaders: [
                     {
                         test: /\.js$/,
-                        include: /src/,
+                        exclude: /(test|bower_components|node_modules)/,
+                        loader: 'istanbul-instrumenter'
+                    },
+                    {
+                        test: /\.js$/,
                         exclude: /(bower_components|node_modules)/,
                         loader: 'eslint-loader'
+                    },
+                    {
+                        test: /\.css/,
+                        loader: 'style!css'
+                    },
+                    {
+                        test: /\.png/,
+                        loader: 'url-loader'
                     }
                 ]
-            },
-            plugins: [
-                new webpack.HotModuleReplacementPlugin()
-            ]
+            }
         },
         port: 9876,
         colors: true,
@@ -195,6 +145,7 @@ module.exports = function(config) {
         singleRun: true
     };
 
+    /* eslint-disable */
     setConfig(defaultConfig, process.env.KARMA_SERVER);
     config.set(defaultConfig);
-}
+};

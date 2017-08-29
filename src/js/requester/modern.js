@@ -2,12 +2,16 @@
  * @fileoverview Requester for modern browsers.
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
+
+var $ = require('jquery');
+var snippet = require('tui-code-snippet');
 
 var consts = require('../consts');
 
 var TYPE = consts.conf.REQUESTER_TYPE_MODERN;
-var forEach = tui.util.forEach;
+var forEach = snippet.forEach;
 
 /**
  * Modern requester
@@ -15,7 +19,7 @@ var forEach = tui.util.forEach;
  * @class
  * @ignore
  */
-var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
+var Modern = snippet.defineClass(/** @lends Modern.prototype */{
     init: function(uploader) {
         /**
          * Uploader
@@ -79,10 +83,10 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
      */
     store: function(files) {
         var pool = this.pool;
-        var stamp = tui.util.stamp;
+        var stamp = snippet.stamp;
         var data = [];
 
-        files = tui.util.toArray(files || this.formView.$fileInput[0].files);
+        files = snippet.toArray(files || this.formView.$fileInput[0].files);
         forEach(files, function(file) {
             var id = stamp(file);
             pool.push(file);
@@ -147,7 +151,7 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
      * @private
      */
     _removeWhenBatch: function(removedItems) {
-        this.pool = tui.util.filter(this.pool, function(file) {
+        this.pool = snippet.filter(this.pool, function(file) {
             return (removedItems[file.id]);
         });
 
@@ -162,5 +166,5 @@ var Modern = tui.util.defineClass(/** @lends Modern.prototype */{
     }
 });
 
-tui.util.CustomEvents.mixin(Modern);
+snippet.CustomEvents.mixin(Modern);
 module.exports = Modern;

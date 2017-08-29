@@ -2,7 +2,11 @@
  * @fileoverview Requester for old browsers.
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
+
 'use strict';
+
+var $ = require('jquery');
+var snippet = require('tui-code-snippet');
 
 var Pool = require('../pool');
 var consts = require('../consts');
@@ -15,7 +19,7 @@ var TYPE = consts.conf.REQUESTER_TYPE_OLD;
  * @class
  * @ignore
  */
-var Old = tui.util.defineClass(/** @lends Old.prototype */{
+var Old = snippet.defineClass(/** @lends Old.prototype */{
     init: function(uploader) {
         var $hiddenFrame = uploader.$targetFrame;
         var formView = uploader.formView;
@@ -73,7 +77,7 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{
 
         try {
             frameBody = $hiddenFrame[0].contentWindow.document.body;
-            data = tui.util.pick(frameBody, 'firstChild', 'data');
+            data = snippet.pick(frameBody, 'firstChild', 'data');
             if (data) {
                 this.fire('uploaded', $.parseJSON(data));
                 frameBody.innerHTML = '';
@@ -91,7 +95,7 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{
      */
     store: function() {
         var el = this.formView.$fileInput[0];
-        var id = tui.util.stamp(el);
+        var id = snippet.stamp(el);
 
         this.pool.store(el);
         this.formView.resetFileInput();
@@ -146,7 +150,7 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{
      * @private
      */
     _removeWhenBatch: function(removedItems) {
-        tui.util.forEach(removedItems, function(id, name) {
+        snippet.forEach(removedItems, function(id, name) {
             this.pool.remove(id, name);
         }, this);
 
@@ -161,5 +165,5 @@ var Old = tui.util.defineClass(/** @lends Old.prototype */{
     }
 });
 
-tui.util.CustomEvents.mixin(Old);
+snippet.CustomEvents.mixin(Old);
 module.exports = Old;
