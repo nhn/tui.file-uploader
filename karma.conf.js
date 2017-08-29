@@ -48,11 +48,6 @@ function setConfig(defaultConfig, server) {
                 config: webdriverConfig,
                 browserName: 'MicrosoftEdge'
             },
-            'Edge': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'MicrosoftEdge'
-            },
             'Chrome-WebDriver': {
                 base: 'WebDriver',
                 config: webdriverConfig,
