@@ -14,8 +14,8 @@ Component that supports uploading files to server
 [https://nhnent.github.io/tui.file-uploader/latest/tutorial-example01-basic.html](https://nhnent.github.io/tui.file-uploader/latest/tutorial-example01-basic.html)
 
 ## Dependency
-* jQuery ~1.11.0
-* tui-code-snippet ~1.2.5
+* [jQuery](https://jquery.com/) >=1.11.0
+* [tui-code-snippet](https://github.com/nhnent/tui.code-snippet) >=1.2.5
 
 ## Test Environment
 ### PC

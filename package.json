@@ -1,6 +1,6 @@
 {
   "name": "tui-file-uploader",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "main": "dist/tui-file-uploader",
   "scripts": {
     "test": "karma start --no-single-run",
@@ -14,7 +14,7 @@
   "description": "TOAST UI Compoent: FileUploader",
   "repository": {
       "type": "git",
-      "url": "https://github.com/nhnent/tui.project-name"
+      "url": "https://github.com/nhnent/tui.file-uploader"
   },
   "keywords": [
     "nhnent",
