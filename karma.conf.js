@@ -109,11 +109,22 @@ module.exports = function(config) {
     var defaultConfig = {
         basePath: './',
         frameworks: [
+            'jquery-1.11.0',
             'jasmine-ajax',
             'jasmine',
             'es5-shim'
         ],
         files: [
+            // reason for not using karma-jasmine-jquery framework is that including older jasmine-karma file
+            // included jasmine-karma version is 2.0.5 and this version don't support ie8
+            {
+                pattern: 'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
+                watched: false
+            },
+            {
+                pattern: 'test/fixtures/*.html',
+                included: false
+            },
             'test/index.js'
         ],
         preprocessors: {
