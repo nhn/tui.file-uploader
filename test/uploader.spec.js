@@ -4,12 +4,16 @@ var $ = require('jquery');
 
 var Uploader = require('../src/js/uploader.js');
 
+jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
+
 describe('Uploader test', function() {
     var uploader,
         batchUploader,
         options;
 
     beforeEach(function() {
+        loadFixtures('uploader.html');
+
         options = {
             url: {
                 send: 'fakeURL-send',
@@ -20,11 +24,11 @@ describe('Uploader test', function() {
                 type: 'list'
             }
         };
-        uploader = new Uploader($('<div class="uploader"></div>'), options);
+        uploader = new Uploader($('#normal'), options);
 
         // uploader, batch
         options.isBatchTransfer = true;
-        batchUploader = new Uploader($('<div class="uploader"></div>'), options);
+        batchUploader = new Uploader($('#batch'), options);
     });
 
     it('should have formView, listView', function() {
