@@ -84,6 +84,7 @@ TOAST UI products are available over the CDN powered by [TOAST Cloud](https://ww
 You can use the CDN as below.
 
 ```html
+<link rel="stylesheet" href="https://uicdn.toast.com/tui.file-uploader/latest/tui-file-uploader.css" />
 <script src="https://uicdn.toast.com/tui.file-uploader/latest/tui-file-uploader.js"></script>
 ```
 
@@ -94,6 +95,7 @@ The CDN directory has the following structure.
 ```
 tui.file-uploader/
 ├─ latest/
+│  ├─ tui-file-uploader.css
 │  ├─ tui-file-uploader.js
 │  └─ tui-file-uploader.min.js
 ├─ v3.1.0/
