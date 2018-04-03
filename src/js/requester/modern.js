@@ -119,6 +119,7 @@ var Modern = snippet.defineClass(/** @lends Modern.prototype */{
         $.ajax({
             url: this.uploader.url.send,
             type: 'POST',
+            dataType: 'json',
             data: formData,
             success: $.proxy(this._uploadSuccess, this),
             error: $.proxy(this._uploadError, this),
