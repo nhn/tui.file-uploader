@@ -36,6 +36,8 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  *         @param {object} options.listUI.type - List type ('simple' or 'table')
  *         @param {string} [options.listUI.item] - To customize item contents when list type is 'simple'
  *         @param {Array.<object>} [options.listUI.columnList] - To customize row contents when list type is 'table'
+ *     @param {boolean} [options.usageStatistics=true] Send the host name to google analytics.
+ *         If you do not want to send the host name, this option set to false.
  * @example
  * // Case 1: Using normal transfer & simple list
  * //
@@ -78,8 +80,12 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  * });
  */
 var Uploader = snippet.defineClass(/** @lends Uploader.prototype */{
-    init: function($container, options) {
+    init: function($container, options) { // eslint-disable-line complexity
         var $dropzone = $container.find('.' + classNames.DROPZONE);
+
+        options = snippet.extend({
+            usageStatistics: true
+        }, options);
 
         /**
          * Uploader element
@@ -187,6 +193,10 @@ var Uploader = snippet.defineClass(/** @lends Uploader.prototype */{
 
         if (this.isCrossDomain && this.isSupportPostMessage) {
             this._setPostMessageEvent();
+        }
+
+        if (options.usageStatistics) {
+            utils.sendHostNameToGA();
         }
     },
 
