@@ -5,6 +5,8 @@
 
 'use strict';
 
+var snippet = require('tui-code-snippet');
+
 /**
  * @namespace utils
  * @ignore
@@ -134,6 +136,22 @@ function getLabelElement($target) {
     return null;
 }
 
+/**
+ * Send information to google analytics
+ */
+function sendHostNameToGA() {
+    var hostname = location.hostname;
+
+    snippet.imagePing('https://www.google-analytics.com/collect', {
+        v: 1,
+        t: 'event',
+        tid: 'UA-115377265-9',
+        cid: hostname,
+        dp: hostname,
+        dh: 'file-uploader'
+    });
+}
+
 module.exports = {
     getFileSizeWithUnit: getFileSizeWithUnit,
     isSupportFileSystem: isSupportFileSystem,
@@ -141,5 +159,6 @@ module.exports = {
     template: template,
     isCrossDomain: isCrossDomain,
     removeItemFromArray: removeItemFromArray,
-    getLabelElement: getLabelElement
+    getLabelElement: getLabelElement,
+    sendHostNameToGA: sendHostNameToGA
 };

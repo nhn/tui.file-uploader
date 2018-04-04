@@ -1,6 +1,7 @@
 'use strict';
 
 var $ = require('jquery');
+var snippet = require('tui-code-snippet');
 
 var Uploader = require('../src/js/uploader.js');
 
@@ -59,5 +60,25 @@ describe('Uploader test', function() {
         uploader.listView.fire('remove', {'A': true});
 
         expect(uploader._requester.remove).toHaveBeenCalledWith({idList: ['A']});
+    });
+
+    describe('Using "usageStatistics" option', function() {
+        beforeEach(function() {
+            spyOn(snippet, 'imagePing');
+        });
+
+        it('when the value set to true by default, the host name is send to server.', function() {
+            uploader = new Uploader($('#normal'), options);
+
+            expect(snippet.imagePing).toHaveBeenCalled();
+        });
+
+        it('when the value set to false, the host name is not send to server.', function() {
+            options.usageStatistics = false;
+
+            uploader = new Uploader($('#normal'), options);
+
+            expect(snippet.imagePing).not.toHaveBeenCalled();
+        });
     });
 });
