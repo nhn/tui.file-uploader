@@ -207,7 +207,7 @@ You can also see the older versions of API page on the [releases page](https://g
 
 
 ## 🔩 Dependency
-* [tui-code-snippet](https://github.com/nhnent/tui.code-snippet) >=1.2.5
+* [tui-code-snippet](https://github.com/nhnent/tui.code-snippet) >=1.3.0
 * [jquery](https://jquery.com/) >=1.11.0
 
 
