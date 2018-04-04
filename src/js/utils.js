@@ -138,6 +138,7 @@ function getLabelElement($target) {
 
 /**
  * Send information to google analytics
+ * @memberof utils
  */
 function sendHostNameToGA() {
     var hostname = location.hostname;
