@@ -1,6 +1,6 @@
 /*!
  * tui-file-uploader.js
- * @version 3.0.1
+ * @version 3.1.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -116,6 +116,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *         @param {object} options.listUI.type - List type ('simple' or 'table')
 	 *         @param {string} [options.listUI.item] - To customize item contents when list type is 'simple'
 	 *         @param {Array.<object>} [options.listUI.columnList] - To customize row contents when list type is 'table'
+	 *     @param {boolean} [options.usageStatistics=true] Send the hostname to google analytics.
+	 *         If you do not want to send the hostname, this option set to false.
 	 * @example
 	 * // Case 1: Using normal transfer & simple list
 	 * //
@@ -158,8 +160,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * });
 	 */
 	var Uploader = snippet.defineClass(/** @lends Uploader.prototype */{
-	    init: function($container, options) {
+	    init: function($container, options) { // eslint-disable-line complexity
 	        var $dropzone = $container.find('.' + classNames.DROPZONE);
+
+	        options = snippet.extend({
+	            usageStatistics: true
+	        }, options);
 
 	        /**
 	         * Uploader element
@@ -267,6 +273,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (this.isCrossDomain && this.isSupportPostMessage) {
 	            this._setPostMessageEvent();
+	        }
+
+	        if (options.usageStatistics) {
+	            utils.sendHostNameToGA();
 	        }
 	    },
 
@@ -713,7 +723,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview This file contain utility methods for uploader.
@@ -721,6 +731,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	'use strict';
+
+	var snippet = __webpack_require__(3);
 
 	/**
 	 * @namespace utils
@@ -851,6 +863,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return null;
 	}
 
+	/**
+	 * Send information to google analytics
+	 * @memberof utils
+	 */
+	function sendHostNameToGA() {
+	    var hostname = location.hostname;
+
+	    snippet.imagePing('https://www.google-analytics.com/collect', {
+	        v: 1,
+	        t: 'event',
+	        tid: 'UA-115377265-9',
+	        cid: hostname,
+	        dp: hostname,
+	        dh: 'file-uploader'
+	    });
+	}
+
 	module.exports = {
 	    getFileSizeWithUnit: getFileSizeWithUnit,
 	    isSupportFileSystem: isSupportFileSystem,
@@ -858,7 +887,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    template: template,
 	    isCrossDomain: isCrossDomain,
 	    removeItemFromArray: removeItemFromArray,
-	    getLabelElement: getLabelElement
+	    getLabelElement: getLabelElement,
+	    sendHostNameToGA: sendHostNameToGA
 	};
 
 
@@ -2314,6 +2344,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        $.ajax({
 	            url: this.uploader.url.send,
 	            type: 'POST',
+	            dataType: 'json',
 	            data: formData,
 	            success: $.proxy(this._uploadSuccess, this),
 	            error: $.proxy(this._uploadError, this),
