@@ -36,8 +36,8 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  *         @param {object} options.listUI.type - List type ('simple' or 'table')
  *         @param {string} [options.listUI.item] - To customize item contents when list type is 'simple'
  *         @param {Array.<object>} [options.listUI.columnList] - To customize row contents when list type is 'table'
- *     @param {boolean} [options.usageStatistics=true] Send the host name to google analytics.
- *         If you do not want to send the host name, this option set to false.
+ *     @param {boolean} [options.usageStatistics=true] Send the hostname to google analytics.
+ *         If you do not want to send the hostname, this option set to false.
  * @example
  * // Case 1: Using normal transfer & simple list
  * //
