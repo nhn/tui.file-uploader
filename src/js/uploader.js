@@ -196,7 +196,7 @@ var Uploader = snippet.defineClass(/** @lends Uploader.prototype */{
         }
 
         if (options.usageStatistics) {
-            utils.sendHostNameToGA();
+            snippet.sendHostname('file-uploader', 'UA-129987462-1');
         }
     },
 
