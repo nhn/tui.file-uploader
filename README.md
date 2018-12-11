@@ -44,7 +44,13 @@ var options = {
     usageStatistics: false
 }
 
-var instance = new FileUploader(options);
+var instance = new FileUploader(container, options);
+```
+
+Or, include [`tui-code-snippet`](https://github.com/nhnent/tui.code-snippet)(**v1.5.0** or **later**) and then immediately write the options as follows:
+
+```js
+tui.usageStatistics = false;
 ```
 
 
