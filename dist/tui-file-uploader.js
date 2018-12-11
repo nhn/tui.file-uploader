@@ -1,6 +1,6 @@
 /*!
  * tui-file-uploader.js
- * @version 3.1.0
+ * @version 3.1.1
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -276,7 +276,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (options.usageStatistics) {
-	            utils.sendHostNameToGA();
+	            snippet.sendHostname('file-uploader', 'UA-129987462-1');
 	        }
 	    },
 
@@ -723,7 +723,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview This file contain utility methods for uploader.
@@ -731,8 +731,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	'use strict';
-
-	var snippet = __webpack_require__(3);
 
 	/**
 	 * @namespace utils
@@ -863,23 +861,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return null;
 	}
 
-	/**
-	 * Send information to google analytics
-	 * @memberof utils
-	 */
-	function sendHostNameToGA() {
-	    var hostname = location.hostname;
-
-	    snippet.imagePing('https://www.google-analytics.com/collect', {
-	        v: 1,
-	        t: 'event',
-	        tid: 'UA-115377265-9',
-	        cid: hostname,
-	        dp: hostname,
-	        dh: 'file-uploader'
-	    });
-	}
-
 	module.exports = {
 	    getFileSizeWithUnit: getFileSizeWithUnit,
 	    isSupportFileSystem: isSupportFileSystem,
@@ -887,8 +868,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    template: template,
 	    isCrossDomain: isCrossDomain,
 	    removeItemFromArray: removeItemFromArray,
-	    getLabelElement: getLabelElement,
-	    sendHostNameToGA: sendHostNameToGA
+	    getLabelElement: getLabelElement
 	};
 
 
@@ -2299,7 +2279,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _uploadSuccess: function(data) {
-	        this.fire('uploaded', JSON.parse(data));
+	        this.fire('uploaded', data);
 	    },
 
 	    /**
