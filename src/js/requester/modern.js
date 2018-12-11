@@ -74,7 +74,7 @@ var Modern = snippet.defineClass(/** @lends Modern.prototype */{
      * @private
      */
     _uploadSuccess: function(data) {
-        this.fire('uploaded', JSON.parse(data));
+        this.fire('uploaded', data);
     },
 
     /**
