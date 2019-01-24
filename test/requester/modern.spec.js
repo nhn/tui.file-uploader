@@ -6,25 +6,31 @@ var ModernRequester = require('../../src/js/requester/modern');
 
 if (window.FormData) {
     describe('Modern Requester', function() {
-        var formView = jasmine.createSpyObj('formView', ['resetFileInput']),
-            uploader = {
-                $targetFrame: $('iframe'),
-                formView: formView,
-                url: {
-                    send: 'http://fakeURL-upload',
-                    remove: 'http://fakeURL-remove'
-                }
-            },
-            requester;
+        var formView = jasmine.createSpyObj('formView', ['resetFileInput']);
+        var uploader = {
+            $targetFrame: $('iframe'),
+            formView: formView,
+            url: {
+                send: 'http://fakeURL-upload',
+                remove: 'http://fakeURL-remove'
+            }
+        };
+        var requester;
 
-        beforeEach(function() {
+        /* eslint-disable require-jsdoc */
+        function createUploder(options) {
             formView.$el = $('<form></form>');
             formView.$fileInput = $('<input type="file" name="userfile[]">');
-            requester = new ModernRequester(uploader);
 
             formView.$el.on('submit', function(event) {
                 event.preventDefault();
             });
+
+            return new ModernRequester(options);
+        }
+
+        beforeEach(function() {
+            requester = createUploder(uploader);
         });
 
         it('When store, should resetFileInput and fire "stored" event', function() {
@@ -51,6 +57,30 @@ if (window.FormData) {
             expect(requester._uploadSuccess).toHaveBeenCalled();
 
             jasmine.Ajax.uninstall();
+        });
+
+        describe('when using batch transfer, ', function() {
+            beforeEach(function() {
+                uploader.isBatchTransfer = true;
+                requester = createUploder(uploader);
+            });
+
+            it('remove items from pool.', function() {
+                var removedItems = {
+                    'bar': true,
+                    'baz': true
+                };
+
+                requester.pool = [
+                    {id: 'foo'},
+                    {id: 'bar'},
+                    {id: 'baz'}
+                ];
+
+                requester.remove(removedItems);
+
+                expect(requester.pool).toEqual([{id: 'foo'}]);
+            });
         });
     });
 }
