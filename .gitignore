@@ -44,3 +44,4 @@ tags
 
 # etc
 .agignore
+server/files
