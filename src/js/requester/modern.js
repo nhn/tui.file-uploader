@@ -153,7 +153,9 @@ var Modern = snippet.defineClass(/** @lends Modern.prototype */{
      */
     _removeWhenBatch: function(removedItems) {
         this.pool = snippet.filter(this.pool, function(file) {
-            return (removedItems[file.id]);
+            var id = snippet.hasStamp(file) ? snippet.stamp(file) : file.id;
+
+            return !removedItems[id];
         });
 
         this.fire('removed', removedItems);
