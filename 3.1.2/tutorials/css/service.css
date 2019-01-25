@@ -1,0 +1,138 @@
+@charset "utf-8";
+
+.tui-file-uploader-form .tui-form-row{
+    display:table-row;
+}
+
+.tui-file-uploader-form .tui-form-col{
+    display: table-cell;
+}
+
+.tui-file-uploader-form .tui-form-label{
+    width:132px;
+}
+
+.tui-file-uploader .tui-input-txt{
+    width:100%;
+    border:1px solid #ddd;
+    font-size:14px;
+    padding:4px 8px 5px;
+}
+
+.tui-file-uploader-form .tui-form-lbl{
+    position: relative;
+    font-weight: normal;
+    color: #555;
+}
+
+.tui-file-uploader-form .tui-form-lbl .tui-em{
+    position: absolute;
+    top: -4px;
+    color:#ef351c;
+}
+
+.tui-file-uploader .tui-file-uploader-tit{
+    display:inline-block;
+    font-size:14px;
+    color:#555;
+    vertical-align:top;
+}
+
+.tui-file-uploader .tui-tooltip-wrap{
+    position: relative;
+    display: inline-block;
+}
+
+.tui-ico-help,
+.tui-ico-arr{
+    overflow:hidden;
+    display:inline-block;
+    width:1px;
+    height:1px;
+    line-height:300px;
+    vertical-align:top;
+    background:url(../img/sp_tui_fileupload.png) no-repeat;
+}
+
+.tui-ico-help{
+    margin:6px 0 0 3px;
+    border:0;
+    width:14px;
+    height:14px;
+    background-position:0 -17px;
+    cursor:pointer;
+    background-color:#fff;
+    font-size:0;
+}
+
+.tui-file-form .tui-ico-help {
+    margin-top:2px;
+}
+
+.tui-file-uploader .tui-tooltip-area{
+    display:none;
+    position:absolute;
+    left:-14px;
+    bottom:32px;
+    max-width: 190px;
+    z-index:30;
+}
+
+.tui-file-uploader .tui-tooltip{
+    display:block;
+    padding:13px 14px;
+    max-width:200px;
+    background-color:#5c5c5c;
+    font-size:12px;
+    color:#fff;
+    border-radius:5px;
+    line-height:16px;
+    white-space:nowrap;
+}
+
+.tui-file-uploader .tui-ico-arr{
+    position:absolute;
+    left:16px;
+    bottom:-8px;
+    width:16px;
+    height:8px;
+    background-position:-16px -17px;
+}
+
+.tui-file-uploader .tui-file-upload-msg{
+    display:inline-block;
+    margin-left:15px;
+    font-size:12px;
+    color:#4b96e6;
+    vertical-align:top;
+}
+
+.tui-file-uploader-info{
+    margin-top:11px;
+    text-align:right;
+    line-height:13px;
+}
+
+.tui-file-uploader-info .tui-info-txt{
+    font-size:12px;
+    color:#777;
+}
+
+.tui-file-uploader-info .tui-info-txt:before{
+    display:inline-block;
+    margin:3px 5px 0 2px;
+    width:1px;
+    height:10px;
+    background:#ddd;
+    vertical-align:top;
+    content:''
+}
+
+.tui-file-uploader-info .tui-info-txt:first-child:before{
+    background:none;
+}
+
+.tui-file-uploader-info .tui-spec{
+    color:#4b96e6;
+    font-style:normal;
+}
