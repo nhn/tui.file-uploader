@@ -1,6 +1,6 @@
 /*!
  * tui-file-uploader.js
- * @version 3.1.1
+ * @version 3.1.2
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -2358,7 +2358,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _removeWhenBatch: function(removedItems) {
 	        this.pool = snippet.filter(this.pool, function(file) {
-	            return (removedItems[file.id]);
+	            var id = snippet.hasStamp(file) ? snippet.stamp(file) : file.id;
+
+	            return !removedItems[id];
 	        });
 
 	        this.fire('removed', removedItems);
