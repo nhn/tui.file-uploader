@@ -71,9 +71,9 @@ tui.usageStatistics = false;
 
 
 ## 🐾 Examples
-* [Basic](https://nhnent.github.io/tui.file-uploader/latest/tutorial-example01-basic.html) : Example of using default options.
-* [Batch transfer](https://nhnent.github.io/tui.file-uploader/latest/tutorial-example02-batch-transfer.html) : Example of transferring files in batches instead of uploading them directly.
-* [Using the list UI](https://nhnent.github.io/tui.file-uploader/latest/tutorial-example05-table-ui.html) : Example of creating a list of transfer files in the form of a table.
+* [Basic](https://nhnent.github.io/tui.file-uploader/latest/tutorial-example01-basic) : Example of using default options.
+* [Batch transfer](https://nhnent.github.io/tui.file-uploader/latest/tutorial-example02-batch-transfer) : Example of transferring files in batches instead of uploading them directly.
+* [Using the list UI](https://nhnent.github.io/tui.file-uploader/latest/tutorial-example05-table-ui) : Example of creating a list of transfer files in the form of a table.
 
 More examples can be found on the left sidebar of each example page, and have fun with it.
 
@@ -137,7 +137,7 @@ tui.file-uploader/
 ### HTML
 
 Add the container element to create the component as an option.
-See [here](https://nhnent.github.io/tui.file-uploader/latest/tutorial-example01-basic.html#) for information about the added element.
+See [here](https://nhnent.github.io/tui.file-uploader/latest/tutorial-example01-basic) for information about the added element.
 
 ### JavaScript
 
@@ -155,10 +155,10 @@ var FileUploader = require('tui-file-uploader'); /* CommonJS */
 ```
 
 ``` javascript
-import {FileUploader} from 'tui-file-uploader'; /* ES6 */
+import FileUploader from 'tui-file-uploader'; /* ES6 */
 ```
 
-You can create an instance with [options](https://nhnent.github.io/tui.file-uploader/latest/Uploader.html) and call various APIs after creating an instance.
+You can create an instance with [options](https://nhnent.github.io/tui.file-uploader/latest/Uploader) and call various APIs after creating an instance.
 
 ``` javascript
 var container = document.getElementById('tui-file-uploader');
@@ -168,7 +168,7 @@ var instance = new FileUploader(container, { ... });
 instance.getCheckedList();
 ```
 
-For more information about the API, please see [here](https://nhnent.github.io/tui.file-uploader/latest/Uploader.html).
+For more information about the API, please see [here](https://nhnent.github.io/tui.file-uploader/latest/Uploader).
 
 
 ## 🔧 Pull Request Steps
