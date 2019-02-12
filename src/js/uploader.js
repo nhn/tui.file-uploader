@@ -262,11 +262,11 @@ var Uploader = snippet.defineClass(/** @lends Uploader.prototype */{
                 /**
                  * Check event
                  * @event Uploader#check
-                 * @param {object} evt - Check event data
-                 *     @param {string} evt.id - File id
-                 *     @param {string} evt.name - File name
-                 *     @param {string} evt.size - File size
-                 *     @param {boolean} evt.state - Checked state
+                 * @type {object} evt - Check event data
+                 * @property {string} id - File id
+                 * @property {string} name - File name
+                 * @property {string} size - File size
+                 * @property {boolean} state - Checked state
                  * @example
                  * FileUploader.on('check', function(evt) {
                  *     console.log(evt.id + ' checked state is ' + evt.state);
@@ -277,10 +277,9 @@ var Uploader = snippet.defineClass(/** @lends Uploader.prototype */{
             checkAll: function(data) {
                 /**
                  * Check event
-                 * @api
                  * @event Uploader#checkAll
-                 * @param {object} evt - Check event data
-                 *     @param {string} evt.filelist - Checked file list
+                 * @type {object} evt - Check event data
+                 * @property {string} filelist - Checked file list
                  * @example
                  * FileUploader.on('checkAll', function(evt) {
                  *     console.log(evt.filelist);
@@ -468,7 +467,7 @@ module.exports = Uploader;
 /**
  * Remove event
  * @event Uploader#remove
- * @param {object} evt - Removed item's data (ex: {id: state})
+ * @type {object} evt - Removed item's data (ex: {id: state})
  * @example
  * fileUploader.on('remove', function(evt) {
  *     console.log('state: ' + evt['fileId']);
@@ -478,9 +477,9 @@ module.exports = Uploader;
 /**
  * Error event
  * @event Uploader#error
- * @param {Error} evt - Error data
- *     @param {string} evt.status - Error status
- *     @param {string} evt.message - Error message
+ * @type {object} evt - Error data
+ * @property {string} status - Error status
+ * @property {string} message - Error message
  * @example
  * fileUploader.on('error', function(evt) {
  *     console.log(evt.status);
@@ -490,11 +489,11 @@ module.exports = Uploader;
 /**
  * Success event
  * @event Uploader#success
- * @param {object} evt - Server response data
- *     @param {Array} evt.filelist - Uploaded file list
- *     @param {number} [evt.success] - Uploaded file count
- *     @param {number} [evt.failed] - Failed file count
- *     @param {number} [evt.count] - Total count
+ * @type {object} evt - Server response data
+ * @property {Array} filelist - Uploaded file list
+ * @property {number} [success] - Uploaded file count
+ * @property {number} [failed] - Failed file count
+ * @property {number} [count] - Total count
  * @example
  * fileUploader.on('success', function(evt) {
  *     console.log(evt.filelist);
@@ -504,8 +503,8 @@ module.exports = Uploader;
 /**
  * Update event when using batch transfer
  * @event Uploader#update
- * @param {object} evt - Updated file list
- *     @param {Array} evt.filelist - Updated file list
+ * @type {object} evt - Updated file list
+ * @property {Array} filelist - Updated file list
  * @example
  * fileUploader.on('update', function(evt) {
  *     console.log(evt.filelist);
