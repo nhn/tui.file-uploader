@@ -1,6 +1,6 @@
 /*!
  * tui-file-uploader.min.js
- * @version 3.1.2
+ * @version 3.1.3
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
