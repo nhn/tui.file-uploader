@@ -245,7 +245,9 @@ var Uploader = snippet.defineClass(/** @lends Uploader.prototype */{
         var $target = $('<iframe name="' + this.formTarget + '"></iframe>');
         $target.css({
             visibility: 'hidden',
-            position: 'absolute'
+            position: 'absolute',
+            width: '0px',
+            height: '0px'
         });
 
         return $target;
