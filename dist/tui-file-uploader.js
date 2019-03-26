@@ -1,6 +1,6 @@
 /*!
  * tui-file-uploader.js
- * @version 3.1.3
+ * @version 3.1.4
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -325,7 +325,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var $target = $('<iframe name="' + this.formTarget + '"></iframe>');
 	        $target.css({
 	            visibility: 'hidden',
-	            position: 'absolute'
+	            position: 'absolute',
+	            width: '0px',
+	            height: '0px'
 	        });
 
 	        return $target;
