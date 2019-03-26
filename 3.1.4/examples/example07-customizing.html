@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>FileUploader with customizing view</title>
+        <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+        <link rel="stylesheet" type="text/css" href="../dist/tui-file-uploader.css" />
+        <link rel="stylesheet" type="text/css" href="./css/service.css" />
+    </head>
+
+    <body>
+        <div class="code-description">
+            This example jsut show customizing the view in service.<br>
+            Each server request and response data is a mocking data. (not real)<br>
+            So, the request data is not same as the response data like uploaded file's total count or size.
+        </div>
+        <div class="code-html" style="width:698px;">
+            <div id="uploader" class="tui-file-uploader">
+                <div class="tui-file-uploader-header">
+                    <span class="tui-file-uploader-tit">File Uploader</span>
+                    <span class="tui-file-upload-msg"><span id="uploadedCount">0</span> files successfully uploaded</span>
+                    <div class="tui-btn-area">
+                        <button type="button" class="tui-btn tui-btn-cancel tui-is-disabled" disabled>Remove</button>
+                        <label class="tui-btn tui-btn-upload">
+                            <span class="tui-btn-txt">Add files</span>
+                            <input type="file" name="userfile[]" class="tui-input-file">
+                        </label>
+                    </div>
+                </div>
+                <div class="tui-js-file-uploader-list tui-js-file-uploader-dropzone tui-file-uploader-area tui-has-scroll">
+                    <div class="tui-dropzone-contents">
+                        <span class="tui-dropzone-msg">Drop files here.</span>
+                    </div>
+                </div>
+                <div class="tui-file-uploader-info">
+                    <span class="tui-info-txt">Selected <em class="tui-spec"><span id="checkedItemCount">0</span> files</em> (<span id="checkedItemSize">0 KB</span>)</span>
+                    <span class="tui-info-txt">Total <span id="itemTotalSize">0 KB</span></span>
+                </div>
+                <div class="tui-btn-submit">
+                    <button type="submit" class="tui-btn tui-btn-large">Upload</button>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mockjax/1.6.2/jquery.mockjax.min.js"></script>
+        <script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js"></script>
+        <script type="text/javascript" src="js/ajaxMocking.js"></script>
+        <script type="text/javascript" src="../dist/tui-file-uploader.js"></script>
+        <script type="text/javascript" class="code-js">
+
+        var uploader = new tui.FileUploader($('#uploader'), {
+            url: {
+                send: "http://localhost:3000/upload"
+            },
+            isMultiple: true,
+            isBatchTransfer: true,
+            listUI: {
+                type: 'table',
+                columnList: [
+                    {
+                        header: '{{checkbox}}',
+                        body: '{{checkbox}}',
+                        width: 32
+                    },
+                    {
+                        header: 'File Name',
+                        body: '<span class="tui-filename-area"><span class="tui-file-name" style="max-width:480px;">{{filename}}</span></span>',
+                        width: 500
+                    },
+                    {
+                        header: 'File Size',
+                        body: '{{filesize}}'
+                    }
+                ]
+            }
+        });
+
+        var $uploadedCount = $('#uploadedCount');
+        var $itemTotalSize = $('#itemTotalSize');
+        var $checkedItemCount = $('#checkedItemCount');
+        var $checkedItemSize = $('#checkedItemSize');
+        var $removeButton = $('.tui-btn-cancel');
+
+        // below service code
+        function disableRemoveButton(state) {
+            var className = 'tui-is-disabled';
+
+            if (state) {
+                $removeButton.addClass(className);
+            } else {
+                $removeButton.removeClass(className);
+            }
+
+            $removeButton.prop('disabled', state);
+        }
+
+        function updateCheckedInfo(size, count) {
+            $checkedItemSize.html(size);
+            $checkedItemCount.html(count);
+        }
+
+        function setUploadedCountInfo(count) {
+            $uploadedCount.html(count);
+        }
+
+        function resetInfo() {
+            $itemTotalSize.html('0 KB');
+            $checkedItemSize.html('0 KB');
+            $checkedItemCount.html('0');
+        }
+
+        uploader.on('update', function(evt) { // This event is only fired when using batch transfer
+            var items = evt.filelist;
+            var totalSize = uploader.getTotalSize(items);
+
+            $itemTotalSize.html(totalSize);
+        });
+
+        uploader.on('check', function(evt) {
+            var checkedItems = uploader.getCheckedList();
+            var checkedItemSize = uploader.getTotalSize(checkedItems);
+            var checkedItemCount = checkedItems.length;
+            var removeButtonState = (checkedItemCount === 0);
+
+            disableRemoveButton(removeButtonState);
+            updateCheckedInfo(checkedItemSize, checkedItemCount);
+        });
+
+        uploader.on('checkAll', function(evt) {
+            var checkedItems = uploader.getCheckedList();
+            var checkedItemSize = uploader.getTotalSize(checkedItems);
+            var checkedItemCount = checkedItems.length;
+            var removeButtonState = (checkedItemCount === 0);
+
+            disableRemoveButton(removeButtonState);
+            updateCheckedInfo(checkedItemSize, checkedItemCount);
+        });
+
+        uploader.on('remove', function(evt) {
+            var checkedItems = uploader.getCheckedList();
+            var removeButtonState = (checkedItems.length === 0);
+
+            disableRemoveButton(removeButtonState);
+            setUploadedCountInfo(0);
+            resetInfo();
+        });
+
+        uploader.on('success', function(evt) {
+            var successCount = evt.success;
+            var removeButtonState = (successCount > 0);
+
+            $uploadedCount.html(successCount);
+
+            disableRemoveButton(removeButtonState);
+            setUploadedCountInfo(successCount);
+            resetInfo();
+        });
+
+        $removeButton.on('click', function() {
+            var checkedItems = uploader.getCheckedList();
+
+            uploader.removeList(checkedItems);
+        });
+
+        </script>
+    </body>
+</html>
