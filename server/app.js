@@ -1,6 +1,6 @@
 /**
  * File upload server example - NodeJS 5.1.0 stable
- * NHN Entertainment FE development team
+ * NHN FE Development Lab <dl_javascript@nhn.com>
  * Github:
  *  nhnent/tui.component.file-uploader
  *  https://github.com/nhnent/tui.component.file-uploader

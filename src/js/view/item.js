@@ -1,6 +1,6 @@
 /**
  * @fileoverview ItemView make element to display added file information. It has attached file ID to request for remove.
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';
