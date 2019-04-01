@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>FileUploader with dropzone</title>
+        <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+        <link rel="stylesheet" type="text/css" href="../dist/tui-file-uploader.css" />
+    </head>
+
+    <body>
+        <div class="code-description">
+            This example just show using dropzone in table list. (support modern browsers)<br>
+            So, don't include submit button despite of using batch transfer.
+        </div>
+        <div class="code-html" style="width:698px;">
+            <div id="uploader" class="tui-file-uploader">
+                <div class="tui-file-uploader-header">
+                    <div class="tui-btn-area">
+                        <button type="button" class="tui-btn tui-btn-cancel">Remove</button>
+                        <label class="tui-btn tui-btn-upload">
+                			<span class="tui-btn-txt">Add files</span>
+                			<input type="file" name="userfile[]" class="tui-input-file">
+                		</label>
+                    </div>
+                </div>
+                <div class="tui-js-file-uploader-list tui-js-file-uploader-dropzone tui-file-uploader-area tui-has-scroll">
+                    <div class="tui-dropzone-contents">
+                        <span class="tui-dropzone-msg">Drop files here.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js"></script>
+        <script type="text/javascript" src="../dist/tui-file-uploader.js"></script>
+        <script type="text/javascript" class="code-js">
+
+        var $removeButton = $('.tui-btn-cancel');
+
+        var uploader = new tui.FileUploader($('#uploader'), {
+            url: {
+                send: "http://localhost:3000/upload"
+            },
+            isMultiple: true,
+            isBatchTransfer: true,
+            listUI: {
+                type: 'table'
+            }
+        });
+
+        $removeButton.on('click', function() {
+            var checkedItems = uploader.getCheckedList();
+
+            uploader.removeList(checkedItems);
+        });
+
+        </script>
+    </body>
+</html>

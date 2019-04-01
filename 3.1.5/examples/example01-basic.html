@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>FileUploader with normal transfer</title>
+        <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+        <link rel="stylesheet" type="text/css" href="../dist/tui-file-uploader.css" />
+    </head>
+
+    <body>
+        <div class="code-description">
+            This example just show normal transfer action.<br>
+            Each server request and response data is a mocking data. (not real)<br>
+            So, the information of the selected file is not the same as in the list view.
+        </div>
+        <div class="code-html" style="width:240px;">
+            <div id="uploader" class="tui-file-uploader">
+                <label class="tui-btn tui-btn-upload">
+                    <span class="tui-btn-txt">Add files</span>
+                    <input type="file" name="userfile[]" class="tui-input-file">
+                </label>
+                <div class="tui-js-file-uploader-list"></div>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mockjax/1.6.2/jquery.mockjax.min.js"></script>
+        <script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js"></script>
+        <script type="text/javascript" src="js/ajaxMocking.js"></script>
+        <script type="text/javascript" src="../dist/tui-file-uploader.js"></script>
+        <script type="text/javascript" class="code-js">
+
+            var uploader = new tui.FileUploader($('#uploader'), {
+                url: {
+                    send: "http://localhost:3000/upload",
+                    remove: "http://localhost:3000/remove"
+                },
+                isMultiple: true,
+                listUI: {
+                    type: 'simple'
+                }
+            });
+
+            uploader.on('success', function(evt) {
+                alert(evt.success + ' files uploaded');
+            });
+
+        </script>
+    </body>
+</html>
