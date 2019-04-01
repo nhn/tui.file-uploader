@@ -1,7 +1,7 @@
 /*!
  * tui-file-uploader.js
- * @version 3.1.4
- * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
+ * @version 3.1.5
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -62,7 +62,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview The entry file of FileUploader components
-	 * @author NHN Ent. FE Development Team
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -81,7 +81,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * @fileoverview FileUploader is core of file uploader component.
 	 *               FileManager manage connector to connect server and update FileListView.
-	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -612,7 +612,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Configuration or default values.
-	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -728,7 +728,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This file contain utility methods for uploader.
-	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -879,7 +879,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview From-view makes a form by template. Add events for file upload.
-	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1109,7 +1109,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview FileListView listing files and display states(like size, count).
-	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1593,7 +1593,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview ItemView make element to display added file information. It has attached file ID to request for remove.
-	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1809,7 +1809,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This file is about drag and drop file to send. Drag and drop is running via file api.
-	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -1931,7 +1931,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Requester for old browsers.
-	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2106,7 +2106,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview This is manager of input elements that act like file pool.
-	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
@@ -2206,7 +2206,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Requester for modern browsers.
-	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE Development Lab <dl_javascript@nhn.com>
 	 */
 
 	'use strict';
