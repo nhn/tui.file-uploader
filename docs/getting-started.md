@@ -266,7 +266,7 @@ But a default CSS can't use normally in IE7.
 So in IE7, CSS should be implemented on the service.
 
 And CORS for IE7 must also be handled by server. The following option is used.
-Refer to [server request & response tutorial](https://github.com/nhnent/tui.component.file-uploader/wiki/Server-request-&-response) for information about the page set to `redirectURL` option.
+Refer to [server request & response tutorial](https://github.com/nhn/tui.file-uploader/wiki/Server-request-&-response) for information about the page set to `redirectURL` option.
 
 ```js
 {
@@ -274,4 +274,4 @@ Refer to [server request & response tutorial](https://github.com/nhnent/tui.comp
 }
 ```
 
-For more information, see [example pages] (https://nhnent.github.io/tui.file-uploader/latest/tutorial-example01-basic.html).
+For more information, see [example pages] (https://nhn.github.io/tui.file-uploader/latest/tutorial-example01-basic).

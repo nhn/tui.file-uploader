@@ -3,7 +3,7 @@ You can test all features of file-uploader component using `node.js`. You must i
 
 ### Step 1. Clone or download a repository url.
 ```
-git clone https://github.com/nhnent/tui.file-uploader.git
+git clone https://github.com/nhn/tui.file-uploader.git
 ```
 
 ### Step 2. Install node packages.
@@ -20,4 +20,4 @@ node app.js
 ```
 
 ### Step 4. Confirm example page.
-* [Example](https://nhnent.github.io/tui.file-uploader/latest/tutorial-example08-local-test.html)
+* [Example](https://nhn.github.io/tui.file-uploader/latest/tutorial-example08-local-test)
