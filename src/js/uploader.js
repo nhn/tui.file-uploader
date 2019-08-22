@@ -27,15 +27,17 @@ var REQUESTER_TYPE_MODERN = consts.conf.REQUESTER_TYPE_MODERN;
  * @class Uploader
  * @param {jQuery} container - Container element to generate component
  * @param {object} options - Options
- *     @param {object} options.url - File server urls
- *         @param {string} options.url.send - Send files url
- *         @param {string} options.url.remove - Remove files url
- *     @param {boolean} [options.isMultiple] Use multiple files upload
- *     @param {boolean} [options.useFolder] - Use directory upload. If ture, 'isMultiple' option will be ignored
- *     @param {object} options.listUI - List area preset
+ *     @param {object} options.url - Server request urls
+ *         @param {string} options.url.send - To send files to server
+ *         @param {string} [options.url.remove] - To remove files on server (Using when transfer type is normal)
+ *     @param {string} [options.redirectURL] - This option is only used in IE7 for CORS
+ *     @param {boolean} [options.isMultiple] - Whether selecting multiple file or not
+ *     @param {boolean} [options.isBatchTransfer] - Whether using batch transfer or not
+ *     @param {boolean} [options.useFolder] - Whether the folder can be selected or not. If it is ture, 'isMultiple' option will be ignored
+ *     @param {object} options.listUI - To set a list view
  *         @param {object} options.listUI.type - List type ('simple' or 'table')
- *         @param {string} [options.listUI.item] - To customize item contents when list type is 'simple'
- *         @param {Array.<object>} [options.listUI.columnList] - To customize row contents when list type is 'table'
+ *         @param {string} [options.listUI.item] - List item's template when using list type is 'simple'
+ *         @param {Array.<object>} [options.listUI.columnList] - List item's template when using list type is 'table'
  *     @param {boolean} [options.usageStatistics=true] Send the hostname to google analytics.
  *         If you do not want to send the hostname, this option set to false.
  * @example

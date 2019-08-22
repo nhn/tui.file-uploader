@@ -2,8 +2,8 @@
  * File upload server example - NodeJS 5.1.0 stable
  * NHN FE Development Lab <dl_javascript@nhn.com>
  * Github:
- *  nhnent/tui.component.file-uploader
- *  https://github.com/nhnent/tui.component.file-uploader
+ *  nhn/tui.file-uploader
+ *  https://github.com/nhn/tui.file-uploader
  **/
 'use strict';
 var express = require('express'),
