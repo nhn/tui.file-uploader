@@ -1,3 +1,5 @@
+#### ‼️ There are no major updates planned for `tui.file-uploader` in the future. It will only get bug fixes.
+
 # TOAST UI Component : File Uploader
 > Component that transfers local files to the server.
 
